@@ -34,85 +34,124 @@ public class AutoTest extends LinearOpMode {
         this.downLeftMotor = hardwareMap.get(DcMotor.class, "Down Left Motor");
         this.downRightMotor = hardwareMap.get(DcMotor.class, "Down Right Motor");
 
-        resetEncoders();
-
-        this.downLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.downRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.upLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.upRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         waitForStart();
-
 
         //COMMAND LINE BELOW HERE
 
-        move(1500);
-        turn("left", 1500);
-        move(1500);
+        move(1500, 0.5);
+        turn("left", 1500, 0.5);
+        move(1500, 0.5);
 
 
 
     }
 
 
-    public void move(int distance){
+    public void move(int distance, double speed){
 
-        this.upLeftMotor.setTargetPosition(-distance);
-        this.upRightMotor.setTargetPosition(distance);
-        this.downRightMotor.setTargetPosition(distance);
-        this.downLeftMotor.setTargetPosition(-distance);
 
+        upRightMotor.setMode    (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        upLeftMotor.setMode     (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        downRightMotor.setMode  (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        downLeftMotor.setMode   (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        upRightMotor.setMode    (DcMotor.RunMode.RUN_TO_POSITION);
+        upLeftMotor.setMode     (DcMotor.RunMode.RUN_TO_POSITION);
+        downRightMotor.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+        downLeftMotor.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
+
+        upLeftMotor.setTargetPosition   (-distance);
+        upRightMotor.setTargetPosition  (distance);
+        downRightMotor.setTargetPosition(distance);
+        downLeftMotor.setTargetPosition (-distance);
+
+        while((upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive()) {
+
+            //Loop body can be empty
+
+        }
+
+        upLeftMotor.setPower(0);
+        upRightMotor.setPower(0);
+        downRightMotor.setPower(0);
+        downLeftMotor.setPower(0);
     }
 
-    public void turn(String direction, int distance){
+    public void turn(String direction, int distance, double speed){
 
         if(direction == "left"){// left
 
-            upRightMotor.setTargetPosition(distance);
-            upLeftMotor.setTargetPosition(distance);
-            downLeftMotor.setTargetPosition(distance);
+            upRightMotor.setMode    (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            upLeftMotor.setMode     (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            downRightMotor.setMode  (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            downLeftMotor.setMode   (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            upRightMotor.setMode    (DcMotor.RunMode.RUN_TO_POSITION);
+            upLeftMotor.setMode     (DcMotor.RunMode.RUN_TO_POSITION);
+            downRightMotor.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+            downLeftMotor.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
+
+            upRightMotor.setTargetPosition  (distance);
+            upLeftMotor.setTargetPosition   (distance);
+            downLeftMotor.setTargetPosition (distance);
             downRightMotor.setTargetPosition(distance);
 
-            setMotorPowers(1.0);
+
+            while((upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive()) {
+
+                //Loop body can be empty
+
+            }
+
+            upLeftMotor.setPower(0);
+            upRightMotor.setPower(0);
+            downRightMotor.setPower(0);
+            downLeftMotor.setPower(0);
 
         }
 
         if(direction == "right"){// right
-p[]
-            upRightMotor.setTargetPosition(-distance);
-            upLeftMotor.setTargetPosition(-distance);
-            downLeftMotor.setTargetPosition(-distance);
+
+
+            upRightMotor.setMode    (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            upLeftMotor.setMode     (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            downRightMotor.setMode  (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            downLeftMotor.setMode   (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            upRightMotor.setMode    (DcMotor.RunMode.RUN_TO_POSITION);
+            upLeftMotor.setMode     (DcMotor.RunMode.RUN_TO_POSITION);
+            downRightMotor.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+            downLeftMotor.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
+
+            upRightMotor.setTargetPosition  (-distance);
+            upLeftMotor.setTargetPosition   (-distance);
+            downLeftMotor.setTargetPosition (-distance);
             downRightMotor.setTargetPosition(-distance);
 
-            setMotorPowers(1.0);
+            while((upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive()) {
 
+                //Loop body can be empty
+
+            }
+
+            upLeftMotor.setPower(0);
+            upRightMotor.setPower(0);
+            downRightMotor.setPower(0);
+            downLeftMotor.setPower(0);
         }
 
     }
 
 
 
-    public void setMotorPowers(double speed){
-
-        upRightMotor.setPower(speed);
-        upLeftMotor.setPower(speed);
-        downRightMotor.setPower(speed);
-        downLeftMotor.setPower(speed);
-
-        resetEncoders();
+    public void move(){
 
         //makes the motors move after giving them a target
+
+
     }
 
-    public void resetEncoders(){
 
-        this.downLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.downRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.upLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.upRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //resets the encoders, so you can move 1000 ticks twice by saying
-        //move 1000 ticks, move 1000 ticks
-        //instead of
-        //move 1000 ticks, move 2000 ticks
-    }
+
+
 }
