@@ -14,10 +14,13 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 public class AutoTest extends LinearOpMode {
 
-    static final double     COUNTS_PER_MOTOR_REV    = 540 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+    static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Andymark Neverest 40
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER_INCHES * 3.1415));//879.645943005
+
+    /*
+    roughly 880 steps to move a wheel an inch, but this is untested
+     */
 
 
     private DcMotor upRightMotor;
@@ -39,6 +42,8 @@ public class AutoTest extends LinearOpMode {
         telemetry.addData("DR Motor Pos", downRightMotor.getCurrentPosition());
         telemetry.addData("DL Motor Pos", downLeftMotor.getCurrentPosition());
 
+        //this comment made by romanesque architecture gang
+        
         waitForStart();
 
         //COMMAND LINE BELOW HERE
@@ -96,6 +101,42 @@ public class AutoTest extends LinearOpMode {
             downRightMotor.setTargetPosition(distance);
         }
 
+        if(direction == "UL"){//up left diagonal
+
+            upLeftMotor.setTargetPosition(0);
+            upRightMotor.setTargetPosition(-distance);
+            downLeftMotor.setTargetPosition(distance);
+            downRightMotor.setTargetPosition(0);
+
+        }
+
+        if(direction == "UR"){//up right diagonal
+
+            upLeftMotor.setTargetPosition(distance);
+            upRightMotor.setTargetPosition(0);
+            downRightMotor.setTargetPosition(-distance);
+            downLeftMotor.setTargetPosition(0);
+
+        }
+
+        if(direction == "DR"){//down right diagonal
+
+            upLeftMotor.setTargetPosition(0);
+            upRightMotor.setTargetPosition(distance);
+            downLeftMotor.setTargetPosition(-distance);
+            downRightMotor.setTargetPosition(0);
+
+        }
+
+        if(direction == "DL") {//down left diagonal
+
+            upLeftMotor.setTargetPosition(-distance);
+            upRightMotor.setTargetPosition(0);
+            downRightMotor.setTargetPosition(distance);
+            downLeftMotor.setTargetPosition(0);
+
+        }
+
         upLeftMotor.setPower(0);
         upRightMotor.setPower(0);
         downRightMotor.setPower(0);
@@ -110,7 +151,7 @@ public class AutoTest extends LinearOpMode {
 
             if(currentSpeed < speed){
 
-                currentSpeed = currentSpeed + 0.005;
+                currentSpeed = currentSpeed + 0.01;
 
             }
 

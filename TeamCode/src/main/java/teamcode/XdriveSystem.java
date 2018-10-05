@@ -132,7 +132,6 @@ put variables above here, but in the class still
 
 
                 /*
-                axis lock mode
                 arm controls
                 scoop controls
                  */
@@ -146,7 +145,6 @@ put variables above here, but in the class still
                 setMotorSpeeds();
 
                 /*
-                axis lock mode
                 arm controls
                 scoop controls
                  */
@@ -160,8 +158,6 @@ put variables above here, but in the class still
                 setMotorSpeeds();
 
                 /*
-                tenth speed movement
-                axis lock mode
                 lift controls
                 arm controls
                 scoop controls
