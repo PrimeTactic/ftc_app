@@ -61,41 +61,73 @@ put variables above here, but in the class still
         setup stuff goes here
          */
 
+        /*
+        GAMEPAD BUTTON USES BELOW HERE
+         */
 
         while (opModeIsActive()) {
 
             if(gamepad1.dpad_up){
 
                 controlMode =1;
+                telemetry.update();
 
             }
 
             if(gamepad1.dpad_left){
 
                 controlMode = 2;
+                telemetry.update();
 
             }
 
             if(gamepad1.dpad_right){
 
                 controlMode = 3;
+                telemetry.update();
 
             }
 
             telemetry.update();
 
-            leftStickY = gamepad1.left_stick_y;
-            leftStickX =  - gamepad1.left_stick_x;
-            rightStickX = - gamepad1.right_stick_x;
+            if(gamepad1.right_trigger == 0){
+
+                leftStickY = gamepad1.left_stick_y;
+                leftStickX =  - gamepad1.left_stick_x;
+                rightStickX = - gamepad1.right_stick_x;
+
+            }
+
+            if(gamepad1.right_trigger != 0){
+
+                rightStickX = - gamepad1.right_stick_x;
+
+                if(Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)){//if x > y in either direction
+
+                    leftStickY = 0;
+                    leftStickX = gamepad1.left_stick_x;
+
+                }
+
+                else if(Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)){// if y > x in either direction
+
+                    leftStickY = gamepad1.left_stick_y;
+                    leftStickX = 0;
+
+                }
+
+                //this block of code works as the axis lock, simply by locking the movement to an axis if the right trigger is held
+            }
 
 
-            //BELOW HERE IS CONTROL MODE FUNCTIONS SETS
+            /*
+            COMMAND SETS BELOW HERE
+             */
 
             if (controlMode == 1){
 
                 speed1Movement();
                 setMotorSpeeds();
-                axisLock(1);
 
 
 
@@ -142,6 +174,9 @@ put variables above here, but in the class still
         }
     }
 
+    /*
+    METHODS FOR STUFF BELOW HERE
+     */
 
     public void speed1Movement() {
 
@@ -264,14 +299,6 @@ put variables above here, but in the class still
 
         }
     }
-
-    public void axisLock(double motorPower){
-
-
-
-    }
-
-
 
     public void setMotorSpeeds(){
 
