@@ -4,9 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+
+import javax.net.ssl.SSLPeerUnverifiedException;
 
 
 @Autonomous(name="Auto Test", group="Auto Modes")
@@ -42,16 +45,16 @@ public class AutoTest extends LinearOpMode {
         telemetry.addData("DR Motor Pos", downRightMotor.getCurrentPosition());
         telemetry.addData("DL Motor Pos", downLeftMotor.getCurrentPosition());
 
+
         //this comment made by romanesque architecture gang
-        
+
         waitForStart();
 
         //COMMAND LINE BELOW HERE
 
-        move("F", 2000, 0.4);
-        move("B", 2000, 0.4);
-
+        turn("L", 5000, 1.0);
     }
+
 
 
     public void move(String direction, int distance, double speed){
@@ -83,6 +86,7 @@ public class AutoTest extends LinearOpMode {
             upRightMotor.setTargetPosition  (distance);
             downLeftMotor.setTargetPosition (-distance);
             downRightMotor.setTargetPosition(distance);
+
         }
 
         if(direction == "R"){//right
@@ -91,6 +95,7 @@ public class AutoTest extends LinearOpMode {
             upRightMotor.setTargetPosition  (distance);
             downLeftMotor.setTargetPosition (-distance);
             downRightMotor.setTargetPosition(-distance);
+
         }
 
         if(direction == "L"){//left
@@ -99,6 +104,7 @@ public class AutoTest extends LinearOpMode {
             upRightMotor.setTargetPosition  (-distance);
             downLeftMotor.setTargetPosition (distance);
             downRightMotor.setTargetPosition(distance);
+
         }
 
         if(direction == "UL"){//up left diagonal
@@ -137,24 +143,21 @@ public class AutoTest extends LinearOpMode {
 
         }
 
-        upLeftMotor.setPower(0);
-        upRightMotor.setPower(0);
-        downRightMotor.setPower(0);
-        downLeftMotor.setPower(0);
 
-        double currentSpeed = (speed / 4);
+
+        double currentSpeed = (speed);
 
         while((upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive()) {
 
             //Loop body can be empty
             telemetry.update();
 
-            if(currentSpeed < speed){
+            /*if(currentSpeed < speed){
 
                 currentSpeed = currentSpeed + 0.01;
 
             }
-
+            */
             upLeftMotor.setPower(currentSpeed);
             upRightMotor.setPower(currentSpeed);
             downRightMotor.setPower(currentSpeed);
@@ -188,7 +191,7 @@ public class AutoTest extends LinearOpMode {
 
         if(direction == "L") {// left
 
-            upLeftMotor.setPower        (speed);
+            upLeftMotor.setPower    (speed);
             upRightMotor.setPower   (speed);
             downRightMotor.setPower (speed);
             downLeftMotor.setPower  (speed);
@@ -217,4 +220,6 @@ public class AutoTest extends LinearOpMode {
         downLeftMotor.setPower  (0);
 
     }
+
+    public void wiggleMove(String direction, int distance, double speed){}
 }
