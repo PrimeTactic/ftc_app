@@ -3,6 +3,7 @@ package teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -39,23 +40,26 @@ put variables above here, but in the class still
 
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
 
         waitForStart();
         runtime.reset();
 
-        controlMode = 1;
 
-        this.upLeftMotor    = hardwareMap.get(DcMotor.class, "Up Left Motor");
-        this.upRightMotor   = hardwareMap.get(DcMotor.class, "Up Right Motor");
-        this.downLeftMotor  = hardwareMap.get(DcMotor.class, "Down Left Motor");
+        this.upLeftMotor = hardwareMap.get(DcMotor.class, "Up Left Motor");
+        this.upRightMotor = hardwareMap.get(DcMotor.class, "Up Right Motor");
+        this.downLeftMotor = hardwareMap.get(DcMotor.class, "Down Left Motor");
         this.downRightMotor = hardwareMap.get(DcMotor.class, "Down Right Motor");
 
-        telemetry.addData("Up Left Motor Power",    this.upLeftMotor.getPower());
-        telemetry.addData("Up Right Motor Power",   this.upRightMotor.getPower());
-        telemetry.addData("Down Left Motor Power",  this.downLeftMotor.getPower());
+        this.downLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.downRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.upRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.upLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        telemetry.addData("Up Left Motor Power", this.upLeftMotor.getPower());
+        telemetry.addData("Up Right Motor Power", this.upRightMotor.getPower());
+        telemetry.addData("Down Left Motor Power", this.downLeftMotor.getPower());
         telemetry.addData("Down Right Motor Power", this.downRightMotor.getPower());
-        telemetry.addData("Control Mode",           controlMode);
 
         /*
         setup stuff goes here
@@ -67,231 +71,103 @@ put variables above here, but in the class still
 
         while (opModeIsActive()) {
 
-            if(gamepad1.dpad_up){
+            leftStickY = gamepad1.left_stick_y;
+            leftStickX = -gamepad1.left_stick_x;
+            rightStickX = -gamepad1.right_stick_x;
 
-                controlMode =1;
-                telemetry.update();
 
-            }
+            //this block of code works as the axis lock, simply by locking the movement to an axis if the right trigger is held
 
-            if(gamepad1.dpad_left){
-
-                controlMode = 2;
-                telemetry.update();
-
-            }
-
-            if(gamepad1.dpad_right){
-
-                controlMode = 3;
-                telemetry.update();
-
-            }
-
-            telemetry.update();
-
-            if(gamepad1.right_trigger == 0){
-
-                leftStickY = gamepad1.left_stick_y;
-                leftStickX =  - gamepad1.left_stick_x;
-                rightStickX = - gamepad1.right_stick_x;
-
-            }
-
-            if(gamepad1.right_trigger != 0){
-
-                rightStickX = - gamepad1.right_stick_x;
-
-                if(Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)){//if x > y in either direction
-
-                    leftStickY = 0;
-                    leftStickX = gamepad1.left_stick_x;
-
-                }
-
-                else if(Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)){// if y > x in either direction
-
-                    leftStickY = gamepad1.left_stick_y;
-                    leftStickX = 0;
-
-                }
-
-                //this block of code works as the axis lock, simply by locking the movement to an axis if the right trigger is held
-            }
 
 
             /*
             COMMAND SETS BELOW HERE
              */
 
-            if (controlMode == 1){
+            if(gamepad1.right_trigger != 0){
 
-                speed1Movement();
-                setMotorSpeeds();
-
-
-
-                /*
-                arm controls
-                scoop controls
-                 */
-
+                sprintMovement();
 
             }
+            else if(gamepad1.right_trigger == 0){
 
-            if (controlMode == 2){
-
-                speed2Movement();
-                setMotorSpeeds();
-
-                /*
-                arm controls
-                scoop controls
-                 */
+                regularMovement();
 
             }
-
-            if (controlMode == 3){
-
-
-                speed3Movement();
-                setMotorSpeeds();
-
-                /*
-                lift controls
-                arm controls
-                scoop controls
-                 */
-            }
-
+            setMotorSpeeds();
             telemetry.update();
-
 
         }
     }
+
 
     /*
     METHODS FOR STUFF BELOW HERE
      */
 
-    public void speed1Movement() {
+    public void regularMovement() {
 
         /*
         this method moves the bot at half speed, the fastest we want to go
         it also stops the robot, if the sticks are not moved
          */
 
-        if (rightStickX == 0 & (leftStickX != 0 || leftStickY != 0)) { //if only left stick, move
+            if (rightStickX == 0 & (leftStickX != 0 || leftStickY != 0)) { //if only left stick, move
 
-            upleftMotorPower    = ((-leftStickY / 2) - (leftStickX / 2));
-            downLeftMotorPower  = ((-leftStickY / 2) + (leftStickX / 2));
-            upRightMotorPower   = ((leftStickY  / 2) - (leftStickX / 2));
-            downRightMotorPower = ((leftStickY  / 2) + (leftStickX / 2));
+                upleftMotorPower    = ((-leftStickY / 2) - (leftStickX / 2));
+                downLeftMotorPower  = ((-leftStickY / 2) + (leftStickX / 2));
+                upRightMotorPower   = ((leftStickY / 2)  - (leftStickX / 2));
+                downRightMotorPower = ((leftStickY / 2)  + (leftStickX / 2));
 
-        } else if (rightStickX != 0 & (leftStickX == 0 & leftStickY == 0)) { //if only right stick, turn
+            } else if (rightStickX != 0 & (leftStickX == 0 & leftStickY == 0)) { //if only right stick, turn
 
-            upRightMotorPower   = (-rightStickX / 2);
-            upleftMotorPower    = (-rightStickX / 2);
-            downLeftMotorPower  = (-rightStickX / 2);
-            downRightMotorPower = (-rightStickX / 2);
+                upRightMotorPower   = (-rightStickX);
+                upleftMotorPower    = (-rightStickX);
+                downLeftMotorPower  = (-rightStickX);
+                downRightMotorPower = (-rightStickX);
 
-        } else if(rightStickX != 0  & (leftStickY != 0 || leftStickX != 0)){ //if both sticks, move and turn
+            } else if (rightStickX != 0 & (leftStickY != 0 || leftStickX != 0)) { //if both sticks, move and turn
 
-            upleftMotorPower    = (((-leftStickY / 3) - (leftStickX / 3)) - rightStickX / 3);
-            downLeftMotorPower  = (((-leftStickY / 3) + (leftStickX / 3)) - rightStickX / 3);
-            upRightMotorPower   = (((leftStickY  / 3) - (leftStickX / 3)) - rightStickX / 3);
-            downRightMotorPower = (((leftStickY  / 3) + (leftStickX / 3)) - rightStickX / 3);
+                upleftMotorPower    = (((-leftStickY / 3) - (leftStickX / 3)) - rightStickX / 3);
+                downLeftMotorPower  = (((-leftStickY / 3) + (leftStickX / 3)) - rightStickX / 3);
+                upRightMotorPower   = (((leftStickY / 3)  - (leftStickX / 3)) - rightStickX / 3);
+                downRightMotorPower = (((leftStickY / 3)  + (leftStickX / 3)) - rightStickX / 3);
+
+            } else { //if no sticks, stop
+
+                upRightMotorPower   = 0;
+                upleftMotorPower    = 0;
+                downLeftMotorPower  = 0;
+                downRightMotorPower = 0;
+
+
+            }
+        }
+
+    public void sprintMovement(){
+
+        if(Math.abs(leftStickX) > Math.abs(leftStickY)){ //if x is greater than y, only move on the x axis
+
+            upRightMotorPower   = -leftStickX;
+            upleftMotorPower    = -leftStickX;
+            downLeftMotorPower  = leftStickX;
+            downRightMotorPower = leftStickX;
 
         }
-        else { //if no sticks, stop
+
+        else if(Math.abs(leftStickX) < Math.abs(leftStickY)){ //if y is greater than x, only move on the y axis
+
+            upRightMotorPower   = leftStickY;
+            upleftMotorPower    = -leftStickY;
+            downLeftMotorPower  = -leftStickY;
+            downRightMotorPower = leftStickY;
+
+        }else { //if no sticks, stop
 
             upRightMotorPower   = 0;
             upleftMotorPower    = 0;
             downLeftMotorPower  = 0;
             downRightMotorPower = 0;
-
-
-        }
-    }
-
-    public void speed2Movement(){
-
-            /*
-        this method moves the bot at quarter speed, as if to implement a 'slow mode'
-        it also stops the robot, if the sticks are not moved
-         */
-
-        if (rightStickX == 0 & (leftStickX != 0 || leftStickY != 0)) { //if only left stick, move
-
-            upleftMotorPower    =   ((-leftStickY / 3) - (leftStickX / 3));
-            downLeftMotorPower  =   ((-leftStickY / 3) + (leftStickX / 3));
-            upRightMotorPower   =   ((leftStickY  / 3) - (leftStickX / 3));
-            downRightMotorPower =   ((leftStickY  / 3) + (leftStickX / 3));
-
-        } else if (rightStickX != 0 & (leftStickX == 0 & leftStickY == 0)) { //if only right stick, turn
-
-            upRightMotorPower   =   (-rightStickX / 3);
-            upleftMotorPower    =   (-rightStickX / 3);
-            downLeftMotorPower  =   (-rightStickX / 3);
-            downRightMotorPower =   (-rightStickX / 3);
-
-        } else if(rightStickX != 0  & (leftStickY != 0 || leftStickX != 0)){ //if both sticks, move and turn
-
-            upleftMotorPower    =   (((-leftStickY / 4.5)  -  (leftStickX / 4.5)) - rightStickX / 4.5);
-            downLeftMotorPower  =   (((-leftStickY / 4.5)  +  (leftStickX / 4.5)) - rightStickX / 4.5);
-            upRightMotorPower   =   (((leftStickY  / 4.5)  -  (leftStickX / 4.5)) - rightStickX / 4.5);
-            downRightMotorPower =   (((leftStickY  / 4.5)  +  (leftStickX / 4.5)) - rightStickX / 4.5);
-
-        }
-        else { //if no sticks, stop
-
-            upRightMotorPower   = 0;
-            upleftMotorPower    = 0;
-            downLeftMotorPower  = 0;
-            downRightMotorPower = 0;
-
-
-        }
-
-
-    }
-
-    public void speed3Movement(){
-
-             /*
-        this method moves the bot at the slowest speed for a precision movement mode
-        it also stops the robot, if the sticks are not moved
-         */
-
-        if (rightStickX == 0 & (leftStickX != 0 || leftStickY != 0)) { //if only left stick, move
-
-            upleftMotorPower    = ((-leftStickY  / 6) - (leftStickX / 6));
-            downLeftMotorPower  = ((-leftStickY) / 6 + (leftStickX  / 6));
-            upRightMotorPower   = ((leftStickY)  / 6 - (leftStickX  / 6));
-            downRightMotorPower = ((leftStickY)  / 6 + (leftStickX  / 6));
-
-        } else if (rightStickX != 0 & (leftStickX == 0 & leftStickY == 0)) { //if only right stick, turn
-
-            upRightMotorPower   = (-rightStickX / 6);
-            upleftMotorPower    = (-rightStickX / 6);
-            downLeftMotorPower  = (-rightStickX / 6);
-            downRightMotorPower = (-rightStickX / 6);
-
-        } else if(rightStickX != 0  & (leftStickY != 0 || leftStickX != 0)){ //if both sticks, move and turn
-
-            upleftMotorPower    = (((-leftStickY / 8) - (leftStickX / 8)) - rightStickX / 8);
-            downLeftMotorPower  = (((-leftStickY / 8) + (leftStickX / 8)) - rightStickX / 8);
-            upRightMotorPower   = (((leftStickY  / 8) - (leftStickX / 8)) - rightStickX / 8);
-            downRightMotorPower = (((leftStickY  / 8) + (leftStickX / 8)) - rightStickX / 8);
-
-        }
-        else { //if no sticks, stop
-
-            upRightMotorPower   = 0;
-            upleftMotorPower    = 0;
-            downLeftMotorPower  = 0;
-            downRightMotorPower = 0;
-
 
         }
     }
