@@ -45,14 +45,24 @@ public class AutoTest extends LinearOpMode {
         telemetry.addData("DR Motor Pos", downRightMotor.getCurrentPosition());
         telemetry.addData("DL Motor Pos", downLeftMotor.getCurrentPosition());
 
+        this.downLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.downRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.upRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.upLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         //this comment made by romanesque architecture gang
 
         waitForStart();
 
         //COMMAND LINE BELOW HERE
+        move("F", 1000, 0.5);
+        move("B", 1000, 0.5 );
+        move("L", 1000, 0.5 );
+        move("R", 1000, 0.5 );
+        turn("L", 5000, 0.5);
+        turn("R", 5000, 0.5);
 
-        turn("L", 5000, 1.0);
     }
 
 
@@ -147,7 +157,7 @@ public class AutoTest extends LinearOpMode {
 
         double currentSpeed = (speed);
 
-        while((upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive()) {
+        while(motorsWithinTarget() == false) {
 
             //Loop body can be empty
             telemetry.update();
@@ -169,7 +179,7 @@ public class AutoTest extends LinearOpMode {
         upRightMotor.setPower(0);
         downRightMotor.setPower(0);
         downLeftMotor.setPower(0);
-    }
+    } // give a move command, stops the command once all motors are within 10 ticks
 
     public void turn(String direction, int distance, double speed){
 
@@ -183,31 +193,32 @@ public class AutoTest extends LinearOpMode {
         downRightMotor.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
         downLeftMotor.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
 
-        upRightMotor.setTargetPosition  (-distance);
-        upLeftMotor.setTargetPosition   (-distance);
-        downLeftMotor.setTargetPosition (-distance);
-        downRightMotor.setTargetPosition(-distance);
 
 
         if(direction == "L") {// left
 
-            upLeftMotor.setPower    (speed);
-            upRightMotor.setPower   (speed);
-            downRightMotor.setPower (speed);
-            downLeftMotor.setPower  (speed);
+            upRightMotor.setTargetPosition  (-distance);
+            upLeftMotor.setTargetPosition   (-distance);
+            downLeftMotor.setTargetPosition (-distance);
+            downRightMotor.setTargetPosition(-distance);
 
         }
 
         if(direction == "R"){
 
-            upLeftMotor.setPower    (-speed);
-            upRightMotor.setPower   (-speed);
-            downRightMotor.setPower (-speed);
-            downLeftMotor.setPower  (-speed);
+            upRightMotor.setTargetPosition  (distance);
+            upLeftMotor.setTargetPosition   (distance);
+            downLeftMotor.setTargetPosition (distance);
+            downRightMotor.setTargetPosition(distance);
 
         }
 
-            while((upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive()) {
+        upLeftMotor.setPower    (speed);
+        upRightMotor.setPower   (speed);
+        downRightMotor.setPower (speed);
+        downLeftMotor.setPower  (speed);
+
+            while(motorsWithinTarget() == false) {
 
                 //Loop body can be empty
                 telemetry.update();
@@ -219,7 +230,23 @@ public class AutoTest extends LinearOpMode {
         downRightMotor.setPower (0);
         downLeftMotor.setPower  (0);
 
+    } // give a move command, stops the command once all motors are within 10 ticks
+
+
+    public boolean motorsBusy(){
+
+        return (upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive();
+
     }
 
-    public void wiggleMove(String direction, int distance, double speed){}
+    public boolean motorsWithinTarget(){
+
+        int ulDif = (upLeftMotor.getTargetPosition() - upLeftMotor.getCurrentPosition());
+        int urDif = (upRightMotor.getTargetPosition() - upRightMotor.getCurrentPosition());
+        int dlDif = (downLeftMotor.getTargetPosition() - downLeftMotor.getCurrentPosition());
+        int drDif = (downRightMotor.getTargetPosition() - downRightMotor.getCurrentPosition());
+
+        return ((Math.abs(ulDif) <= 10) & (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10));
+
+    }
 }
