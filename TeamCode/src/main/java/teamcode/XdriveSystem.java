@@ -162,6 +162,20 @@ put variables above here, but in the class still
             downLeftMotorPower  = -leftStickY;
             downRightMotorPower = leftStickY;
 
+        } else if (rightStickX != 0 & (leftStickX == 0 & leftStickY == 0)) { //if only right stick, turn
+
+            upRightMotorPower   = (-rightStickX);
+            upleftMotorPower    = (-rightStickX);
+            downLeftMotorPower  = (-rightStickX);
+            downRightMotorPower = (-rightStickX);
+
+        } else if (rightStickX != 0 & (leftStickY != 0 || leftStickX != 0)) { //if both sticks, move and turn
+
+            upleftMotorPower    = (((-leftStickY / 3) - (leftStickX / 3)) - rightStickX / 3);
+            downLeftMotorPower  = (((-leftStickY / 3) + (leftStickX / 3)) - rightStickX / 3);
+            upRightMotorPower   = (((leftStickY / 3)  - (leftStickX / 3)) - rightStickX / 3);
+            downRightMotorPower = (((leftStickY / 3)  + (leftStickX / 3)) - rightStickX / 3);
+
         }else { //if no sticks, stop
 
             upRightMotorPower   = 0;

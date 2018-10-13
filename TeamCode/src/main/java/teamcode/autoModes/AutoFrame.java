@@ -1,4 +1,4 @@
-package teamcode;
+package teamcode.autoModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -15,7 +15,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 @Autonomous(name="Auto Test", group="Auto Modes")
 
 
-public class AutoTest extends LinearOpMode {
+public class AutoFrame extends LinearOpMode {
 
     static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Andymark Neverest 40
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
@@ -56,12 +56,6 @@ public class AutoTest extends LinearOpMode {
         waitForStart();
 
         //COMMAND LINE BELOW HERE
-        move("F", 1000, 0.5);
-        move("B", 1000, 0.5 );
-        move("L", 1000, 0.5 );
-        move("R", 1000, 0.5 );
-        turn("L", 5000, 0.5);
-        turn("R", 5000, 0.5);
 
     }
 
