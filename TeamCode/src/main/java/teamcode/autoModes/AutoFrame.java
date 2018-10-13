@@ -1,25 +1,18 @@
 package teamcode.autoModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
-
-import javax.net.ssl.SSLPeerUnverifiedException;
-
 
 @Autonomous(name="Auto Test", group="Auto Modes")
 
 
 public class AutoFrame extends LinearOpMode {
 
-    static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Andymark Neverest 40
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER_INCHES * 3.1415));//879.645943005
+    private static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Andymark Neverest 40
+    private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER_INCHES * 3.1415));//879.645943005
 
     /*
     roughly 880 steps to move a wheel an inch, but this is untested
@@ -45,10 +38,10 @@ public class AutoFrame extends LinearOpMode {
         telemetry.addData("DR Motor Pos", downRightMotor.getCurrentPosition());
         telemetry.addData("DL Motor Pos", downLeftMotor.getCurrentPosition());
 
-        this.downLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.downLeftMotor.setDirection (DcMotorSimple.Direction.REVERSE);
         this.downRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.upRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.upLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.upRightMotor.setDirection  (DcMotorSimple.Direction.REVERSE);
+        this.upLeftMotor.setDirection   (DcMotorSimple.Direction.REVERSE);
 
 
         //this comment made by romanesque architecture gang
@@ -113,37 +106,37 @@ public class AutoFrame extends LinearOpMode {
 
         if(direction == "UL"){//up left diagonal
 
-            upLeftMotor.setTargetPosition(0);
-            upRightMotor.setTargetPosition(-distance);
-            downLeftMotor.setTargetPosition(distance);
+            upLeftMotor.setTargetPosition   (0);
+            upRightMotor.setTargetPosition  (-distance);
+            downLeftMotor.setTargetPosition (distance);
             downRightMotor.setTargetPosition(0);
 
         }
 
         if(direction == "UR"){//up right diagonal
 
-            upLeftMotor.setTargetPosition(distance);
-            upRightMotor.setTargetPosition(0);
+            upLeftMotor.setTargetPosition   (distance);
+            upRightMotor.setTargetPosition  (0);
             downRightMotor.setTargetPosition(-distance);
-            downLeftMotor.setTargetPosition(0);
+            downLeftMotor.setTargetPosition (0);
 
         }
 
         if(direction == "DR"){//down right diagonal
 
-            upLeftMotor.setTargetPosition(0);
-            upRightMotor.setTargetPosition(distance);
-            downLeftMotor.setTargetPosition(-distance);
+            upLeftMotor.setTargetPosition   (0);
+            upRightMotor.setTargetPosition  (distance);
+            downLeftMotor.setTargetPosition (-distance);
             downRightMotor.setTargetPosition(0);
 
         }
 
         if(direction == "DL") {//down left diagonal
 
-            upLeftMotor.setTargetPosition(-distance);
-            upRightMotor.setTargetPosition(0);
+            upLeftMotor.setTargetPosition   (-distance);
+            upRightMotor.setTargetPosition  (0);
             downRightMotor.setTargetPosition(distance);
-            downLeftMotor.setTargetPosition(0);
+            downLeftMotor.setTargetPosition (0);
 
         }
 
@@ -162,17 +155,17 @@ public class AutoFrame extends LinearOpMode {
 
             }
             */
-            upLeftMotor.setPower(currentSpeed);
-            upRightMotor.setPower(currentSpeed);
-            downRightMotor.setPower(currentSpeed);
-            downLeftMotor.setPower(currentSpeed);
+            upLeftMotor.setPower    (currentSpeed);
+            upRightMotor.setPower   (currentSpeed);
+            downRightMotor.setPower (currentSpeed);
+            downLeftMotor.setPower  (currentSpeed);
 
         }
 
-        upLeftMotor.setPower(0);
-        upRightMotor.setPower(0);
-        downRightMotor.setPower(0);
-        downLeftMotor.setPower(0);
+        upLeftMotor.setPower    (0);
+        upRightMotor.setPower   (0);
+        downRightMotor.setPower (0);
+        downLeftMotor.setPower  (0);
     } // give a move command, stops the command once all motors are within 10 ticks
 
     public void turn(String direction, int distance, double speed){

@@ -15,8 +15,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class XdriveSystem extends LinearOpMode{ //make it work right
 
-    private ElapsedTime runtime = new ElapsedTime();
-
     private DcMotor upRightMotor;
     private DcMotor upLeftMotor;
     private DcMotor downLeftMotor;
@@ -27,9 +25,9 @@ public class XdriveSystem extends LinearOpMode{ //make it work right
     private double downLeftMotorPower;
     private double downRightMotorPower;
 
-    double leftStickY;
-    double leftStickX;
-    double rightStickX;
+    private double leftStickY;
+    private double leftStickX;
+    private double rightStickX;
 
     private int controlMode;
 
