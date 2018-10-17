@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 
-@TeleOp(name = "drive system", group = "Linear Opmode") //making the code appear in the app
+@TeleOp(name = "Drive System", group = "Linear Opmode") //making the code appear in the app
 
 
 
