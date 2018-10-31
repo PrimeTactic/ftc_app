@@ -234,13 +234,13 @@ public class AutoFrame extends LinearOpMode {
         int dlDif = (downLeftMotor.getTargetPosition() - downLeftMotor.getCurrentPosition());
         int drDif = (downRightMotor.getTargetPosition() - downRightMotor.getCurrentPosition());
 
-        return ((Math.abs(ulDif) <= 10& (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10));
+        return ((Math.abs(ulDif) <= 10& (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10)));
 
     }
 
     public void commandLine(){
 
-        lowerRobot(0.5, 1500);
+        lowerRobot(-0.5, 1500);
 
 
 
