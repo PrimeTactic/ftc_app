@@ -240,13 +240,17 @@ public class AutoFrame extends LinearOpMode {
 
     public void commandLine(){
 
-        lowerRobot(-0.5, 1500);
+        moveLift(0.5, 4500);
+
+        move("F", 500, 0.5);
+
+        moveLift(-0.5, 4500);
 
 
 
     }
 
-    public void lowerRobot(double power, int time){
+    public void moveLift(double power, int time){
 
         liftMotor.setPower(power);
 
