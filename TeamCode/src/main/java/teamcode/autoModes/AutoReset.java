@@ -240,7 +240,7 @@ public class AutoReset extends LinearOpMode {
 
     public void commandLine(){
 
-        moveLift(-0.5, 4500);
+        moveLift(-0.5, 2500);
 
     }
 

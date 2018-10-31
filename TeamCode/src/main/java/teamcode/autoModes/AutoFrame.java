@@ -240,11 +240,11 @@ public class AutoFrame extends LinearOpMode {
 
     public void commandLine(){
 
-        moveLift(0.5, 4500);
+        moveLift(0.5, 2500);
 
         move("F", 500, 0.5);
 
-        moveLift(-0.5, 4500);
+        moveLift(-0.5, 2500);
 
 
 
