@@ -24,6 +24,8 @@ public class AutoFrame extends LinearOpMode {
     private DcMotor downLeftMotor;
     private DcMotor downRightMotor;
 
+    private DcMotor liftMotor;
+
 
     @Override
     public void runOpMode() {
@@ -32,6 +34,8 @@ public class AutoFrame extends LinearOpMode {
         this.upRightMotor = hardwareMap.get(DcMotor.class, "Up Right Motor");
         this.downLeftMotor = hardwareMap.get(DcMotor.class, "Down Left Motor");
         this.downRightMotor = hardwareMap.get(DcMotor.class, "Down Right Motor");
+
+        this.liftMotor = hardwareMap.get(DcMotor.class, "Lift Motor");
 
         telemetry.addData("UL Motor pos", upLeftMotor.getCurrentPosition());
         telemetry.addData("UR Motor Pos", upRightMotor.getCurrentPosition());
@@ -48,11 +52,9 @@ public class AutoFrame extends LinearOpMode {
 
         waitForStart();
 
-        //COMMAND LINE BELOW HERE
+        commandLine();
 
     }
-
-
 
     public void move(String direction, int distance, double speed){
 
@@ -219,7 +221,6 @@ public class AutoFrame extends LinearOpMode {
 
     } // give a move command, stops the command once all motors are within 10 ticks
 
-
     public boolean motorsBusy(){
 
         return (upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive();
@@ -233,7 +234,25 @@ public class AutoFrame extends LinearOpMode {
         int dlDif = (downLeftMotor.getTargetPosition() - downLeftMotor.getCurrentPosition());
         int drDif = (downRightMotor.getTargetPosition() - downRightMotor.getCurrentPosition());
 
-        return ((Math.abs(ulDif) <= 10) & (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10));
+        return ((Math.abs(ulDif) <= 10& (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10));
+
+    }
+
+    public void commandLine(){
+
+        lowerRobot(0.5, 1500);
+
+
+
+    }
+
+    public void lowerRobot(double power, int time){
+
+        liftMotor.setPower(power);
+
+        sleep(time);
+
+        liftMotor.setPower(0);
 
     }
 }
