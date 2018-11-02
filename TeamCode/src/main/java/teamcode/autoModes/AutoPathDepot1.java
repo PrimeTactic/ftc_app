@@ -4,17 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="Auto Test", group="Auto Modes")
+@Autonomous(name="Auto Path Depot 1", group="Auto Modes")
 
 
-public class AutoFrame extends LinearOpMode {
+public class AutoPathDepot1 extends LinearOpMode {
 
     private static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Andymark Neverest 40
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER_INCHES * 3.1415));//879.645943005
 
-    /*
+    /*\
     roughly 880 steps to move a wheel an inch, but this is untested
      */
 
@@ -24,7 +25,11 @@ public class AutoFrame extends LinearOpMode {
     private DcMotor downLeftMotor;
     private DcMotor downRightMotor;
 
+    private DcMotor armBase;
+
     private DcMotor liftMotor;
+
+    private Servo armServo;
 
 
     @Override
@@ -37,15 +42,23 @@ public class AutoFrame extends LinearOpMode {
 
         this.liftMotor = hardwareMap.get(DcMotor.class, "Lift Motor");
 
+        this.armBase = hardwareMap.get(DcMotor.class, "Arm Motor");
+
+        this.armServo = hardwareMap.get(Servo.class, "Arm Servo");
+
         telemetry.addData("UL Motor pos", upLeftMotor.getCurrentPosition());
         telemetry.addData("UR Motor Pos", upRightMotor.getCurrentPosition());
         telemetry.addData("DR Motor Pos", downRightMotor.getCurrentPosition());
         telemetry.addData("DL Motor Pos", downLeftMotor.getCurrentPosition());
+        telemetry.addData("Arm Servo pos", armServo.getPosition());
+        telemetry.addData("Arm Motor Pos", armBase.getCurrentPosition());
 
         this.downLeftMotor.setDirection (DcMotorSimple.Direction.REVERSE);
         this.downRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.upRightMotor.setDirection  (DcMotorSimple.Direction.REVERSE);
         this.upLeftMotor.setDirection   (DcMotorSimple.Direction.REVERSE);
+
+        this.armBase.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         //this comment made by romanesque architecture gang
@@ -53,6 +66,17 @@ public class AutoFrame extends LinearOpMode {
         waitForStart();
 
         commandLine();
+
+    }
+
+    public void commandLine(){
+
+        moveLift(-0.4, 4000);//get down
+        move("F", 250, 1.0);//get off of the hook
+        move("R", 75, 0.5);//aligns the robot on the side of the lander
+        move("L", 1300, 1.0);//move to the minerals
+        move("F", 950, 1.0);//forward to the first mineral
+
 
     }
 
@@ -146,7 +170,7 @@ public class AutoFrame extends LinearOpMode {
 
         double currentSpeed = (speed);
 
-        while(motorsWithinTarget() == false) {
+        while(!motorsWithinTarget()) {
 
             //Loop body can be empty
             telemetry.update();
@@ -207,12 +231,12 @@ public class AutoFrame extends LinearOpMode {
         downRightMotor.setPower (speed);
         downLeftMotor.setPower  (speed);
 
-            while(motorsWithinTarget() == false) {
+        while(motorsWithinTarget() == false) {
 
-                //Loop body can be empty
-                telemetry.update();
+            //Loop body can be empty
+            telemetry.update();
 
-            }
+        }
 
         upLeftMotor.setPower    (0);
         upRightMotor.setPower   (0);
@@ -238,15 +262,11 @@ public class AutoFrame extends LinearOpMode {
 
     }
 
-    public void commandLine(){
+    public boolean armMotorWithinTarget(){
 
-        moveLift(0.5, 2500);
+        int dif = (armBase.getTargetPosition() - armBase.getCurrentPosition());
 
-        move("F", 500, 0.5);
-
-        moveLift(-0.5, 2500);
-
-
+        return (Math.abs(dif) <= 10);
 
     }
 
@@ -257,6 +277,24 @@ public class AutoFrame extends LinearOpMode {
         sleep(time);
 
         liftMotor.setPower(0);
+
+    }
+
+    public void extendArm(int target, double speed){
+
+        armBase.setTargetPosition(target);
+
+        armBase.setPower(speed);
+
+        while(!armMotorWithinTarget()) {
+
+            //Loop body can be empty
+            telemetry.update();
+
+            upLeftMotor.setPower(0.0);
+        }
+
+        armServo.setPosition(0.2);
 
     }
 }

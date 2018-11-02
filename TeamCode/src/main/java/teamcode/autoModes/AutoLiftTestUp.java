@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="Path Top C", group="Auto Modes")
+@Autonomous(name="Auto Lift Test Up", group="Auto Modes")
 
 
-public class AutoPathTC extends LinearOpMode {
+public class AutoLiftTestUp extends LinearOpMode {
 
     private static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Andymark Neverest 40
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
@@ -24,14 +25,19 @@ public class AutoPathTC extends LinearOpMode {
     private DcMotor downLeftMotor;
     private DcMotor downRightMotor;
 
+    private DcMotor liftMotor;
+
+
 
     @Override
     public void runOpMode() {
 
-        this.upLeftMotor = hardwareMap.get(DcMotor.class, "Up Left Motor");
-        this.upRightMotor = hardwareMap.get(DcMotor.class, "Up Right Motor");
-        this.downLeftMotor = hardwareMap.get(DcMotor.class, "Down Left Motor");
+        this.upLeftMotor = hardwareMap.get   (DcMotor.class, "Up Left Motor");
+        this.upRightMotor = hardwareMap.get  (DcMotor.class, "Up Right Motor");
+        this.downLeftMotor = hardwareMap.get (DcMotor.class, "Down Left Motor");
         this.downRightMotor = hardwareMap.get(DcMotor.class, "Down Right Motor");
+
+        this.liftMotor = hardwareMap.get(DcMotor.class, "Lift Motor");
 
         telemetry.addData("UL Motor pos", upLeftMotor.getCurrentPosition());
         telemetry.addData("UR Motor Pos", upRightMotor.getCurrentPosition());
@@ -44,23 +50,14 @@ public class AutoPathTC extends LinearOpMode {
         this.upLeftMotor.setDirection   (DcMotorSimple.Direction.REVERSE);
 
 
+
         //this comment made by romanesque architecture gang
 
         waitForStart();
 
-        //COMMAND LINE BELOW HERE
-        move("F", 1000, 0.5); //forward to minerals
-        move("B", 500, 0.5); //backwards to dodge bad minerals
-        move("L", 2000, 0.5); //left to above depot
-        move("DL", 1000, 0.5); //diagonal to depot
-        //deposit team marker
-        move("DR", 2500, 0.5); //diagonal to crater
-
-
+        commandLine();
 
     }
-
-
 
     public void move(String direction, int distance, double speed){
 
@@ -176,6 +173,14 @@ public class AutoPathTC extends LinearOpMode {
         downLeftMotor.setPower  (0);
     } // give a move command, stops the command once all motors are within 10 ticks
 
+    public void commandLine(){
+
+        moveLift(1.0, 4000);
+
+
+
+    }
+
     public void turn(String direction, int distance, double speed){
 
         upRightMotor.setMode    (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -213,12 +218,12 @@ public class AutoPathTC extends LinearOpMode {
         downRightMotor.setPower (speed);
         downLeftMotor.setPower  (speed);
 
-            while(motorsWithinTarget() == false) {
+        while(motorsWithinTarget() == false) {
 
-                //Loop body can be empty
-                telemetry.update();
+            //Loop body can be empty
+            telemetry.update();
 
-            }
+        }
 
         upLeftMotor.setPower    (0);
         upRightMotor.setPower   (0);
@@ -226,7 +231,6 @@ public class AutoPathTC extends LinearOpMode {
         downLeftMotor.setPower  (0);
 
     } // give a move command, stops the command once all motors are within 10 ticks
-
 
     public boolean motorsBusy(){
 
@@ -241,7 +245,18 @@ public class AutoPathTC extends LinearOpMode {
         int dlDif = (downLeftMotor.getTargetPosition() - downLeftMotor.getCurrentPosition());
         int drDif = (downRightMotor.getTargetPosition() - downRightMotor.getCurrentPosition());
 
-        return ((Math.abs(ulDif) <= 10) & (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10));
+        return ((Math.abs(ulDif) <= 10& (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10)));
 
     }
+
+    public void moveLift(double power, int time){
+
+        liftMotor.setPower(power);
+
+        sleep(time);
+
+        liftMotor.setPower(0);
+
+    }
+
 }

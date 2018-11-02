@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name="Auto RESET", group="Auto Modes")
+@Autonomous(name="Auto Reset Up", group="Auto Modes")
 
 
-public class AutoReset extends LinearOpMode {
+public class AutoResetUp extends LinearOpMode {
 
     private static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Andymark Neverest 40
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
@@ -53,6 +53,12 @@ public class AutoReset extends LinearOpMode {
         waitForStart();
 
         commandLine();
+
+    }
+
+    public void commandLine(){
+
+        moveLift(-0.5, 1000);
 
     }
 
@@ -235,12 +241,6 @@ public class AutoReset extends LinearOpMode {
         int drDif = (downRightMotor.getTargetPosition() - downRightMotor.getCurrentPosition());
 
         return ((Math.abs(ulDif) <= 10& (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10)));
-
-    }
-
-    public void commandLine(){
-
-        moveLift(-0.5, 2500);
 
     }
 

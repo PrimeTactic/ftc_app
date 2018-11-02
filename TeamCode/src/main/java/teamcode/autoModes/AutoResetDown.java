@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name="Path Top A", group="Auto Modes")
+@Autonomous(name="Auto Reset Down", group="Auto Modes")
 
 
-public class AutoPathTA extends LinearOpMode {
+public class AutoResetDown extends LinearOpMode {
 
     private static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Andymark Neverest 40
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
@@ -24,6 +24,8 @@ public class AutoPathTA extends LinearOpMode {
     private DcMotor downLeftMotor;
     private DcMotor downRightMotor;
 
+    private DcMotor liftMotor;
+
 
     @Override
     public void runOpMode() {
@@ -32,6 +34,8 @@ public class AutoPathTA extends LinearOpMode {
         this.upRightMotor = hardwareMap.get(DcMotor.class, "Up Right Motor");
         this.downLeftMotor = hardwareMap.get(DcMotor.class, "Down Left Motor");
         this.downRightMotor = hardwareMap.get(DcMotor.class, "Down Right Motor");
+
+        this.liftMotor = hardwareMap.get(DcMotor.class, "Lift Motor");
 
         telemetry.addData("UL Motor pos", upLeftMotor.getCurrentPosition());
         telemetry.addData("UR Motor Pos", upRightMotor.getCurrentPosition());
@@ -48,14 +52,9 @@ public class AutoPathTA extends LinearOpMode {
 
         waitForStart();
 
-        //COMMAND LINE BELOW HERE
-        move("F", 1000, 0.5); //forwards to crater
-
-
+        commandLine();
 
     }
-
-
 
     public void move(String direction, int distance, double speed){
 
@@ -171,6 +170,14 @@ public class AutoPathTA extends LinearOpMode {
         downLeftMotor.setPower  (0);
     } // give a move command, stops the command once all motors are within 10 ticks
 
+    public void commandLine(){
+
+        moveLift(0.5, 1000);
+
+
+
+    }
+
     public void turn(String direction, int distance, double speed){
 
         upRightMotor.setMode    (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -222,7 +229,6 @@ public class AutoPathTA extends LinearOpMode {
 
     } // give a move command, stops the command once all motors are within 10 ticks
 
-
     public boolean motorsBusy(){
 
         return (upRightMotor.isBusy() || upLeftMotor.isBusy() || downLeftMotor.isBusy() || downRightMotor.isBusy()) && opModeIsActive();
@@ -236,7 +242,17 @@ public class AutoPathTA extends LinearOpMode {
         int dlDif = (downLeftMotor.getTargetPosition() - downLeftMotor.getCurrentPosition());
         int drDif = (downRightMotor.getTargetPosition() - downRightMotor.getCurrentPosition());
 
-        return ((Math.abs(ulDif) <= 10) & (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10));
+        return ((Math.abs(ulDif) <= 10& (Math.abs(urDif) <= 10) & (Math.abs(drDif) <= 10) & (Math.abs(dlDif) < 10)));
+
+    }
+
+    public void moveLift(double power, int time){
+
+        liftMotor.setPower(power);
+
+        sleep(time);
+
+        liftMotor.setPower(0);
 
     }
 }

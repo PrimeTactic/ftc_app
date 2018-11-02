@@ -69,6 +69,30 @@ put variables above here, but in the class still
 
         updateTelemetry();
 
+        liftButtons();
+
+    }
+
+    private void liftButtons(){
+
+        if(gamepad1.right_bumper){
+
+            liftMotor.setPower(-1.0);
+
+        }
+
+        else if(gamepad1.left_bumper){
+
+            liftMotor.setPower(1.0);
+
+        }
+
+        else{
+
+            liftMotor.setPower(0);
+
+        }
+
     }
 
     private void regularMovement() {
@@ -228,10 +252,10 @@ put variables above here, but in the class still
 
         this.liftMotor = hardwareMap.get(DcMotor.class, "Lift Motor");
 
-        this.armBase = hardwareMap.get(DcMotor.class, "Base");
+        this.armBase = hardwareMap.get(DcMotor.class, "Arm Motor");
 
-        this.armElbow = hardwareMap.get(Servo.class, "Elbow");
-        this.armWrist = hardwareMap.get(Servo.class, "Wrist");
+        this.armElbow = hardwareMap.get(Servo.class, "Arm Servo");
+        this.armWrist = hardwareMap.get(Servo.class, "Arm Servo 2");
         this.intakeHand = hardwareMap.get(Servo.class, "Hand");
 
         this.downLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -239,7 +263,7 @@ put variables above here, but in the class still
         this.upRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.upLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        armBase.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armBase.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         updateTelemetry();
     }
