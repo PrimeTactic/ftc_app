@@ -16,153 +16,64 @@ public class ArmTest extends LinearOpMode { //make it work right
 
     private DcMotor baseJoint;
     private Servo elbowJoint;
-    private Servo wristJoint;
-    private Servo intakeHand;
 
     public String currentDevice = "Base";
 
     @Override
     public void runOpMode() {
 
-        this.baseJoint = hardwareMap.get(DcMotor.class, "Base");
+        this.baseJoint = hardwareMap.get(DcMotor.class, "Arm Motor");
 
         baseJoint.setMode   (DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         baseJoint.setMode    (DcMotor.RunMode.RUN_TO_POSITION);
 
-        this.elbowJoint = hardwareMap.get(Servo.class, "Elbow");
-        this.wristJoint = hardwareMap.get(Servo.class, "Wrist");
-        this.intakeHand = hardwareMap.get(Servo.class, "Hand");
+        this.elbowJoint = hardwareMap.get(Servo.class, "Arm Servo");
 
         waitForStart();
 
         while (opModeIsActive()) {
 
-            selectDevice();
+            if(gamepad1.a){
 
-            if(gamepad1.y){
-
-                baseJoint.setTargetPosition(200);
+                this.elbowJoint.setPosition(this.elbowJoint.getPosition() - 0.01);
 
             }
 
-            while(currentDevice == "Hand"){//hand must be continuous
+            if(gamepad1.y) {
 
-                if(gamepad1.x){
+                this.elbowJoint.setPosition(this.elbowJoint.getPosition() + 0.01);
 
-                    this.intakeHand.setPosition(1.0);
-                    sleep(150);
-                    this.intakeHand.setPosition(0.5);
+            }
+            if(gamepad1.x){
 
-                }
+                baseJoint.setTargetPosition(baseJoint.getCurrentPosition() + 10);
 
-                if(gamepad1.b){
-
-                    this.intakeHand.setPosition(0.0);
-                    sleep(150);
-                    this.intakeHand.setPosition(0.5);
-
-                }
-
-                selectDevice();
             }
 
+            if(gamepad1.b){
 
-            while(currentDevice == "Wrist"){//wrist must use encoders
+                baseJoint.setTargetPosition(baseJoint.getCurrentPosition() - 10);
 
-                if(gamepad1.x){
-
-                    this.wristJoint.setPosition(this.wristJoint.getPosition() - 0.01);
-
-                }
-
-                if(gamepad1.b){
-
-                    this.wristJoint.setPosition(this.wristJoint.getPosition() + 0.01);
-
-                }
-
-                selectDevice();
             }
 
-
-            while(currentDevice == "Elbow"){//elbow must use encoders
-
-                if(gamepad1.x){
-
-                    this.elbowJoint.setPosition(this.elbowJoint.getPosition() - 0.01);
-
-                }
-
-                if(gamepad1.b){
-
-                    this.elbowJoint.setPosition(this.elbowJoint.getPosition() + 0.01);
-
-                }
-
-                selectDevice();
-            }
-
-            while(currentDevice == "Base"){//the base is a motor using encoders
-
-                if(gamepad1.x){
-
-                    baseJoint.setTargetPosition(baseJoint.getCurrentPosition() + 10);
-
-                }
-
-                if(gamepad1.b){
-
-                    baseJoint.setTargetPosition(baseJoint.getCurrentPosition() - 10);
-
-                }
+            if(gamepad1.dpad_down){
 
                 runBaseToPos();
-                selectDevice();
 
             }
 
-
+            updateTelemetry();
         }
     }
 
-    public void selectDevice(){
-        if(gamepad1.dpad_up){
-
-            currentDevice = "Base";
-
-        }
-
-        if(gamepad1.dpad_down){
-
-            currentDevice = "Elbow";
-
-        }
-
-        if(gamepad1.dpad_left){
-
-            currentDevice = "Wrist";
-
-        }
-
-        if(gamepad1.dpad_right){
-
-            currentDevice = "Hand";
-
-
-        }
-
-        updateTelemetry();
-    }
 
     public void updateTelemetry(){
 
         telemetry.addData("Selected device", currentDevice);
-        telemetry.addData("Hand Speed", intakeHand.getPosition());
-        telemetry.addData("Wrist Pos", wristJoint.getPosition());
         telemetry.addData("Elbow Pos", elbowJoint.getPosition());
         telemetry.addData("Base Pos", baseJoint.getCurrentPosition());
 
-        telemetry.addData("Base Targer", baseJoint.getTargetPosition());
+        telemetry.addData("Base Target", baseJoint.getTargetPosition());
 
         telemetry.update();
 

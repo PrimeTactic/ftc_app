@@ -2,16 +2,15 @@ package teamcode.autoModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Autonomous(name = "Auto Path Depot 1", group = "Auto Modes")
+@Autonomous(name = "Auto Path Depot 2", group = "Auto Modes")
 
 
-public class AutoPathDepot1 extends LinearOpMode {
+public class AutoPathDepot2 extends LinearOpMode {
 
     private static final double COUNTS_PER_MOTOR_REV = 1120;    // Andymark Neverest 40
     private static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
@@ -88,83 +87,16 @@ public class AutoPathDepot1 extends LinearOpMode {
 
     public void commandLine() {
 
-        boolean foundMineral = false;
-
         moveWrist(0.5); // level the wrist horizontally
-        moveLift(-0.5, 3000);//get down
+        moveLift(-0.5, 4500);//get down
         move("F", 250, 0.8);//get off of the hook
-        // turn("R", 125, 0.3);//straightens the robot
-        move("L", 1150, 0.65);//move to the minerals
-
-        int scan = scanMineral();//look at the middle mineral
-
-        for(int i  = 0; i < 3; i++ ) {
-            if (scan == 1) {
-
-                foundMineral = true;
-
-                move("L", 2000, 0.8);//move the minerals
-                move("R", 250, 0.8);//move back from mineral
-                break;
-
-            }
-            move("B", 180, 0.8);
-
-        }
-
-        int loc = 1;
-
-
-        if (scan != 1) {//if the middle is not gold, check the right one
-            move("F", 1100, 0.65);//forward to the first mineral
-            loc = 0;
-        }
-
-
-
-        // scan the minerals
-        while (scan != 1 && foundMineral == false) {
-            scan = scanMineral();
-
-            if (scan == 1) {
-                // found gold
-                foundMineral = true;
-                move("L", 2000, 0.8);//move the minerals
-                move("R", 250, 0.8);//move back from mineral
-                break;
-            }
-            else if (scan == 2) {
-                // found white
-                move("B", 1500, 0.8);
-                loc++;
-            }
-            else {
-                // found nothing
-                move("B", 180, 1.0);
-            }
-        }
-
-        if (loc == 0 ) {
-            // gold was on the front most location
-            // move back to center
-            move("B", 1000, 0.8);
-        }
-        else if (loc == 2) {
-            // gold was on the back most location
-            // move back to center
-            move("F", 1000, 0.8);
-        }
-
-        telemetry.addData("marker", "start");
-        telemetry.update();
-        turn("L", 1800, 0.8); //turn 90 degrees left
-        move("F", 300, 0.8);//move to the pit
+        move("L", 3500, 0.8);
+        turn("L", 1800, 0.5);
+        move("F", 3500, 0.8);
         moveWrist(0);
         moveBase(-200, 0.3);
         moveBase(-100);
-        move("F", 1500, 0.5);
-        //marker is now dropped
-        //conclude the op
+
     }
 
     public int scanMineral() {

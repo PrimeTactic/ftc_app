@@ -24,7 +24,6 @@ public class XdriveSystem extends LinearOpMode{ //make it work right
     private DcMotor armBase;
 
     private Servo armElbow;
-    private Servo armWrist;
     private Servo intakeHand;
 
     private double upRightMotorPower;
@@ -35,6 +34,7 @@ public class XdriveSystem extends LinearOpMode{ //make it work right
     private double leftStickY;
     private double leftStickX;
     private double rightStickX;
+    private double rightStickY;
 
 
 /*
@@ -43,7 +43,7 @@ put variables above here, but in the class still
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode(){
 
         initializeHardware();
 
@@ -54,6 +54,7 @@ put variables above here, but in the class still
             leftStickY = gamepad1.left_stick_y;
             leftStickX = -gamepad1.left_stick_x;
             rightStickX = -gamepad1.right_stick_x;
+            rightStickY = gamepad1.right_stick_y;
 
             commandSet();
             updateTelemetry();
@@ -102,26 +103,26 @@ put variables above here, but in the class still
         it also stops the robot, if the sticks are not moved
          */
 
-        if (rightStickX == 0 & (leftStickX != 0 || leftStickY != 0)) { //if only left stick, move
+        if (leftStickX == 0 & (rightStickX != 0 || rightStickY != 0)) { //if only left stick, move
 
-            upLeftMotorPower =      ((-leftStickY / 2) - (leftStickX / 2));
-            downLeftMotorPower =    ((-leftStickY / 2) + (leftStickX / 2));
-            upRightMotorPower =     ((leftStickY / 2)  - (leftStickX / 2));
-            downRightMotorPower =   ((leftStickY / 2)  + (leftStickX / 2));
+            upLeftMotorPower =      ((-rightStickY / 2) - (rightStickX / 2));
+            downLeftMotorPower =    ((-rightStickY / 2) + (rightStickX / 2));
+            upRightMotorPower =     ((rightStickY / 2)  - (rightStickX / 2));
+            downRightMotorPower =   ((rightStickY / 2)  + (rightStickX / 2));
 
-        } else if (rightStickX != 0 & (leftStickX == 0 & leftStickY == 0)) { //if only right stick, turn
+        } else if (leftStickX != 0 & (rightStickX == 0 & rightStickY == 0)) { //if only right stick, turn
 
-            upRightMotorPower =     (-rightStickX);
-            upLeftMotorPower =      (-rightStickX);
-            downLeftMotorPower =    (-rightStickX);
-            downRightMotorPower =   (-rightStickX);
+            upRightMotorPower =     (-leftStickX);
+            upLeftMotorPower =      (-leftStickX);
+            downLeftMotorPower =    (-leftStickX);
+            downRightMotorPower =   (-leftStickX);
 
         } else if (rightStickX != 0 & (leftStickY != 0 || leftStickX != 0)) { //if both sticks, move and turn
 
-            upLeftMotorPower =      (((-leftStickY / 3) - (leftStickX / 3)) - rightStickX / 3);
-            downLeftMotorPower =    (((-leftStickY / 3) + (leftStickX / 3)) - rightStickX / 3);
-            upRightMotorPower =     (((leftStickY / 3)  - (leftStickX / 3)) - rightStickX / 3);
-            downRightMotorPower =   (((leftStickY / 3)  + (leftStickX / 3)) - rightStickX / 3);
+            upLeftMotorPower =      (((-rightStickY / 3) - (rightStickX / 3)) - leftStickX / 3);
+            downLeftMotorPower =    (((-rightStickY / 3) + (rightStickX / 3)) - leftStickX / 3);
+            upRightMotorPower =     (((rightStickY / 3)  - (rightStickX / 3)) - leftStickX / 3);
+            downRightMotorPower =   (((rightStickY / 3)  + (rightStickX / 3)) - leftStickX / 3);
 
         } else { //if no sticks, stop
 
@@ -139,35 +140,35 @@ put variables above here, but in the class still
 
     private void sprintMovement(){
 
-        if(Math.abs(leftStickX) > Math.abs(leftStickY)){ //if x is greater than y, only move on the x axis
+        if(Math.abs(rightStickX) > Math.abs(rightStickY)){ //if x is greater than y, only move on the x axis
 
-            upRightMotorPower   = -leftStickX;
-            upLeftMotorPower    = -leftStickX;
-            downLeftMotorPower  = leftStickX;
-            downRightMotorPower = leftStickX;
+            upRightMotorPower   = -rightStickX;
+            upLeftMotorPower    = -rightStickX;
+            downLeftMotorPower  = rightStickX;
+            downRightMotorPower = rightStickX;
 
         }
 
-        else if(Math.abs(leftStickX) < Math.abs(leftStickY)){ //if y is greater than x, only move on the y axis
+        else if(Math.abs(rightStickX) < Math.abs(rightStickY)){ //if y is greater than x, only move on the y axis
 
-            upRightMotorPower   = leftStickY;
-            upLeftMotorPower    = -leftStickY;
-            downLeftMotorPower  = -leftStickY;
-            downRightMotorPower = leftStickY;
+            upRightMotorPower   = rightStickY;
+            upLeftMotorPower    = -rightStickY;
+            downLeftMotorPower  = -rightStickY;
+            downRightMotorPower = rightStickY;
 
-        } else if (rightStickX != 0 & (leftStickX == 0 & leftStickY == 0)) { //if only right stick, turn
+        } else if (leftStickX != 0 & (rightStickX == 0 & rightStickY == 0)) { //if only right stick, turn
 
-            upRightMotorPower   = (-rightStickX);
-            upLeftMotorPower    = (-rightStickX);
-            downLeftMotorPower  = (-rightStickX);
-            downRightMotorPower = (-rightStickX);
+            upRightMotorPower   = (-leftStickX);
+            upLeftMotorPower    = (-leftStickX);
+            downLeftMotorPower  = (-leftStickX);
+            downRightMotorPower = (-leftStickX);
 
-        } else if (rightStickX != 0 & (leftStickY != 0 || leftStickX != 0)) { //if both sticks, move and turn
+        } else if (leftStickX != 0 & (rightStickY != 0 || rightStickX != 0)) { //if both sticks, move and turn
 
-            upLeftMotorPower    = (((-leftStickY / 3) - (leftStickX / 3)) - rightStickX / 3);
-            downLeftMotorPower  = (((-leftStickY / 3) + (leftStickX / 3)) - rightStickX / 3);
-            upRightMotorPower   = (((leftStickY / 3)  - (leftStickX / 3)) - rightStickX / 3);
-            downRightMotorPower = (((leftStickY / 3)  + (leftStickX / 3)) - rightStickX / 3);
+            upLeftMotorPower    = (((-rightStickY / 3) - (rightStickX / 3)) - leftStickX / 3);
+            downLeftMotorPower  = (((-rightStickY / 3) + (rightStickX / 3)) - leftStickX / 3);
+            upRightMotorPower   = (((rightStickY / 3)  - (rightStickX / 3)) - leftStickX / 3);
+            downRightMotorPower = (((rightStickY / 3)  + (rightStickX / 3)) - leftStickX / 3);
 
         }else { //if no sticks, stop
 
@@ -198,26 +199,55 @@ put variables above here, but in the class still
 
     private void armLoop(){
 
-        if(gamepad1.b){
+        if(gamepad1.y){//retract arm
 
-            armWrist.setPosition(0.1);
-            armElbow.setPosition(.5694);
+            armElbow.setPosition(0.138);
 
-            armBase.setTargetPosition(-475);
+            armBase.setTargetPosition(-45);
+            armBase.setPower(0.5);
 
-        }
+            while(!motorWithinTarget()){//if the motor is close, stop it
 
-        if(!motorWithinTarget()){
 
-            armBase.setPower(1.0);
+            }
 
-        }
-
-        if(motorWithinTarget()){
-
+            armBase.setPower(0.2);
+            sleep(50);
             armBase.setPower(0.0);
 
         }
+
+        if(gamepad1.a){//extend arm
+
+            armElbow.setPosition(0.9);
+
+            sleep(250);
+
+            armBase.setTargetPosition(-580);
+            armBase.setPower(0.5);
+        }
+
+        if(gamepad1.b){//intake in
+
+            intakeHand.setPosition(0.0);
+
+        }
+
+        else if(gamepad1.x){//intake out
+
+            intakeHand.setPosition(1.0);
+
+        }
+
+        else{//intake stop
+
+            intakeHand.setPosition(0.5);
+
+        }
+
+
+
+
     }
 
     private boolean motorWithinTarget(){
@@ -255,7 +285,6 @@ put variables above here, but in the class still
         this.armBase = hardwareMap.get(DcMotor.class, "Arm Motor");
 
         this.armElbow = hardwareMap.get(Servo.class, "Arm Servo");
-        this.armWrist = hardwareMap.get(Servo.class, "Arm Servo 2");
         this.intakeHand = hardwareMap.get(Servo.class, "Hand");
 
         this.downLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -263,7 +292,7 @@ put variables above here, but in the class still
         this.upRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.upLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        armBase.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armBase.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         updateTelemetry();
     }
@@ -280,7 +309,6 @@ put variables above here, but in the class still
         telemetry.addData("Arm Base Pos", this.armBase.getCurrentPosition());
 
         telemetry.addData("Arm Elbow Pos", this.armElbow.getPosition());
-        telemetry.addData("Arm Wrist Pos", this.armWrist.getPosition());
         telemetry.addData("Arm Hand Pos", this.intakeHand.getPosition());
 
         telemetry.update();
