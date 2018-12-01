@@ -172,30 +172,9 @@ public class KKL2Auto extends LinearOpMode {
     }
 
     private void approach() {
-        float height = 0;
-        double power = 1.0;
-        List<Mineral> minerals = null;
-
-        /*
-        while(1) {
-        error = desired_value – actual_value
-        integral = integral + (error*iteration_time)
-        derivative = (error – error_prior)/iteration_time
-        output = KP*error + KI*integral + KD*derivative + bias
-        error_prior = error
-        sleep(iteration_time)
-        }
-        */
-
-        float error_prev = 1000;
-        float error = 0;
-        float integral = 0;
-        float derivative = 0;
-        float target_x = 640;
-        double c = 1000;
-        double ratio = 30.48 / 200; // centimeters / pixels (num pixel when the object is 1 ft away)
-        double forward_distance = 25.4;
         boolean completed = false;
+        List<Mineral> minerals = null;
+        double power = 1.0;
 
         while (opModeIsActive() && !completed) {
             minerals = this.tfManager.getRecognizedMinerals();
@@ -203,26 +182,10 @@ public class KKL2Auto extends LinearOpMode {
             if (minerals != null) {
                 for (Mineral mineral : minerals) {
                     if (mineral.isGold()) {
-                        /*
-                        float center_y = (mineral.getLeft() + mineral.getRight()) / 2;
-                        float center_x = (mineral.getBottom() + mineral.getTop()) / 2;
-                        height = mineral.getRight() - mineral.getLeft();
-                        telemetry.addData("Gold Height", height);
-                        telemetry.addData("Gold Center X", center_x);
-                        telemetry.addData("Gold Center Y", center_y);
-
-                        c = Helper.getCentimetersFromPixels(height); // centimeters
-                        error = target_x - center_x; // adjacent side in pixels
-                        double a = c * error / Helper.CAMERA_DISTANCE; // centimeters
-                        double b = Math.sqrt((c*c) - (a*a)); // centimeters
-                        double radians = Math.asin(a / c);
-                        double degrees = radians * 180.0 / Math.PI;
-
-                        telemetry.addData("error", error);
-                        telemetry.addData("inches away", c / 2.54);
-                        telemetry.addData("degrees away", degrees);
-                        */
-
+                        calculateAngle(mineral);
+                        telemetry.addData("Angle (deg)", mineral.getAngle());
+                        telemetry.addData("Horizontal (cm)", mineral.getA());
+                        telemetry.addData("Vertical (cm)", mineral.getB());
                         double degrees = mineral.getAngle();
                         if (degrees > 10 || degrees < -10) {
                             // turn towards the gold
@@ -230,7 +193,7 @@ public class KKL2Auto extends LinearOpMode {
                         } else {
                             telemetry.addData("Facing Gold", "No Turn, Move Forward");
                             // Move to knock the gold
-                            drive(c + 45, power);
+                            drive(mineral.getC() + 45, power);
                             completed = true;
                         }
 
@@ -244,89 +207,6 @@ public class KKL2Auto extends LinearOpMode {
                 // drive back to try and detect objects
                 drive(-3, power);
             }
-        }
-    }
-
-    private void approachGold() {
-        boolean approachComplete = false;
-        double power = 1.0;
-        int goldIndex = 0;
-        List<Mineral> minerals = null;
-
-        // Get close to view the minerals
-        //while (!approachComplete){
-        while (opModeIsActive()) {
-            minerals = this.tfManager.getRecognizedMinerals();
-            Mineral gold = null;
-            int index = 0;
-            if (minerals != null) {
-                // Update trajectory
-                int i = 0;
-                for (Mineral mineral : minerals) {
-                    if (mineral.isGold()) {
-                        gold = mineral;
-                        index++;
-                    }
-                    addTelemetry(mineral, ++i);
-                }
-                telemetry.update();
-            }
-
-            sleep(2000);
-
-            // Check if we are within approach limit
-            // 1280 x 720
-            // center of the screen is y = 360 and x = 640
-            if (gold != null) {
-                float center_y = (gold.getLeft() + gold.getRight()) / 2;
-                float center_x = (gold.getBottom() + gold.getTop()) / 2;
-                float height = gold.getRight() - gold.getLeft();
-                telemetry.addData("Gold Height", height);
-                telemetry.addData("Gold Center Y", center_y);
-                telemetry.addData("Gold Center X", center_x);
-                telemetry.update();
-                /*
-                if (center_y >= 350 && center_y <= 370) {
-                    goldIndex = index;
-                    break;
-                }*/
-                if (height >= 20) {
-                    //break;
-                }
-            }
-            else {
-                // Move robot 1 inch closer
-                //drive(2.54, power);
-            }
-        }
-
-        // Turn to face the gold
-        double ninetyDegreesInRadians = Math.PI / 2;
-        double distanceBetweenMinerals = 30;
-        if (goldIndex == 1) {
-            // gold is on the left
-            // turn left 90
-            turn(-ninetyDegreesInRadians);
-            drive(distanceBetweenMinerals, power);
-            turn(ninetyDegreesInRadians);
-        }
-        else if (goldIndex == 3) {
-            // gold is on the right
-            // turn right 90
-            turn(ninetyDegreesInRadians);
-            drive(distanceBetweenMinerals, power);
-            turn(-ninetyDegreesInRadians);
-        }
-
-        // Knock the gold off
-        drive(30, power);
-        minerals = this.tfManager.getRecognizedMinerals();
-        if (minerals != null) {
-            int i = 0;
-            for (Mineral mineral : minerals) {
-                addTelemetry(mineral, ++i);
-            }
-            telemetry.update();
         }
     }
 
@@ -350,5 +230,23 @@ public class KKL2Auto extends LinearOpMode {
 
     public double getCentimetersFromPixels(double pixels) {
         return ((pixels - 300) / -100) * 30.48; // centimeters
+    }
+
+    private void calculateAngle(Mineral m) {
+        float target_x = 640;
+        float center_y = (m.getLeft() + m.getRight()) / 2;
+        float center_x = (m.getBottom() + m.getTop()) / 2;
+        float height = m.getRight() - m.getLeft();
+
+        double c = getCentimetersFromPixels(height); // centimeters
+        float error = target_x - center_x; // adjacent side in pixels
+        double a = c * error / Helper.KK_CAMERA_DISTANCE; // centimeters
+        double b = Math.sqrt((c*c) - (a*a)); // centimeters
+        double radians = Math.asin(a / c);
+        double degrees = Math.toDegrees(radians);
+        m.setAngle(degrees);
+        m.setA(a);
+        m.setB(b);
+        m.setC(c);
     }
 }
