@@ -10,13 +10,13 @@ import teamcode.examples.Helper;
 import teamcode.examples.Mineral;
 import teamcode.examples.TensorFlowManager;
 
-@Autonomous(name = "TTL2Auto", group = "Linear OpMode")
-public class TTL2Auto extends LinearOpMode {
+@Autonomous(name = "TTL2AutoDepotSide", group = "Linear OpMode")
+public class TTL2AutoDepotSide extends LinearOpMode {
 
     private static final double DRIVE_MOTOR_TICKS_PER_CENTIMETER_COVERED_VERTICAL = -36.3;
     private static final double DRIVE_MOTOR_TICKS_PER_CENTIMETER_COVERED_LATERAL = -45.4;
     private static final double DRIVE_MOTOR_TICKS_PER_RADIAN_COVERED = -1370.8;
-    private static final int LIFT_MOTOR_TICKS_TO_LOWER = 590;
+    private static final int LIFT_MOTOR_TICKS_TO_LOWER = 600;
     private static final double LOWER_POWER = 0.25;
     private static final double TURN_POWER = 0.5;
     private static final int DRIVE_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD = 25;
@@ -26,8 +26,6 @@ public class TTL2Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("sdf ", "daf");
-        telemetry.update();
         TTL2HardwareManager.initialize(this);
         this.tfManager = new TensorFlowManager(this.hardwareMap);
         this.tfManager.initialize();
@@ -35,9 +33,14 @@ public class TTL2Auto extends LinearOpMode {
         resetDriveEncoders();
 
         setArmPosition(LIFT_MOTOR_TICKS_TO_LOWER, LOWER_POWER);
-        driveLateral(25, 0.25);
-        setArmPosition(-LIFT_MOTOR_TICKS_TO_LOWER, -LOWER_POWER);
-        approach();
+        driveLateral(20, 0.75);
+        driveVertical(100, 0.75);
+        // setArmPosition(-LIFT_MOTOR_TICKS_TO_LOWER, -LOWER_POWER);
+        //approach();
+        releaseMarker();
+        driveVertical(-25, 0.75);
+        turn(-0.75 * Math.PI);
+        driveVertical(200, 1.0);
 
         while (opModeIsActive()) ;
     }
@@ -59,7 +62,7 @@ public class TTL2Auto extends LinearOpMode {
                         double degrees = mineral.getAngle();
                         if (degrees > 10 || degrees < -10) {
                             // turn towards the gold
-                            driveLateral(mineral.getA(), 1.0);
+                            turn(Math.toRadians(degrees));
                         } else {
                             telemetry.addData("Facing Gold", "No Turn, Move Forward");
                             // Move to knock the gold
@@ -73,9 +76,15 @@ public class TTL2Auto extends LinearOpMode {
                 telemetry.addData("Can't find minerals", "Move back");
                 telemetry.update();
                 // drive back to try and detect objects
-                driveVertical(-3, 1.0);
+                turn(0.05 * Math.PI);
             }
+
         }
+    }
+
+    private void releaseMarker() {
+        TTL2HardwareManager.clawServo.setPosition(0.0);
+        sleep(1000);
     }
 
     private void setArmPosition(int ticks, double power) {

@@ -140,7 +140,7 @@ public class KKL2Auto extends LinearOpMode {
         // push arm backwards
 
         double liftBaseMotorPower = 1.0;
-        double ticksPerDegree = Helper.REV_CORE_HEX_MOTOR_TICKS_PER_ROTATION / 360.0 * 7.0;
+        double ticksPerDegree = Helper.REV_CORE_HEX_MOTOR_TICKS_PER_ROTATION / 360.0 * 5.0;
         int ticks = (int)(ticksPerDegree * 5);
         /*
         KKL2HardwareManager.liftBaseMotor.setTargetPosition(ticks);

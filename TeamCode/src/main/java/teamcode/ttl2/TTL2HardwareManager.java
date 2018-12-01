@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import java.util.Queue;
+import com.qualcomm.robotcore.hardware.Servo;
 
 class TTL2HardwareManager {
 
@@ -22,6 +21,8 @@ class TTL2HardwareManager {
     private static final String LIFT_MOTOR_LEFT_NAME = "LiftMotorL";
     private static final String LIFT_MOTOR_RIGHT_NAME = "LiftMotorR";
 
+    private static final String CLAW_SERVO_NAME = "ClawServo";
+
     // drive hardware
     public static DcMotor frontLeftDrive;
     public static DcMotor frontRightDrive;
@@ -32,6 +33,8 @@ class TTL2HardwareManager {
     // lift hardware
     public static DcMotor liftMotorL;
     public static DcMotor liftMotorR;
+
+    public static Servo clawServo;
 
     public static void initialize(LinearOpMode mainClassInstance) {
         HardwareMap hardwareMap = mainClassInstance.hardwareMap;
@@ -48,6 +51,9 @@ class TTL2HardwareManager {
 
         liftMotorL = hardwareMap.get(DcMotor.class, LIFT_MOTOR_LEFT_NAME);
         liftMotorR = hardwareMap.get(DcMotor.class, LIFT_MOTOR_RIGHT_NAME);
+
+
+        clawServo = hardwareMap.get(Servo.class, CLAW_SERVO_NAME);
     }
 
 }
