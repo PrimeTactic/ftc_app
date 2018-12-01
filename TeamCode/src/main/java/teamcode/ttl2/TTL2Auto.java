@@ -1,5 +1,6 @@
 package teamcode.ttl2;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -9,7 +10,8 @@ import teamcode.examples.Helper;
 import teamcode.examples.Mineral;
 import teamcode.examples.TensorFlowManager;
 
-public abstract class TTL2Auto extends LinearOpMode {
+@Autonomous(name = "TTL2Auto", group = "Linear OpMode")
+public class TTL2Auto extends LinearOpMode {
 
     private static final double DRIVE_MOTOR_TICKS_PER_CENTIMETER_COVERED_VERTICAL = -36.3;
     private static final double DRIVE_MOTOR_TICKS_PER_CENTIMETER_COVERED_LATERAL = -45.4;
@@ -24,9 +26,11 @@ public abstract class TTL2Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        TTL2HardwareManager.initialize(this);
-        this.tfManager = new TensorFlowManager(this.hardwareMap);
-        this.tfManager.initialize();
+        telemetry.addData("sdf ", "daf");
+        telemetry.update();
+        //TTL2HardwareManager.initialize(this);
+        //this.tfManager = new TensorFlowManager(this.hardwareMap);
+        //this.tfManager.initialize();
         waitForStart();
         resetDriveEncoders();
 
