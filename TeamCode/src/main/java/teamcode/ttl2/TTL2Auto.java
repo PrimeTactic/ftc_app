@@ -3,6 +3,10 @@ package teamcode.ttl2;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import java.util.List;
+
+import teamcode.examples.Helper;
+import teamcode.examples.Mineral;
 import teamcode.examples.TensorFlowManager;
 
 public abstract class TTL2Auto extends LinearOpMode {
@@ -27,12 +31,46 @@ public abstract class TTL2Auto extends LinearOpMode {
         resetDriveEncoders();
 
         lowerRobot();
-        driveLateral(10, 0.25);
-        driveVertical(50, 0.5);
-        turn(0.5 * Math.PI);
-        driveVertical(100, 1.0);
-        turn(0.25 * Math.PI);
-        driveVertical(300, 1.0);
+        approach();
+
+        while (opModeIsActive()) ;
+    }
+
+    private void approach() {
+        boolean completed = false;
+        List<Mineral> minerals = null;
+
+        while (opModeIsActive() && !completed) {
+            minerals = this.tfManager.getRecognizedMinerals();
+
+            if (minerals != null) {
+                for (Mineral mineral : minerals) {
+                    if (mineral.isGold()) {
+                        calculateAngle(mineral);
+                        telemetry.addData("Angle (deg)", mineral.getAngle());
+                        telemetry.addData("Horizontal (cm)", mineral.getA());
+                        telemetry.addData("Vertical (cm)", mineral.getB());
+                        double degrees = mineral.getAngle();
+                        if (degrees > 10 || degrees < -10) {
+                            // turn towards the gold
+                            driveLateral(mineral.getA(), 1.0);
+                        } else {
+                            telemetry.addData("Facing Gold", "No Turn, Move Forward");
+                            // Move to knock the gold
+                            driveVertical(mineral.getB(), 1.0);
+                            completed = true;
+                        }
+
+                        telemetry.update();
+                    }
+                }
+            } else {
+                telemetry.addData("Can't find minerals", "Move back");
+                telemetry.update();
+                // drive back to try and detect objects
+                driveVertical(-3, 1.0);
+            }
+        }
     }
 
     protected void lowerRobot() {
@@ -179,5 +217,23 @@ public abstract class TTL2Auto extends LinearOpMode {
 
     private double getCentimetersFromPixel(float height) {
         return ((-0.25 * height) + 52.5) * 2.54;
+    }
+
+    private void calculateAngle(Mineral m) {
+        float target_x = 640;
+        float center_y = (m.getLeft() + m.getRight()) / 2;
+        float center_x = (m.getBottom() + m.getTop()) / 2;
+        float height = m.getRight() - m.getLeft();
+
+        double c = getCentimetersFromPixel(height); // centimeters
+        float error = target_x - center_x; // adjacent side in pixels
+        double a = c * error / Helper.KK_CAMERA_DISTANCE; // centimeters
+        double b = Math.sqrt((c * c) - (a * a)); // centimeters
+        double radians = Math.asin(a / c);
+        double degrees = Math.toDegrees(radians);
+        m.setAngle(degrees);
+        m.setA(a);
+        m.setB(b);
+        m.setC(c);
     }
 }

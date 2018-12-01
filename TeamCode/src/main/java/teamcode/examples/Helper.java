@@ -16,5 +16,8 @@ public class Helper {
     public static final int REV_HD_HEX_60_MOTOR_TICKS_PER_ROTATION = 1680;
 
     // distance from 537.6494 x 930.5470
-    public static final double CAMERA_DISTANCE = 930.55;
+    public static final double KK_CAMERA_DISTANCE = 930.55;
+
+    // distance from 548.48 x 950
+    public static final double TT_CAMERA_DISTANCE = 950;
 }

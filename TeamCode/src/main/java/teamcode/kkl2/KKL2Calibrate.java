@@ -210,7 +210,7 @@ public class KKL2Calibrate extends LinearOpMode {
 
                             object_distance = getCentimetersFromPixels(height); // centimeters
                             error = target_x - center_x; // adjacent side in pixels
-                            double x = object_distance * error / Helper.CAMERA_DISTANCE; // centimeters
+                            double x = object_distance * error / Helper.KK_CAMERA_DISTANCE; // centimeters
                             double v = x / object_distance;
                             double radians = Math.asin(v);
                             double degrees = radians * 180.0 / Math.PI;
