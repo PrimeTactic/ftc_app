@@ -83,10 +83,10 @@ public class TTL2TeleOp extends LinearOpMode {
     }
 
     private void turn(float turn) {
-        TTL2HardwareManager.frontLeftDrive.setPower(turn);
-        TTL2HardwareManager.frontRightDrive.setPower(-turn);
-        TTL2HardwareManager.backLeftDrive.setPower(turn);
-        TTL2HardwareManager.backRightDrive.setPower(-turn);
+        TTL2HardwareManager.frontLeftDrive.setPower(-turn);
+        TTL2HardwareManager.frontRightDrive.setPower(turn);
+        TTL2HardwareManager.backLeftDrive.setPower(-turn);
+        TTL2HardwareManager.backRightDrive.setPower(turn);
     }
 
     private void setMoveMechanismPower(double power) {
