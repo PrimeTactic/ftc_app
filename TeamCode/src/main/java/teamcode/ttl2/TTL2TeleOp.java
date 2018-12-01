@@ -30,8 +30,8 @@ public class TTL2TeleOp extends LinearOpMode {
         TTL2HardwareManager.initialize(this);
         waitForStart();
         while (opModeIsActive()) {
-            float driveX = gamepad1.left_stick_x;
-            float driveY = gamepad1.left_stick_y;
+            float driveX = -gamepad1.left_stick_x;
+            float driveY = -gamepad1.left_stick_y;
             drive(driveX, driveY);
             // do not rotate robot if the robot translated this update
             if (!translationalMovementThisUpdate) {
@@ -83,10 +83,10 @@ public class TTL2TeleOp extends LinearOpMode {
     }
 
     private void turn(float turn) {
-        TTL2HardwareManager.frontLeftDrive.setPower(-turn);
-        TTL2HardwareManager.frontRightDrive.setPower(turn);
-        TTL2HardwareManager.backLeftDrive.setPower(-turn);
-        TTL2HardwareManager.backRightDrive.setPower(turn);
+        TTL2HardwareManager.frontLeftDrive.setPower(turn);
+        TTL2HardwareManager.frontRightDrive.setPower(-turn);
+        TTL2HardwareManager.backLeftDrive.setPower(turn);
+        TTL2HardwareManager.backRightDrive.setPower(-turn);
     }
 
     private void setMoveMechanismPower(double power) {

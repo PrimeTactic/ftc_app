@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "KKL2TeleOp", group = "Linear OpMode")
 public class KKL2TeleOp extends LinearOpMode {
 
-    private static final double LIFT_BASE_MOTOR_POWER = 1.0;
+    private static final double LIFT_BASE_MOTOR_POWER_EXTEND = 0.3;
+    private static final double LIFT_BASE_MOTOR_POWER_RETRACT = -1.0;
 
     @Override
     public void runOpMode() {
@@ -31,11 +32,9 @@ public class KKL2TeleOp extends LinearOpMode {
     private void liftServo() {
         if (gamepad1.right_bumper) {
             KKL2HardwareManager.liftLockServo.setPosition(0.0);
-        }
-        else if (gamepad1.left_bumper) {
+        } else if (gamepad1.left_bumper) {
             KKL2HardwareManager.liftLockServo.setPosition(1.0);
-        }
-        else {
+        } else {
             KKL2HardwareManager.liftLockServo.setPosition(0.5);
         }
     }
@@ -43,9 +42,11 @@ public class KKL2TeleOp extends LinearOpMode {
     private void liftUpdate() {
         double liftBaseMotorPower;
         if (gamepad1.a) {
-            liftBaseMotorPower = LIFT_BASE_MOTOR_POWER;
+            // extend
+            liftBaseMotorPower = LIFT_BASE_MOTOR_POWER_EXTEND;
         } else if (gamepad1.y) {
-            liftBaseMotorPower = -LIFT_BASE_MOTOR_POWER;
+            // retract
+            liftBaseMotorPower = LIFT_BASE_MOTOR_POWER_RETRACT;
         } else {
             liftBaseMotorPower = 0.0;
         }
@@ -57,19 +58,6 @@ public class KKL2TeleOp extends LinearOpMode {
         if (gamepad1.x) {
             KKL2HardwareManager.liftLatchServo.setPosition(-1.0);
         }
-        liftSupportUpdate();
-    }
-
-    private void liftSupportUpdate(){
-        double power;
-        if (gamepad1.right_bumper) {
-            power = 1.0;
-        } else if (gamepad1.left_bumper) {
-            power = 0.0;
-        } else {
-            power = 0.5;
-        }
-        KKL2HardwareManager.liftSupportServo.setPosition(power);
     }
 
 }

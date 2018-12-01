@@ -30,11 +30,9 @@ public abstract class TTL2Auto extends LinearOpMode {
         driveLateral(10, 0.25);
         driveVertical(50, 0.5);
         turn(0.5 * Math.PI);
-        driveVertical(100,1.0);
+        driveVertical(100, 1.0);
         turn(0.25 * Math.PI);
-        driveVertical(300,1.0);
-
-        this.run();
+        driveVertical(300, 1.0);
     }
 
     protected void lowerRobot() {
