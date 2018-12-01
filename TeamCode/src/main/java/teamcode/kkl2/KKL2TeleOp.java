@@ -69,7 +69,7 @@ public class KKL2TeleOp extends LinearOpMode {
         } else {
             power = 0.5;
         }
-        KKL2HardwareManager.liftSupportServo.setPosition(power);
+        KKL2HardwareManager.liftLockServo.setPosition(power);
     }
 
 }

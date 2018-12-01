@@ -21,7 +21,7 @@ public class KKL2LiftSupportServoWinder extends LinearOpMode {
             } else {
                 power = 0.5;
             }
-            KKL2HardwareManager.liftSupportServo.setPosition(power);
+            KKL2HardwareManager.liftLockServo.setPosition(power);
         }
     }
 
