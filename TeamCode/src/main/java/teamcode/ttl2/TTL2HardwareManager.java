@@ -1,6 +1,5 @@
 package teamcode.ttl2;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -13,15 +12,14 @@ class TTL2HardwareManager {
     private static final String BACK_LEFT_DRIVE_NAME = "BackLeftDrive";
     private static final String BACK_RIGHT_DRIVE_NAME = "BackRightDrive";
 
-    private static final String ARM_BASE_SERVO_NAME = "ArmServoBase";
-    private static final String A = "";
-    private static final String B = "";
-    private static final String C = "";
-
     private static final String LIFT_MOTOR_LEFT_NAME = "LiftMotorL";
     private static final String LIFT_MOTOR_RIGHT_NAME = "LiftMotorR";
+    private static final String LIFT_CLAW_SERVO_NAME = "ClawServo";
 
-    private static final String CLAW_SERVO_NAME = "ClawServo";
+//    private static final String ARM_BASE_SERVO_NAME = "ArmServoBase";
+//    private static final String A = "";
+//    private static final String B = "";
+//    private static final String C = "";
 
     // drive hardware
     public static DcMotor frontLeftDrive;
@@ -29,16 +27,12 @@ class TTL2HardwareManager {
     public static DcMotor backLeftDrive;
     public static DcMotor backRightDrive;
 
-
     // lift hardware
     public static DcMotor liftMotorL;
     public static DcMotor liftMotorR;
+    public static Servo liftClawServo;
 
-    public static Servo clawServo;
-
-    public static void initialize(LinearOpMode mainClassInstance) {
-        HardwareMap hardwareMap = mainClassInstance.hardwareMap;
-
+    public static void initialize(HardwareMap hardwareMap) {
         frontLeftDrive = hardwareMap.get(DcMotor.class, FRONT_LEFT_DRIVE_NAME);
         frontRightDrive = hardwareMap.get(DcMotor.class, FRONT_RIGHT_DRIVE_NAME);
         backLeftDrive = hardwareMap.get(DcMotor.class, BACK_LEFT_DRIVE_NAME);
@@ -51,9 +45,7 @@ class TTL2HardwareManager {
 
         liftMotorL = hardwareMap.get(DcMotor.class, LIFT_MOTOR_LEFT_NAME);
         liftMotorR = hardwareMap.get(DcMotor.class, LIFT_MOTOR_RIGHT_NAME);
-
-
-        clawServo = hardwareMap.get(Servo.class, CLAW_SERVO_NAME);
+        liftClawServo = hardwareMap.get(Servo.class, LIFT_CLAW_SERVO_NAME);
     }
 
 }

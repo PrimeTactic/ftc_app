@@ -27,7 +27,7 @@ public class TTL2TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         // initializes hardware components
-        TTL2HardwareManager.initialize(this);
+        TTL2HardwareManager.initialize(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
             float driveX = -gamepad1.left_stick_x;
