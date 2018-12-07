@@ -3,6 +3,7 @@ package teamcode.examples;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -19,10 +20,12 @@ public class TensorFlowManager {
     private HardwareMap hardwareMap;
     private TFObjectDetector tfod;
     private VisionManager visionManager;
+    private Telemetry telemetry;
 
-    public TensorFlowManager(HardwareMap hardwareMap) {
+    public TensorFlowManager(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
-        this.visionManager = new VisionManager();
+        this.telemetry = telemetry;
+        this.visionManager = new VisionManager(telemetry);
     }
 
     @Override
@@ -54,6 +57,9 @@ public class TensorFlowManager {
     }
 
     public void initialize() {
+        this.telemetry.addData("TensorFlowManager", "initialize() START");
+        this.telemetry.update();
+
         this.visionManager.initialize();
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -61,5 +67,8 @@ public class TensorFlowManager {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, this.visionManager.getVuforia());
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
         tfod.activate();
+
+        this.telemetry.addData("TensorFlowManager", "initialize() END");
+        this.telemetry.update();
     }
 }

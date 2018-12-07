@@ -21,9 +21,19 @@ public class KKL2TeleOp extends LinearOpMode {
 
     private void driveUpdate() {
         float drive = gamepad1.left_stick_y;
-        float steer = gamepad1.left_stick_x;
-        double powerL = drive + steer;
-        double powerR = drive - steer;
+        float steer = gamepad1.right_stick_x;
+        double powerL = 0;
+        double powerR = 0;
+
+        if (Math.abs(drive) >= 0.2 ){
+            powerL = drive;
+            powerR = drive;
+        }
+        else if (Math.abs(steer) >= 0.2) {
+            powerL = steer;
+            powerR = -steer;
+        }
+
         KKL2HardwareManager.driveLMotor.setPower(powerL);
         KKL2HardwareManager.driveRMotor.setPower(powerR);
     }

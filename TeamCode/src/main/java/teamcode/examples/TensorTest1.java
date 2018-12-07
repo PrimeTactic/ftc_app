@@ -72,43 +72,11 @@ public class TensorTest1 extends LinearOpMode {
         List<Mineral> minerals = null;
         while (opModeIsActive()) {
             minerals = this.tfManager.getRecognizedMinerals();
-            Mineral gold = null;
             if (minerals != null) {
                 int i = 0;
                 for (Mineral mineral : minerals) {
-                    float center_y = (mineral.getLeft() + mineral.getRight()) / 2;
-                    float center_x = (mineral.getBottom() + mineral.getTop()) / 2;
-                    float height = mineral.getRight() - mineral.getLeft();
-                    float x = target_x - center_x;
-
-                    // tan(30@) = x / y;
-                    double theta = Math.toRadians(30);
-                    double y = x / Math.tan(theta);
-                    telemetry.addData("x pixels", x);
-                    telemetry.addData("y pixels", y);
-
-
-
-                    telemetry.addData(
-                            "Mineral Gold,Height,center_X,center_Y",
-                            "%s,%f,%f,%f",
-                            mineral.isGold(),
-                            height,
-                            center_x,
-                            center_y);
-                    /*
-                    double c = Helper.getCentimetersFromPixels(height); // centimeters
-                    double a = c * error / Helper.CAMERA_DISTANCE; // centimeters
-                    double b = Math.sqrt((c*c) - (a*a)); // centimeters
-                    double radians = Math.asin(a / c);
-                    double degrees = radians * 180.0 / Math.PI;
-                    telemetry.addData("a b c", "%s %s %s", a, b, c);
-                    telemetry.addData("Degrees away", degrees);
-                    telemetry.addData("Gold Height", height);
-                    telemetry.addData("Gold Center X", center_x);
-                    telemetry.addData("Gold Center Y", center_y);
-                    telemetry.addData("Error (pixels)", error);
-                    */
+                    calculateAngle(mineral);
+                    addTelemetry(mineral);
                 }
 
                 telemetry.update();
@@ -124,17 +92,43 @@ public class TensorTest1 extends LinearOpMode {
             float center_x = (mineral.getBottom() + mineral.getTop()) / 2;
             float height = mineral.getRight() - mineral.getLeft();
             telemetry.addData(
-                    "Mineral" + " Gold,Height,X,Y",
-                    "%s,%f,%f,%f",
+                    "Mineral" + " Gold,Height,X,Y,Z",
+                    "%s,%5f,%5f,%5f,%5f,%5f,%5f,%5f",
                     mineral.isGold(),
                     height,
                     center_x,
-                    center_y);
+                    center_y,
+                    mineral.getAngle(),
+                    mineral.getA(),
+                    mineral.getB(),
+                    mineral.getC());
         }
     }
 
+    public double getCentimetersFromPixels(double pixels) {
+        return ((pixels - 300) / -100) * 30.48; // centimeters
+    }
+
+    private void calculateAngle(Mineral m) {
+        float target_x = 640;
+        float center_y = (m.getLeft() + m.getRight()) / 2;
+        float center_x = (m.getBottom() + m.getTop()) / 2;
+        float height = m.getRight() - m.getLeft();
+
+        double c = getCentimetersFromPixels(height); // centimeters
+        float error = target_x - center_x; // adjacent side in pixels
+        double a = c * error / Helper.KK_CAMERA_DISTANCE; // centimeters
+        double b = Math.sqrt((c*c) - (a*a)); // centimeters
+        double radians = Math.asin(a / c);
+        double degrees = Math.toDegrees(radians);
+        m.setAngle(degrees);
+        m.setA(a);
+        m.setB(b);
+        m.setC(c);
+    }
+
     private void initialize() {
-        this.tfManager = new TensorFlowManager(this.hardwareMap);
+        this.tfManager = new TensorFlowManager(this.hardwareMap, this.telemetry);
         this.tfManager.initialize();
     }
 }

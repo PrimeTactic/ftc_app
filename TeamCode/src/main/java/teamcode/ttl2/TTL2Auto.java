@@ -1,5 +1,6 @@
 package teamcode.ttl2;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -9,8 +10,8 @@ import teamcode.examples.Helper;
 import teamcode.examples.Mineral;
 import teamcode.examples.TensorFlowManager;
 
-public abstract class TTL2Auto extends LinearOpMode {
-
+@Autonomous(name = "TTL2Auto", group = "Linear OpMode")
+public class TTL2Auto extends LinearOpMode {
     private static final double DRIVE_MOTOR_TICKS_PER_CENTIMETER_COVERED_VERTICAL = -36.3;
     private static final double DRIVE_MOTOR_TICKS_PER_CENTIMETER_COVERED_LATERAL = -45.4;
     private static final double DRIVE_MOTOR_TICKS_PER_RADIAN_COVERED = -1370.8;
@@ -24,9 +25,20 @@ public abstract class TTL2Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        this.telemetry.addData("TTL2Auto", "runOpMode() 0");
+        this.telemetry.update();
+
         TTL2HardwareManager.initialize(this);
-        this.tfManager = new TensorFlowManager(this.hardwareMap);
+
+        this.telemetry.addData("TTL2Auto", "runOpMode() 1");
+        this.telemetry.update();
+
+        this.tfManager = new TensorFlowManager(this.hardwareMap, this.telemetry);
         this.tfManager.initialize();
+
+        this.telemetry.addData("TTL2Auto", "runOpMode() 2");
+        this.telemetry.update();
+
         waitForStart();
         resetDriveEncoders();
 
@@ -229,7 +241,7 @@ public abstract class TTL2Auto extends LinearOpMode {
 
         double c = getCentimetersFromPixel(height); // centimeters
         float error = target_x - center_x; // adjacent side in pixels
-        double a = c * error / Helper.KK_CAMERA_DISTANCE; // centimeters
+        double a = c * error / Helper.TT_CAMERA_DISTANCE; // centimeters
         double b = Math.sqrt((c*c) - (a*a)); // centimeters
         double radians = Math.asin(a / c);
         double degrees = Math.toDegrees(radians);

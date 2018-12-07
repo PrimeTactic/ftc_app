@@ -140,7 +140,7 @@ public class KKL2Auto extends LinearOpMode {
         // push arm backwards
 
         double liftBaseMotorPower = 1.0;
-        double ticksPerDegree = Helper.REV_CORE_HEX_MOTOR_TICKS_PER_ROTATION / 360.0 * 7.0;
+        double ticksPerDegree = Helper.REV_CORE_HEX_MOTOR_TICKS_PER_ROTATION / 360.0 * 5.0;
         int ticks = (int)(ticksPerDegree * 5);
         /*
         KKL2HardwareManager.liftBaseMotor.setTargetPosition(ticks);
@@ -181,7 +181,7 @@ public class KKL2Auto extends LinearOpMode {
 
             if (minerals != null) {
                 for (Mineral mineral : minerals) {
-                    if (mineral.isGold()) {
+                    if (mineral.isGold() && mineral.getC() < 89) {
                         calculateAngle(mineral);
                         telemetry.addData("Angle (deg)", mineral.getAngle());
                         telemetry.addData("Horizontal (cm)", mineral.getA());
@@ -213,7 +213,7 @@ public class KKL2Auto extends LinearOpMode {
     private void initialize() {
         KKL2HardwareManager.liftBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         KKL2HardwareManager.liftBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.tfManager = new TensorFlowManager(this.hardwareMap);
+        this.tfManager = new TensorFlowManager(this.hardwareMap, this.telemetry);
         this.tfManager.initialize();
     }
 
