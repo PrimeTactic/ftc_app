@@ -8,15 +8,9 @@ public class DepotSideTTL2Auto extends AbstractTTL2Auto {
     @Override
     protected void run() {
         lowerRobotFromLatch();
-        driveLateral(5, 0.75);
+        driveLateral(-3.0, 0.5);
+        driveVertical(5, 0.5);
         approachGold();
-        //driveVertical(100, 0.75);
-        // rotateArm(-LIFT_MOTOR_TICKS_TO_LOWER, -LOWER_POWER);
-        //approachGold();
-        // releaseMarker();
-        //driveVertical(-25, 0.75);
-        //turn(-0.75 * Math.PI);
-        //driveVertical(200, 1.0);
     }
 
 }

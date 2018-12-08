@@ -1,5 +1,6 @@
 package teamcode.ttl2;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,15 +12,13 @@ class TTL2HardwareManager {
     private static final String FRONT_RIGHT_DRIVE_NAME = "FrontRightDrive";
     private static final String BACK_LEFT_DRIVE_NAME = "BackLeftDrive";
     private static final String BACK_RIGHT_DRIVE_NAME = "BackRightDrive";
-
-    private static final String LIFT_MOTOR_LEFT_NAME = "LiftMotorL";
-    private static final String LIFT_MOTOR_RIGHT_NAME = "LiftMotorR";
-    private static final String LIFT_CLAW_SERVO_NAME = "ClawServo";
-
-//    private static final String ARM_BASE_SERVO_NAME = "ArmServoBase";
-//    private static final String A = "";
-//    private static final String B = "";
-//    private static final String C = "";
+    private static final String LEFT_ARM_BASE_MOTOR_NAME = "LiftMotorL";
+    private static final String RIGHT_ARM_BASE_MOTOR_NAME = "LiftMotorR";
+    private static final String LATCH_CLAW_SERVO_NAME = "ClawServo";
+    private static final String LEFT_ARM_ELBOW_SERVO_NAME = "LeftArmElbowServo";
+    private static final String RIGHT_ARM_ELBOW_SERVO_NAME = "RightArmElbowServo";
+    private static final String ARM_WRIST_SERVO_NAME = "ArmWristServo";
+    private static final String INTAKE_SERVO_NAME = "IntakeServo";
 
     // drive hardware
     public static DcMotor frontLeftDrive;
@@ -27,10 +26,14 @@ class TTL2HardwareManager {
     public static DcMotor backLeftDrive;
     public static DcMotor backRightDrive;
 
-    // lift hardware
-    public static DcMotor liftMotorL;
-    public static DcMotor liftMotorR;
-    public static Servo liftClawServo;
+    // arm hardware
+    public static DcMotor leftArmBaseMotor;
+    public static DcMotor rightArmBaseMotor;
+    public static Servo latchClawServo;
+    public static CRServo leftArmElbowServo;
+    public static CRServo rightArmElbowServo;
+    public static Servo armWristServo;
+    public static CRServo intakeServo;
 
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftDrive = hardwareMap.get(DcMotor.class, FRONT_LEFT_DRIVE_NAME);
@@ -43,9 +46,13 @@ class TTL2HardwareManager {
         backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        liftMotorL = hardwareMap.get(DcMotor.class, LIFT_MOTOR_LEFT_NAME);
-        liftMotorR = hardwareMap.get(DcMotor.class, LIFT_MOTOR_RIGHT_NAME);
-        liftClawServo = hardwareMap.get(Servo.class, LIFT_CLAW_SERVO_NAME);
+        leftArmBaseMotor = hardwareMap.get(DcMotor.class, LEFT_ARM_BASE_MOTOR_NAME);
+        rightArmBaseMotor = hardwareMap.get(DcMotor.class, RIGHT_ARM_BASE_MOTOR_NAME);
+        //latchClawServo = hardwareMap.get(Servo.class, LATCH_CLAW_SERVO_NAME);
+        //leftArmElbowServo = hardwareMap.get(CRServo.class, LEFT_ARM_ELBOW_SERVO_NAME);
+        //rightArmElbowServo = hardwareMap.get(CRServo.class, RIGHT_ARM_ELBOW_SERVO_NAME);
+        //armWristServo = hardwareMap.get(Servo.class, ARM_WRIST_SERVO_NAME);
+        //intakeServo = hardwareMap.get(CRServo.class, INTAKE_SERVO_NAME);
     }
 
 }

@@ -3,6 +3,9 @@ package teamcode.ttl2;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 @TeleOp(name = "TTL2TeleOp", group = "Linear OpMode")
 public class TTL2TeleOp extends LinearOpMode {
 
@@ -23,6 +26,10 @@ public class TTL2TeleOp extends LinearOpMode {
      * Used to make sure that the robot does not translate and rotate on the same update.
      */
     private boolean translationalMovementThisUpdate;
+    /**
+     * Used to schedule time-based tasks.
+     */
+    private Timer timer = new Timer();
 
     @Override
     public void runOpMode() {
@@ -30,23 +37,57 @@ public class TTL2TeleOp extends LinearOpMode {
         TTL2HardwareManager.initialize(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
-            float driveX = -gamepad1.left_stick_x;
-            float driveY = -gamepad1.left_stick_y;
-            drive(driveX, driveY);
-            // do not rotate robot if the robot translated this update
-            if (!translationalMovementThisUpdate) {
-                float turn = gamepad1.right_stick_x;
-                turn(turn);
-            }
-            if (gamepad1.y) {
-                // raise lift mechanism
-                setMoveMechanismPower(-LIFT_SPEED);
-            } else if (gamepad1.a) {
-                // lower lift mechanism
-                setMoveMechanismPower(0.5 * LIFT_SPEED);
-            } else {
-                setMoveMechanismPower(0);
-            }
+            armUpdate();
+//            float driveX = -gamepad1.left_stick_x;
+//            float driveY = -gamepad1.left_stick_y;
+//            drive(driveX, driveY);
+//            // do not rotate robot if the robot translated this update
+//            if (!translationalMovementThisUpdate) {
+//                float turn = gamepad1.right_stick_x;
+//                turn(turn);
+//            }
+//            if (gamepad1.y) {
+//                // raise lift mechanism
+//                setArmBasePower(-LIFT_SPEED);
+//            } else if (gamepad1.a) {
+//                // lower lift mechanism
+//                setArmBasePower(0.5 * LIFT_SPEED);
+//            } else {
+//                setArmBasePower(0);
+//            }
+        }
+    }
+
+    private void armUpdate() {
+        if (gamepad1.a) {
+            int armBaseMotorPos = 0;
+
+            TTL2HardwareManager.leftArmBaseMotor.setTargetPosition(armBaseMotorPos);
+            TTL2HardwareManager.rightArmBaseMotor.setTargetPosition(armBaseMotorPos);
+
+            double elbowServoPower = 0.0;
+            TTL2HardwareManager.leftArmElbowServo.setPower(elbowServoPower);
+            TTL2HardwareManager.rightArmElbowServo.setPower(elbowServoPower);
+
+            int wristExtendTimeInMilis = 0;
+            TimerTask extendWristTask = new TimerTask() {
+
+                @Override
+                public void run() {
+                    TTL2HardwareManager.leftArmElbowServo.setPower(0.0);
+                    TTL2HardwareManager.rightArmElbowServo.setPower(0.0);
+                }
+
+            };
+            timer.schedule(extendWristTask, wristExtendTimeInMilis);
+        } else if (gamepad1.y) {
+            // extend
+        }
+
+        if (gamepad1.x) {
+            // flip wrist back to drop off mineral
+        } else if (gamepad1.b) {
+            // revert wrist to default state
         }
     }
 
@@ -89,9 +130,9 @@ public class TTL2TeleOp extends LinearOpMode {
         TTL2HardwareManager.backRightDrive.setPower(turn);
     }
 
-    private void setMoveMechanismPower(double power) {
-        TTL2HardwareManager.liftMotorL.setPower(power);
-        TTL2HardwareManager.liftMotorR.setPower(power);
+    private void setArmBasePower(double power) {
+        TTL2HardwareManager.leftArmBaseMotor.setPower(power);
+        TTL2HardwareManager.rightArmBaseMotor.setPower(power);
     }
 
 }

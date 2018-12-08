@@ -11,9 +11,9 @@ import teamcode.examples.TensorFlowManager;
 
 public abstract class AbstractTTL2Auto extends LinearOpMode {
 
-    protected static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL = -92.202;
-    protected static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL = -115.316;
-    protected static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = -23.9249648316;
+    protected static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL = -92.2;
+    protected static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL = -104.0;
+    protected static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = -23.3;
     private static final double ARM_MOTOR_TICKS_PER_DEGREE = 3.11111111111;
     protected static final int DRIVE_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD = 25;
     protected static final int LIFT_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD = 25;
@@ -24,7 +24,7 @@ public abstract class AbstractTTL2Auto extends LinearOpMode {
     /**
      * In pixels.
      */
-    private static final float MINERAL_OUT_OF_BOUNDS_THRESHOLD = 10;
+    private static final float MINERAL_OUT_OF_BOUNDS_THRESHOLD = 100;
 
     private TensorFlowManager tfManager;
 
@@ -44,74 +44,46 @@ public abstract class AbstractTTL2Auto extends LinearOpMode {
     }
 
     protected void approachGold() {
-        boolean completed = false;
-        List<Mineral> minerals = null;
-
+        boolean goldLocated = false;
         driveLateral(-INCHES_BETWEEN_MINERALS, 0.5);
-        driveLateral(3 * INCHES_BETWEEN_MINERALS, 0.5);
-        while (opModeIsActive() && !completed) {
-            minerals = this.tfManager.getRecognizedMinerals();
-            if (minerals != null) {
-                for (Mineral mineral : minerals) {
-                    if (mineral.isGold()) {
-                        // vertical and horizontal values are swapped due to landscape orientation
-                        float leftBound = mineral.getTop();
-                        float rightBound = mineral.getBottom();
-                        if (boundingBoxIsInCenterOfView(leftBound, rightBound)) {
-                            double inchesForwardToGold = 48.0;
-                            driveVertical(inchesForwardToGold, 1.0);
-                            completed = false;
-                        }
-                    }
-                }
-            } else {
-                telemetry.addData("Can't find minerals", "Strafe right");
-                telemetry.update();
+        while (opModeIsActive() && !goldLocated) {
+            driveLateral(3, 0.5);
+            if (goldAhead()) {
+                double inchesForwardToGold = 24.0;
+                driveVertical(inchesForwardToGold, 1.0);
+                goldLocated = true;
             }
         }
+    }
 
-//        boolean completed = false;
-//        List<Mineral> minerals = null;
-//
-//        while (opModeIsActive() && !completed) {
-//            minerals = this.tfManager.getRecognizedMinerals();
-//
-//            if (minerals != null) {
-//                for (Mineral mineral : minerals) {
-//                    if (mineral.isGold()) {
-//                        calculateAngle(mineral);
-//                        telemetry.addData("Angle (deg)", mineral.getAngle());
-//                        telemetry.addData("Horizontal (cm)", mineral.getA());
-//                        telemetry.addData("Vertical (cm)", mineral.getB());
-//                        double degrees = mineral.getAngle();
-//                        if (degrees > 10 || degrees < -10) {
-//                            // turn towards the gold
-//                            turn(Math.toRadians(degrees));
-//                        } else {
-//                            telemetry.addData("Facing Gold", "No Turn, Move Forward");
-//                            // Move to knock the gold
-//                            driveVertical(mineral.getB(), 1.0);
-//                            completed = true;
-//                        }
-//                        telemetry.update();
+    private boolean goldAhead() {
+        List<Mineral> minerals = this.tfManager.getRecognizedMinerals();
+        if (minerals != null) {
+            for (Mineral mineral : minerals) {
+                if (mineral.isGold()) {
+                    return true;
+                    // vertical and horizontal values are swapped due to landscape orientation
+//                    float leftBound = mineral.getTop();
+//                    float rightBound = mineral.getBottom();
+//                    if (boundingBoxIsInCenterOfView(leftBound, rightBound)) {
+//                        return true;
 //                    }
-//                }
-//            } else {
-//                telemetry.addData("Can't find minerals", "Move back");
-//                telemetry.update();
-//                // drive back to try and detect objects
-//                turn(0.05 * Math.PI);
-//            }
-//        }
+                }
+            }
+        }
+//        telemetry.addData("gold detected?", goldLocated);
+//        telemetry.addData("mineral count", mineralCount);
+        return false;
     }
 
     private boolean boundingBoxIsInCenterOfView(float leftBound, float rightBound) {
-        float dist = leftBound - (1280 - rightBound);
-        return dist < MINERAL_OUT_OF_BOUNDS_THRESHOLD;
+        float boundingBoxCenter = leftBound + rightBound / 2;
+        float bbCenterOffsetFromFOVCenter = Math.abs(1280 / 2 - boundingBoxCenter);
+        return bbCenterOffsetFromFOVCenter < MINERAL_OUT_OF_BOUNDS_THRESHOLD;
     }
 
     protected void releaseMarker() {
-        TTL2HardwareManager.liftClawServo.setPosition(0.0);
+        TTL2HardwareManager.latchClawServo.setPosition(0.0);
         sleep(1000);
     }
 
@@ -163,26 +135,26 @@ public abstract class AbstractTTL2Auto extends LinearOpMode {
     }
 
     protected void rotateArm(double degrees, double power) {
-        TTL2HardwareManager.liftMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        TTL2HardwareManager.liftMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        TTL2HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        TTL2HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        TTL2HardwareManager.liftMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        TTL2HardwareManager.liftMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        TTL2HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        TTL2HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         int ticks = (int) (degrees * ARM_MOTOR_TICKS_PER_DEGREE);
-        TTL2HardwareManager.liftMotorL.setTargetPosition(ticks);
-        TTL2HardwareManager.liftMotorR.setTargetPosition(ticks);
+        TTL2HardwareManager.leftArmBaseMotor.setTargetPosition(ticks);
+        TTL2HardwareManager.rightArmBaseMotor.setTargetPosition(ticks);
 
-        TTL2HardwareManager.liftMotorL.setPower(power);
-        TTL2HardwareManager.liftMotorR.setPower(power);
+        TTL2HardwareManager.leftArmBaseMotor.setPower(power);
+        TTL2HardwareManager.rightArmBaseMotor.setPower(power);
 
         while (opModeIsActive() && !liftMotorsNearTarget()) ;
 
         telemetry.addData("status", "arm lowered");
         telemetry.update();
 
-        TTL2HardwareManager.liftMotorL.setPower(0.0);
-        TTL2HardwareManager.liftMotorR.setPower(0.0);
+        TTL2HardwareManager.leftArmBaseMotor.setPower(0.0);
+        TTL2HardwareManager.rightArmBaseMotor.setPower(0.0);
     }
 
     protected void turn(double degrees) {
@@ -242,11 +214,11 @@ public abstract class AbstractTTL2Auto extends LinearOpMode {
     }
 
     private boolean liftMotorsNearTarget() {
-        int targetLeftLiftMotorPos = TTL2HardwareManager.liftMotorL.getTargetPosition();
-        int targetRightLiftMotorPos = TTL2HardwareManager.liftMotorR.getTargetPosition();
+        int targetLeftLiftMotorPos = TTL2HardwareManager.leftArmBaseMotor.getTargetPosition();
+        int targetRightLiftMotorPos = TTL2HardwareManager.rightArmBaseMotor.getTargetPosition();
 
-        int currentLeftLiftMotorPos = TTL2HardwareManager.liftMotorL.getCurrentPosition();
-        int currentRightLiftMotorPos = TTL2HardwareManager.liftMotorR.getCurrentPosition();
+        int currentLeftLiftMotorPos = TTL2HardwareManager.leftArmBaseMotor.getCurrentPosition();
+        int currentRightLiftMotorPos = TTL2HardwareManager.rightArmBaseMotor.getCurrentPosition();
 
         return Math.abs(currentLeftLiftMotorPos - targetLeftLiftMotorPos) < LIFT_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD
                 && Math.abs(currentRightLiftMotorPos - targetRightLiftMotorPos) < LIFT_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD;
