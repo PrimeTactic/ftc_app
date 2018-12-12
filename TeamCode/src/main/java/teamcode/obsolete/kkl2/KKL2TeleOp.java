@@ -1,4 +1,4 @@
-package teamcode.kkl2;
+package teamcode.obsolete.kkl2;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

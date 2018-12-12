@@ -1,4 +1,4 @@
-package teamcode.kkl2;
+package teamcode.obsolete.kkl2;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.List;
 
-import teamcode.examples.Helper;
-import teamcode.examples.Mineral;
-import teamcode.examples.TensorFlowManager;
+import teamcode.tensorFlow.Helper;
+import teamcode.tensorFlow.Mineral;
+import teamcode.tensorFlow.TensorFlowManager;
 
 @Autonomous(name = "KKL2Auto", group = "Linear OpMode")
 public class KKL2Auto extends LinearOpMode {

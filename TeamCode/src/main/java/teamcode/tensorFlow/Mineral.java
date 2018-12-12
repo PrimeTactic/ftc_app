@@ -1,13 +1,6 @@
-package teamcode.examples;
+package teamcode.tensorFlow;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-
-import java.util.Comparator;
-import java.util.List;
 
 public class Mineral {
     private float left;

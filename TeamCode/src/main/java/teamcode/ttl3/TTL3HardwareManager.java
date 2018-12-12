@@ -1,11 +1,11 @@
-package teamcode.ttl2;
+package teamcode.ttl3;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-class TTL2HardwareManager {
+class TTL3HardwareManager {
 
     private static final String FRONT_LEFT_DRIVE_NAME = "FrontLeftDrive";
     private static final String FRONT_RIGHT_DRIVE_NAME = "FrontRightDrive";

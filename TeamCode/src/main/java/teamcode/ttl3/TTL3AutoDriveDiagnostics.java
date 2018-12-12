@@ -1,9 +1,9 @@
-package teamcode.ttl2;
+package teamcode.ttl3;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "TTL2AutoDiagnostics", group = "Linear OpMode")
-public class TTL2AutoDiagnostics extends AbstractTTL2Auto {
+@Autonomous(name = "TTL3AutoDriveDiagnostics", group = "Linear OpMode")
+public class TTL3AutoDriveDiagnostics extends AbstractTTL3Auto {
 
     @Override
     protected void run() {

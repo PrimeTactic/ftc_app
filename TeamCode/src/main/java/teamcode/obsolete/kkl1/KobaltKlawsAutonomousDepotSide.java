@@ -1,11 +1,11 @@
-package teamcode.kkl1;
+package teamcode.obsolete.kkl1;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "KobaltKlawsAutonomousCraterSide", group = "Linear OpMode")
-public class KobaltKlawsAutonomousCraterSide extends LinearOpMode {
+@Autonomous(name = "KobaltKlawsAutonomousDepotSide", group = "Linear OpMode")
+public class KobaltKlawsAutonomousDepotSide extends LinearOpMode {
 
     private static final double TICKS_PER_INCH_COVERED = -44.5633840657;
     /**
@@ -25,7 +25,9 @@ public class KobaltKlawsAutonomousCraterSide extends LinearOpMode {
         sleep(800);
         KKL1HardwareManager.liftMotor.setPower(0.0);
         sleep(1000);
-        drive(40, 1.0);
+        drive(65, 0.5);
+        KKL1HardwareManager.intakeServo.setPosition(1.0); // opens right claw
+        sleep(3000);
     }
 
     private void initialize() {
@@ -70,8 +72,7 @@ public class KobaltKlawsAutonomousCraterSide extends LinearOpMode {
         int currentLDriveMotorPos = KKL1HardwareManager.lDriveMotor.getCurrentPosition();
         int targetRDriveMotorPos = KKL1HardwareManager.rDriveMotor.getTargetPosition();
         int currentRDriveMotorPos = KKL1HardwareManager.rDriveMotor.getCurrentPosition();
-        return Math.abs(currentLDriveMotorPos - targetLDriveMotorPos) < 10.0
-                && Math.abs(currentRDriveMotorPos - targetRDriveMotorPos) < 10.0;
+        return Math.abs(currentLDriveMotorPos - targetLDriveMotorPos) < 10.0 && Math.abs(currentRDriveMotorPos - targetRDriveMotorPos) < 10.0;
     }
 
     private void resetEncoders() {
@@ -108,5 +109,4 @@ public class KobaltKlawsAutonomousCraterSide extends LinearOpMode {
         KKL1HardwareManager.armWristServo.setPosition(0.0);
         sleep(1000);
     }
-
 }
