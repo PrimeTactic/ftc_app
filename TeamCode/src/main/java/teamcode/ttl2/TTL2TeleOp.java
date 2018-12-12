@@ -37,15 +37,8 @@ public class TTL2TeleOp extends LinearOpMode {
         TTL2HardwareManager.initialize(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
+            driveUpdate();
             armUpdate();
-//            float driveX = -gamepad1.left_stick_x;
-//            float driveY = -gamepad1.left_stick_y;
-//            drive(driveX, driveY);
-//            // do not rotate robot if the robot translated this update
-//            if (!translationalMovementThisUpdate) {
-//                float turn = gamepad1.right_stick_x;
-//                turn(turn);
-//            }
 //            if (gamepad1.y) {
 //                // raise lift mechanism
 //                setArmBasePower(-LIFT_SPEED);
@@ -58,6 +51,19 @@ public class TTL2TeleOp extends LinearOpMode {
         }
     }
 
+    private void driveUpdate() {
+        float driveYPower = gamepad1.left_stick_y;
+        float driveXPower = gamepad1.left_stick_x;
+        if (driveYPower > MIN_DRIVE_Y_INPUT) {
+            driveVertical(driveYPower);
+        } else if (driveXPower > MIN_DRIVE_X_INPUT) {
+            driveLateral(driveXPower);
+        } else {
+            float turnPower = gamepad1.right_stick_x;
+            turn(turnPower);
+        }
+    }
+
     private void armUpdate() {
         if (gamepad1.a) {
             int armBaseMotorPos = 0;
@@ -66,16 +72,16 @@ public class TTL2TeleOp extends LinearOpMode {
             TTL2HardwareManager.rightArmBaseMotor.setTargetPosition(armBaseMotorPos);
 
             double elbowServoPower = 0.0;
-            TTL2HardwareManager.leftArmElbowServo.setPower(elbowServoPower);
-            TTL2HardwareManager.rightArmElbowServo.setPower(elbowServoPower);
+            TTL2HardwareManager.leftArmElbowServo.setPosition(elbowServoPower);
+            TTL2HardwareManager.rightArmElbowServo.setPosition(elbowServoPower);
 
             int wristExtendTimeInMilis = 0;
             TimerTask extendWristTask = new TimerTask() {
 
                 @Override
                 public void run() {
-                    TTL2HardwareManager.leftArmElbowServo.setPower(0.0);
-                    TTL2HardwareManager.rightArmElbowServo.setPower(0.0);
+                    TTL2HardwareManager.leftArmElbowServo.setPosition(0.0);
+                    TTL2HardwareManager.rightArmElbowServo.setPosition(0.0);
                 }
 
             };
@@ -89,6 +95,14 @@ public class TTL2TeleOp extends LinearOpMode {
         } else if (gamepad1.b) {
             // revert wrist to default state
         }
+    }
+
+    private void driveVertical(double power) {
+
+    }
+
+    private void driveLateral(double power){
+        
     }
 
     private void drive(float x, float y) {

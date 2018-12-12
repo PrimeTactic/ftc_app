@@ -6,23 +6,26 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous(name = "DriveMotorIdentifier", group = "Linear OpMode")
 public class DriveMotorIdentifier extends LinearOpMode {
 
+    private static final double POWER = 0.25;
+    private static final long SLEEP_TIME = 5000;
+
     @Override
     public void runOpMode() {
         TTL2HardwareManager.initialize(hardwareMap);
         updateTelemetry();
         waitForStart();
-        TTL2HardwareManager.frontLeftDrive.setPower(1.0);
+        TTL2HardwareManager.frontLeftDrive.setPower(POWER);
         updateTelemetry();
-        sleep(5000);
-        TTL2HardwareManager.frontRightDrive.setPower(1.0);
+        sleep(SLEEP_TIME);
+        TTL2HardwareManager.frontRightDrive.setPower(POWER);
         updateTelemetry();
-        sleep(5000);
-        TTL2HardwareManager.backLeftDrive.setPower(1.0);
+        sleep(SLEEP_TIME);
+        TTL2HardwareManager.backLeftDrive.setPower(POWER);
         updateTelemetry();
-        sleep(5000);
-        TTL2HardwareManager.backRightDrive.setPower(1.0);
+        sleep(SLEEP_TIME);
+        TTL2HardwareManager.backRightDrive.setPower(POWER);
         updateTelemetry();
-        sleep(5000);
+        sleep(SLEEP_TIME);
         updateTelemetry();
     }
 

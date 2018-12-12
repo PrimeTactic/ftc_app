@@ -274,7 +274,7 @@ public class KKL2Calibrate extends LinearOpMode {
 
             sleep(2000);
 
-            // Check if we are within approachGold limit
+            // Check if we are within knockGold limit
             // 1280 x 720
             // center of the screen is y = 360 and x = 640
             if (gold != null) {
