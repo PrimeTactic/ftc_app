@@ -67,10 +67,10 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
         zeroDriveMotorPower();
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL);
 
-        TTL3HardwareManager.frontLeftDrive.setTargetPosition(ticks);
-        TTL3HardwareManager.frontRightDrive.setTargetPosition(-ticks);
-        TTL3HardwareManager.backLeftDrive.setTargetPosition(-ticks);
-        TTL3HardwareManager.backRightDrive.setTargetPosition(ticks);
+        TTL3HardwareManager.frontLeftDrive.setTargetPosition(-ticks);
+        TTL3HardwareManager.frontRightDrive.setTargetPosition(ticks);
+        TTL3HardwareManager.backLeftDrive.setTargetPosition(ticks);
+        TTL3HardwareManager.backRightDrive.setTargetPosition(-ticks);
 
         TTL3HardwareManager.frontLeftDrive.setPower(power);
         TTL3HardwareManager.frontRightDrive.setPower(power);
@@ -183,7 +183,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
         };
         timer.schedule(stopElbowServoTask, 3625);
 
-        TTL3HardwareManager.armWristServo.setPosition(0.1);
+        TTL3HardwareManager.armWristServo.setPosition(0.05);
         rotateArmBase(85, 1.0);
     }
 
@@ -201,7 +201,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     private void clenchArm() {
         TTL3HardwareManager.leftArmElbowServo.setPosition(0.5);
         TTL3HardwareManager.rightArmElbowServo.setPosition(0.5);
-        TTL3HardwareManager.armWristServo.setPosition(1.0);
+        TTL3HardwareManager.armWristServo.setPosition(0.95);
     }
 
     protected void clenchMarkerClaw() {
@@ -220,7 +220,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
 
     protected boolean goldMineralIsStraightAhead() {
         // sometimes the recognized minerals list is null, so must be checked many times
-        for (int i = 0; i < 10000; i++) {
+        while (true) {
             List<Mineral> minerals = this.tfManager.getRecognizedMinerals();
             if (minerals != null) {
                 for (Mineral mineral : minerals) {
