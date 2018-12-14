@@ -60,7 +60,7 @@ public class TTL3TeleOp extends LinearOpMode {
         }
     }
 
-    private boolean armIsFullyExtended = false;
+    private boolean armIsFullyExtended = true;
 
     private void armInputUpdate() {
         if (gamepad1.a) {
@@ -81,10 +81,10 @@ public class TTL3TeleOp extends LinearOpMode {
             TTL3HardwareManager.armWristServo.setPosition(0.95);
         }
 
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpad_left) {
             TTL3HardwareManager.leftArmElbowServo.setPosition(0.5 + MANUAL_ELBOW_SERVO_SPEED);
             TTL3HardwareManager.rightArmElbowServo.setPosition(0.5 + MANUAL_ELBOW_SERVO_SPEED);
-        } else if (gamepad1.dpad_down) {
+        } else if (gamepad1.dpad_right) {
             TTL3HardwareManager.leftArmElbowServo.setPosition(0.5 - MANUAL_ELBOW_SERVO_SPEED);
             TTL3HardwareManager.rightArmElbowServo.setPosition(0.5 - MANUAL_ELBOW_SERVO_SPEED);
         } else {
@@ -92,21 +92,25 @@ public class TTL3TeleOp extends LinearOpMode {
             TTL3HardwareManager.leftArmElbowServo.setPosition(0.5);
         }
 
-        if (gamepad1.dpad_left) {
+        if (gamepad1.dpad_up) {
+            TTL3HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            TTL3HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             TTL3HardwareManager.leftArmBaseMotor.setPower(-MANUAL_BASE_MOTOR_SPEED);
-            TTL3HardwareManager.leftArmBaseMotor.setPower(-MANUAL_BASE_MOTOR_SPEED);
-        } else if (gamepad1.dpad_right) {
+            TTL3HardwareManager.rightArmBaseMotor.setPower(-MANUAL_BASE_MOTOR_SPEED);
+        } else if (gamepad1.dpad_down) {
+            TTL3HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            TTL3HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             TTL3HardwareManager.leftArmBaseMotor.setPower(MANUAL_BASE_MOTOR_SPEED);
-            TTL3HardwareManager.leftArmBaseMotor.setPower(MANUAL_BASE_MOTOR_SPEED);
+            TTL3HardwareManager.rightArmBaseMotor.setPower(MANUAL_BASE_MOTOR_SPEED);
         } else {
             TTL3HardwareManager.leftArmBaseMotor.setPower(0.0);
-            TTL3HardwareManager.leftArmBaseMotor.setPower(0.0);
+            TTL3HardwareManager.rightArmBaseMotor.setPower(0.0);
         }
 
         if (gamepad1.left_bumper) {
             double wristPos = TTL3HardwareManager.armWristServo.getPosition() - WRIST_SERVO_POS_DELTA;
             TTL3HardwareManager.armWristServo.setPosition(wristPos);
-        } else if (gamepad1.right_stick_button) {
+        } else if (gamepad1.right_bumper) {
             double wristPos = TTL3HardwareManager.armWristServo.getPosition() + WRIST_SERVO_POS_DELTA;
             TTL3HardwareManager.armWristServo.setPosition(wristPos);
         }
@@ -145,7 +149,7 @@ public class TTL3TeleOp extends LinearOpMode {
         TTL3HardwareManager.backRightDrive.setPower(-power);
     }
 
-    protected void rotateArmBase(double degrees, double power) {
+    protected void rotateArmBase(double degrees, double power, boolean makeThreadWaitForMotors) {
         TTL3HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         TTL3HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -159,9 +163,22 @@ public class TTL3TeleOp extends LinearOpMode {
         TTL3HardwareManager.leftArmBaseMotor.setPower(power);
         TTL3HardwareManager.rightArmBaseMotor.setPower(power);
 
-        while (opModeIsActive() && !liftMotorsNearTarget()) ;
-        TTL3HardwareManager.leftArmBaseMotor.setPower(0.0);
-        TTL3HardwareManager.rightArmBaseMotor.setPower(0.0);
+        if (makeThreadWaitForMotors) {
+            while (opModeIsActive() && !liftMotorsNearTarget()) ;
+            TTL3HardwareManager.leftArmBaseMotor.setPower(0.0);
+            TTL3HardwareManager.rightArmBaseMotor.setPower(0.0);
+        } else {
+            new Thread() {
+
+                @Override
+                public void run() {
+                    while (opModeIsActive() && !liftMotorsNearTarget()) ;
+                    TTL3HardwareManager.leftArmBaseMotor.setPower(0.0);
+                    TTL3HardwareManager.rightArmBaseMotor.setPower(0.0);
+                }
+
+            }.start();
+        }
     }
 
     private boolean liftMotorsNearTarget() {
@@ -177,12 +194,14 @@ public class TTL3TeleOp extends LinearOpMode {
 
     private void fullyExtendArm() {
         TTL3HardwareManager.armWristServo.setPosition(0.05);
-        rotateArmBase(85, 1.0);
+        rotateArmBase(85, 1.0, true);
     }
 
     private void retractArmToScore() {
-        TTL3HardwareManager.armWristServo.setPosition(0.5);
-        rotateArmBase(-85, 1.0);
+        rotateArmBase(-95, 1.0, false);
+        sleep(1500);
+        TTL3HardwareManager.armWristServo.setPosition(0.65);
+        while (opModeIsActive() && !liftMotorsNearTarget()) ;
     }
 
 }
