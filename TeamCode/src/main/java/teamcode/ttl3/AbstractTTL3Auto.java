@@ -14,7 +14,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
 
     private static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL = 92.2;
     private static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL = 104.0;
-    private static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = -23.3;
+    private static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = -22.7111913357;
     private static final double ARM_MOTOR_TICKS_PER_DEGREE = 6.0;
     private static final int DRIVE_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD = 25;
     private static final int LIFT_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD = 25;
@@ -23,7 +23,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     /**
      * In pixels.
      */
-    private static final float MINERAL_OUT_OF_BOUNDS_THRESHOLD = 500;
+    private static final float MINERAL_OUT_OF_BOUNDS_THRESHOLD = 750;
 
     private TensorFlowManager tfManager;
 
@@ -106,7 +106,6 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
 
     protected void lowerRobotFromLatch() {
         rotateArmBase(85.0, LOWER_POWER);
-        turn(10);
         driveLateral(5.0, 0.5);
         driveVertical(2, 0.5);
         driveLateral(-5.0, 0.5);
@@ -219,8 +218,8 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     protected boolean goldMineralIsStraightAhead() {
-        // sometimes the recognized minerals list is null, so must be checked many times
-        while (true) {
+        // sometimes the recognized minerals list is null or inaccurate, so must be checked many times
+        for (int i = 0; i < 10000; i++) {
             List<Mineral> minerals = this.tfManager.getRecognizedMinerals();
             if (minerals != null) {
                 for (Mineral mineral : minerals) {
@@ -233,7 +232,6 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
                         }
                     }
                 }
-                break;
             }
         }
         return false;
