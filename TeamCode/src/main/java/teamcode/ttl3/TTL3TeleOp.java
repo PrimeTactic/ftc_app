@@ -24,12 +24,17 @@ public class TTL3TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         TTL3HardwareManager.initialize(hardwareMap);
+        lockWristServoPosition();
         waitForStart();
         while (opModeIsActive()) {
             driveInputUpdate();
             armInputUpdate();
             intakeUpdate();
         }
+    }
+
+    private void lockWristServoPosition(){
+        TTL3HardwareManager.armWristServo.setPosition(0.05);
     }
 
     private boolean reducedSpeed;

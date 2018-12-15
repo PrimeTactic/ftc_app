@@ -7,15 +7,16 @@ public class DepotSideTTL3Auto extends AbstractTTL3Auto {
 
     @Override
     protected void run() {
-        lowerRobotFromLatch();
-        knockGold();
-        driveVertical(28.0, 1.0);
-        releaseMarker();
-        driveVertical(-5.0, 1.0);
-        driveVertical(5.0, 1.0);
-        driveVertical(-48, 1.0);
-        fullyExtendArm();
-        TTL3HardwareManager.intakeServo.setPosition(0.0);
+        turn(1080);
+//        lowerRobotFromLatch();
+//        knockGold();
+//        driveVertical(28.0, 1.0);
+//        releaseMarker();
+//        driveVertical(-5.0, 1.0);
+//        driveVertical(5.0, 1.0);
+//        driveVertical(-48, 1.0);
+//        fullyExtendArm();
+//        TTL3HardwareManager.intakeServo.setPosition(0.0);
     }
 
     private void knockGold() {

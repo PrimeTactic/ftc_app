@@ -67,10 +67,10 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
         zeroDriveMotorPower();
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL);
 
-        TTL3HardwareManager.frontLeftDrive.setTargetPosition(-ticks);
-        TTL3HardwareManager.frontRightDrive.setTargetPosition(ticks);
-        TTL3HardwareManager.backLeftDrive.setTargetPosition(ticks);
-        TTL3HardwareManager.backRightDrive.setTargetPosition(-ticks);
+        TTL3HardwareManager.frontLeftDrive.setTargetPosition(ticks);
+        TTL3HardwareManager.frontRightDrive.setTargetPosition(-ticks);
+        TTL3HardwareManager.backLeftDrive.setTargetPosition(-ticks);
+        TTL3HardwareManager.backRightDrive.setTargetPosition(ticks);
 
         TTL3HardwareManager.frontLeftDrive.setPower(power);
         TTL3HardwareManager.frontRightDrive.setPower(power);
