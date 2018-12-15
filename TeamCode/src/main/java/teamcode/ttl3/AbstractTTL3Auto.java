@@ -219,7 +219,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
 
     protected boolean goldMineralIsStraightAhead() {
         // sometimes the recognized minerals list is null or inaccurate, so must be checked many times
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 500000; i++) {
             List<Mineral> minerals = this.tfManager.getRecognizedMinerals();
             if (minerals != null) {
                 for (Mineral mineral : minerals) {
