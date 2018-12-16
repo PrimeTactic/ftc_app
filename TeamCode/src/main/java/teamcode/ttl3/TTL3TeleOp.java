@@ -18,7 +18,6 @@ public class TTL3TeleOp extends LinearOpMode {
     private static final double ARM_MOTOR_TICKS_PER_DEGREE = 6.0;
     private static final int LIFT_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD = 25;
     private static final double MANUAL_ELBOW_SERVO_SPEED = 0.25;
-    private static final double MANUAL_BASE_MOTOR_SPEED = 1.0;
     private static final double WRIST_SERVO_POS_DELTA = 0.01;
 
     @Override
@@ -33,11 +32,11 @@ public class TTL3TeleOp extends LinearOpMode {
         }
     }
 
-    private void lockWristServoPosition(){
+    private void lockWristServoPosition() {
         TTL3HardwareManager.armWristServo.setPosition(0.05);
     }
 
-    private boolean reducedSpeed;
+    private boolean reducedDriveSpeed;
     private boolean driveSpeedAdjustButtonDownLastUpdate;
 
     private void driveInputUpdate() {
@@ -47,11 +46,11 @@ public class TTL3TeleOp extends LinearOpMode {
             }
         } else {
             if (gamepad1.right_stick_button) {
-                reducedSpeed = !reducedSpeed;
+                reducedDriveSpeed = !reducedDriveSpeed;
                 driveSpeedAdjustButtonDownLastUpdate = true;
             }
         }
-        float driveSpeedMultiplier = reducedSpeed ? 0.25f : 1.0f;
+        float driveSpeedMultiplier = reducedDriveSpeed ? 0.5f : 1.0f;
 
         if (Math.abs(gamepad1.right_stick_y) > MIN_DRIVE_Y_INPUT) {
             float driveVerticalPower = gamepad1.right_stick_y * driveSpeedMultiplier;
@@ -66,8 +65,22 @@ public class TTL3TeleOp extends LinearOpMode {
     }
 
     private boolean armIsFullyExtended = true;
+    private boolean reducedArmBaseSpeed = true;
+    private boolean armBaseSpeedAdjustButtonDownLastUpdate;
 
     private void armInputUpdate() {
+        if (armBaseSpeedAdjustButtonDownLastUpdate) {
+            if (!gamepad1.left_stick_button) {
+                armBaseSpeedAdjustButtonDownLastUpdate = false;
+            }
+        } else {
+            if (gamepad1.left_stick_button) {
+                reducedArmBaseSpeed = !reducedArmBaseSpeed;
+                armBaseSpeedAdjustButtonDownLastUpdate = true;
+            }
+        }
+        float armBaseMotorSpeed = reducedArmBaseSpeed ? 0.5f : 1.0f;
+
         if (gamepad1.a) {
             if (!armIsFullyExtended) {
                 fullyExtendArm();
@@ -100,13 +113,13 @@ public class TTL3TeleOp extends LinearOpMode {
         if (gamepad1.dpad_up) {
             TTL3HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             TTL3HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            TTL3HardwareManager.leftArmBaseMotor.setPower(-MANUAL_BASE_MOTOR_SPEED);
-            TTL3HardwareManager.rightArmBaseMotor.setPower(-MANUAL_BASE_MOTOR_SPEED);
+            TTL3HardwareManager.leftArmBaseMotor.setPower(-armBaseMotorSpeed);
+            TTL3HardwareManager.rightArmBaseMotor.setPower(-armBaseMotorSpeed);
         } else if (gamepad1.dpad_down) {
             TTL3HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             TTL3HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            TTL3HardwareManager.leftArmBaseMotor.setPower(MANUAL_BASE_MOTOR_SPEED);
-            TTL3HardwareManager.rightArmBaseMotor.setPower(MANUAL_BASE_MOTOR_SPEED);
+            TTL3HardwareManager.leftArmBaseMotor.setPower(armBaseMotorSpeed);
+            TTL3HardwareManager.rightArmBaseMotor.setPower(armBaseMotorSpeed);
         } else {
             TTL3HardwareManager.leftArmBaseMotor.setPower(0.0);
             TTL3HardwareManager.rightArmBaseMotor.setPower(0.0);
@@ -205,6 +218,19 @@ public class TTL3TeleOp extends LinearOpMode {
     private void retractArmToScore() {
         rotateArmBase(-95, 1.0, false);
         sleep(1500);
+        new Thread() {
+
+            @Override
+            public void run() {
+                TTL3HardwareManager.leftArmElbowServo.setPosition(0.75);
+                TTL3HardwareManager.rightArmElbowServo.setPosition(0.75);
+
+                TTL3TeleOp.this.sleep(500);
+                TTL3HardwareManager.leftArmElbowServo.setPosition(0.5);
+                TTL3HardwareManager.rightArmElbowServo.setPosition(0.5);
+            }
+
+        };
         TTL3HardwareManager.armWristServo.setPosition(0.65);
         while (opModeIsActive() && !liftMotorsNearTarget()) ;
     }

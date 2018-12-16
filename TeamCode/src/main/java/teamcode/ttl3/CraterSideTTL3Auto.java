@@ -19,24 +19,26 @@ public class CraterSideTTL3Auto extends AbstractTTL3Auto {
     }
 
     private void knockGold() {
+        // allows the robot to stabilize
+        sleep(500);
         if (goldMineralIsStraightAhead()) {
             // gold is in center
             driveVertical(22.0, 1.0);
             driveVertical(-8.0, 1.0);
             driveLateral(-35.0, 1.0);
         } else {
-            turn(-15.0);
-            // allows the robot to stabilize after turning
-            sleep(1000);
+            turn(-20.0);
+            // allows the robot to stabilize
+            sleep(500);
             if (goldMineralIsStraightAhead()) {
                 // gold is on left side
                 driveVertical(24, 1.0);
-                turn(15.0);
+                turn(20.0);
                 driveVertical(-8.0, 0.75);
                 driveLateral(-20, 1.0);
             } else {
                 // gold was not detected or is on right side
-                turn(45.0);
+                turn(50.0);
                 driveVertical(26.0, 1.0);
                 turn(-30.0);
                 driveVertical(-8.0, 0.75);

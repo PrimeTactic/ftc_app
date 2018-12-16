@@ -23,7 +23,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     /**
      * In pixels.
      */
-    private static final float MINERAL_OUT_OF_BOUNDS_THRESHOLD = 750;
+    private static final float MINERAL_OUT_OF_BOUNDS_THRESHOLD = 200;
 
     private TensorFlowManager tfManager;
 
