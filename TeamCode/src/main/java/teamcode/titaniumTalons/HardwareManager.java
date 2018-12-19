@@ -1,11 +1,14 @@
-package teamcode.ttl3;
+package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-class TTL3HardwareManager {
+/**
+ * A class that provides references to the hardware components of the robot.
+ */
+public final class HardwareManager {
 
     private static final String FRONT_LEFT_DRIVE_NAME = "FrontLeftDrive";
     private static final String FRONT_RIGHT_DRIVE_NAME = "FrontRightDrive";
@@ -46,17 +49,17 @@ class TTL3HardwareManager {
         frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        leftArmBaseMotor = hardwareMap.get(DcMotor.class, LEFT_ARM_BASE_MOTOR_NAME);
-        rightArmBaseMotor = hardwareMap.get(DcMotor.class, RIGHT_ARM_BASE_MOTOR_NAME);
-        leftArmElbowServo = hardwareMap.get(Servo.class, LEFT_ARM_ELBOW_SERVO_NAME);
-        rightArmElbowServo = hardwareMap.get(Servo.class, RIGHT_ARM_ELBOW_SERVO_NAME);
-        armWristServo = hardwareMap.get(Servo.class, ARM_WRIST_SERVO_NAME);
-        intakeServo = hardwareMap.get(Servo.class, INTAKE_SERVO_NAME);
-
-        rightArmElbowServo.setDirection(Servo.Direction.REVERSE);
-
-        markerClawServo = hardwareMap.get(Servo.class, MARKER_CLAW_SERVO_NAME);
+//
+//        leftArmBaseMotor = hardwareMap.get(DcMotor.class, LEFT_ARM_BASE_MOTOR_NAME);
+//        rightArmBaseMotor = hardwareMap.get(DcMotor.class, RIGHT_ARM_BASE_MOTOR_NAME);
+//        leftArmElbowServo = hardwareMap.get(Servo.class, LEFT_ARM_ELBOW_SERVO_NAME);
+//        rightArmElbowServo = hardwareMap.get(Servo.class, RIGHT_ARM_ELBOW_SERVO_NAME);
+//        armWristServo = hardwareMap.get(Servo.class, ARM_WRIST_SERVO_NAME);
+//        intakeServo = hardwareMap.get(Servo.class, INTAKE_SERVO_NAME);
+//
+//        rightArmElbowServo.setDirection(Servo.Direction.REVERSE);
+//
+//        markerClawServo = hardwareMap.get(Servo.class, MARKER_CLAW_SERVO_NAME);
     }
 
 }

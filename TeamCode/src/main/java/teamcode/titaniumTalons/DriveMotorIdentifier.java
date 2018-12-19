@@ -1,4 +1,4 @@
-package teamcode.ttl3;
+package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,29 +11,29 @@ public class DriveMotorIdentifier extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        TTL3HardwareManager.initialize(hardwareMap);
+        HardwareManager.initialize(hardwareMap);
         updateTelemetry();
         waitForStart();
-        TTL3HardwareManager.frontLeftDrive.setPower(POWER);
+        HardwareManager.frontLeftDrive.setPower(POWER);
         updateTelemetry();
         sleep(SLEEP_TIME);
-        TTL3HardwareManager.frontRightDrive.setPower(POWER);
+        HardwareManager.frontRightDrive.setPower(POWER);
         updateTelemetry();
         sleep(SLEEP_TIME);
-        TTL3HardwareManager.backLeftDrive.setPower(POWER);
+        HardwareManager.backLeftDrive.setPower(POWER);
         updateTelemetry();
         sleep(SLEEP_TIME);
-        TTL3HardwareManager.backRightDrive.setPower(POWER);
+        HardwareManager.backRightDrive.setPower(POWER);
         updateTelemetry();
         sleep(SLEEP_TIME);
         updateTelemetry();
     }
 
     private void updateTelemetry() {
-        telemetry.addData("front left power", TTL3HardwareManager.frontLeftDrive.getPower());
-        telemetry.addData("front right power", TTL3HardwareManager.frontRightDrive.getPower());
-        telemetry.addData("back left power", TTL3HardwareManager.backLeftDrive.getPower());
-        telemetry.addData("back right power", TTL3HardwareManager.backRightDrive.getPower());
+        telemetry.addData("front left power", HardwareManager.frontLeftDrive.getPower());
+        telemetry.addData("front right power", HardwareManager.frontRightDrive.getPower());
+        telemetry.addData("back left power", HardwareManager.backLeftDrive.getPower());
+        telemetry.addData("back right power", HardwareManager.backRightDrive.getPower());
         telemetry.update();
     }
 

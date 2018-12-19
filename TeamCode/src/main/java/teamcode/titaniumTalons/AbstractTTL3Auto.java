@@ -1,4 +1,4 @@
-package teamcode.ttl3;
+package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -38,7 +38,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     private void initialize() {
-        TTL3HardwareManager.initialize(hardwareMap);
+        HardwareManager.initialize(hardwareMap);
         resetDriveEncoders();
         this.tfManager = new TensorFlowManager(this.hardwareMap);
         this.tfManager.initialize();
@@ -48,15 +48,15 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
         zeroDriveMotorPower();
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL);
 
-        TTL3HardwareManager.frontLeftDrive.setTargetPosition(ticks);
-        TTL3HardwareManager.frontRightDrive.setTargetPosition(ticks);
-        TTL3HardwareManager.backLeftDrive.setTargetPosition(ticks);
-        TTL3HardwareManager.backRightDrive.setTargetPosition(ticks);
+        HardwareManager.frontLeftDrive.setTargetPosition(ticks);
+        HardwareManager.frontRightDrive.setTargetPosition(ticks);
+        HardwareManager.backLeftDrive.setTargetPosition(ticks);
+        HardwareManager.backRightDrive.setTargetPosition(ticks);
 
-        TTL3HardwareManager.frontLeftDrive.setPower(power);
-        TTL3HardwareManager.frontRightDrive.setPower(power);
-        TTL3HardwareManager.backLeftDrive.setPower(power);
-        TTL3HardwareManager.backRightDrive.setPower(power);
+        HardwareManager.frontLeftDrive.setPower(power);
+        HardwareManager.frontRightDrive.setPower(power);
+        HardwareManager.backLeftDrive.setPower(power);
+        HardwareManager.backRightDrive.setPower(power);
 
         while (!driveMotorsNearTarget() && opModeIsActive()) ;
         zeroDriveMotorPower();
@@ -67,15 +67,15 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
         zeroDriveMotorPower();
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL);
 
-        TTL3HardwareManager.frontLeftDrive.setTargetPosition(ticks);
-        TTL3HardwareManager.frontRightDrive.setTargetPosition(-ticks);
-        TTL3HardwareManager.backLeftDrive.setTargetPosition(-ticks);
-        TTL3HardwareManager.backRightDrive.setTargetPosition(ticks);
+        HardwareManager.frontLeftDrive.setTargetPosition(ticks);
+        HardwareManager.frontRightDrive.setTargetPosition(-ticks);
+        HardwareManager.backLeftDrive.setTargetPosition(-ticks);
+        HardwareManager.backRightDrive.setTargetPosition(ticks);
 
-        TTL3HardwareManager.frontLeftDrive.setPower(power);
-        TTL3HardwareManager.frontRightDrive.setPower(power);
-        TTL3HardwareManager.backLeftDrive.setPower(power);
-        TTL3HardwareManager.backRightDrive.setPower(power);
+        HardwareManager.frontLeftDrive.setPower(power);
+        HardwareManager.frontRightDrive.setPower(power);
+        HardwareManager.backLeftDrive.setPower(power);
+        HardwareManager.backRightDrive.setPower(power);
 
         while (!driveMotorsNearTarget() && opModeIsActive()) ;
         zeroDriveMotorPower();
@@ -89,15 +89,15 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
         zeroDriveMotorPower();
         int ticks = (int) (degrees * DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED);
 
-        TTL3HardwareManager.frontLeftDrive.setTargetPosition(-ticks);
-        TTL3HardwareManager.frontRightDrive.setTargetPosition(ticks);
-        TTL3HardwareManager.backLeftDrive.setTargetPosition(-ticks);
-        TTL3HardwareManager.backRightDrive.setTargetPosition(ticks);
+        HardwareManager.frontLeftDrive.setTargetPosition(-ticks);
+        HardwareManager.frontRightDrive.setTargetPosition(ticks);
+        HardwareManager.backLeftDrive.setTargetPosition(-ticks);
+        HardwareManager.backRightDrive.setTargetPosition(ticks);
 
-        TTL3HardwareManager.frontLeftDrive.setPower(TURN_POWER);
-        TTL3HardwareManager.frontRightDrive.setPower(TURN_POWER);
-        TTL3HardwareManager.backLeftDrive.setPower(TURN_POWER);
-        TTL3HardwareManager.backRightDrive.setPower(TURN_POWER);
+        HardwareManager.frontLeftDrive.setPower(TURN_POWER);
+        HardwareManager.frontRightDrive.setPower(TURN_POWER);
+        HardwareManager.backLeftDrive.setPower(TURN_POWER);
+        HardwareManager.backRightDrive.setPower(TURN_POWER);
 
         while (opModeIsActive() && !driveMotorsNearTarget()) ;
         resetDriveEncoders();
@@ -112,54 +112,54 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     protected void rotateArmBase(double degrees, double power) {
-        TTL3HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        TTL3HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        TTL3HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        TTL3HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         int ticks = (int) (degrees * ARM_MOTOR_TICKS_PER_DEGREE);
-        TTL3HardwareManager.leftArmBaseMotor.setTargetPosition(ticks);
-        TTL3HardwareManager.rightArmBaseMotor.setTargetPosition(ticks);
+        HardwareManager.leftArmBaseMotor.setTargetPosition(ticks);
+        HardwareManager.rightArmBaseMotor.setTargetPosition(ticks);
 
-        TTL3HardwareManager.leftArmBaseMotor.setPower(power);
-        TTL3HardwareManager.rightArmBaseMotor.setPower(power);
+        HardwareManager.leftArmBaseMotor.setPower(power);
+        HardwareManager.rightArmBaseMotor.setPower(power);
 
         while (opModeIsActive() && !liftMotorsNearTarget()) ;
-        TTL3HardwareManager.leftArmBaseMotor.setPower(0.0);
-        TTL3HardwareManager.rightArmBaseMotor.setPower(0.0);
+        HardwareManager.leftArmBaseMotor.setPower(0.0);
+        HardwareManager.rightArmBaseMotor.setPower(0.0);
     }
 
     protected void zeroDriveMotorPower() {
-        TTL3HardwareManager.frontLeftDrive.setPower(0.0);
-        TTL3HardwareManager.frontRightDrive.setPower(0.0);
-        TTL3HardwareManager.backLeftDrive.setPower(0.0);
-        TTL3HardwareManager.backRightDrive.setPower(0.0);
+        HardwareManager.frontLeftDrive.setPower(0.0);
+        HardwareManager.frontRightDrive.setPower(0.0);
+        HardwareManager.backLeftDrive.setPower(0.0);
+        HardwareManager.backRightDrive.setPower(0.0);
     }
 
     protected void resetDriveEncoders() {
-        TTL3HardwareManager.frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        TTL3HardwareManager.frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        TTL3HardwareManager.backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        TTL3HardwareManager.backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        TTL3HardwareManager.frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        TTL3HardwareManager.frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        TTL3HardwareManager.backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        TTL3HardwareManager.backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        HardwareManager.frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        HardwareManager.frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        HardwareManager.backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        HardwareManager.backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private boolean driveMotorsNearTarget() {
-        int targetFrontLeftDriveMotorPos = TTL3HardwareManager.frontLeftDrive.getTargetPosition();
-        int targetFrontRightDriveMotorPos = TTL3HardwareManager.frontRightDrive.getTargetPosition();
-        int targetBackLeftDriveMotorPos = TTL3HardwareManager.backLeftDrive.getTargetPosition();
-        int targetBackRightDriveMotorPos = TTL3HardwareManager.backRightDrive.getTargetPosition();
+        int targetFrontLeftDriveMotorPos = HardwareManager.frontLeftDrive.getTargetPosition();
+        int targetFrontRightDriveMotorPos = HardwareManager.frontRightDrive.getTargetPosition();
+        int targetBackLeftDriveMotorPos = HardwareManager.backLeftDrive.getTargetPosition();
+        int targetBackRightDriveMotorPos = HardwareManager.backRightDrive.getTargetPosition();
 
 
-        int currentFrontLeftDriveMotorPos = TTL3HardwareManager.frontLeftDrive.getCurrentPosition();
-        int currentFrontRightDriveMotorPos = TTL3HardwareManager.frontRightDrive.getCurrentPosition();
-        int currentBackLeftDriveMotorPos = TTL3HardwareManager.backLeftDrive.getCurrentPosition();
-        int currentBackRightDriveMotorPos = TTL3HardwareManager.backRightDrive.getCurrentPosition();
+        int currentFrontLeftDriveMotorPos = HardwareManager.frontLeftDrive.getCurrentPosition();
+        int currentFrontRightDriveMotorPos = HardwareManager.frontRightDrive.getCurrentPosition();
+        int currentBackLeftDriveMotorPos = HardwareManager.backLeftDrive.getCurrentPosition();
+        int currentBackRightDriveMotorPos = HardwareManager.backRightDrive.getCurrentPosition();
 
         return Math.abs(currentFrontLeftDriveMotorPos - targetFrontLeftDriveMotorPos) < DRIVE_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD
                 && Math.abs(currentFrontRightDriveMotorPos - targetFrontRightDriveMotorPos) < DRIVE_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD
@@ -168,48 +168,48 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     protected void fullyExtendArm() {
-        TTL3HardwareManager.leftArmElbowServo.setPosition(1.0);
-        TTL3HardwareManager.rightArmElbowServo.setPosition(1.0);
+        HardwareManager.leftArmElbowServo.setPosition(1.0);
+        HardwareManager.rightArmElbowServo.setPosition(1.0);
         Timer timer = new Timer();
         TimerTask stopElbowServoTask = new TimerTask() {
 
             @Override
             public void run() {
-                TTL3HardwareManager.leftArmElbowServo.setPosition(0.5);
-                TTL3HardwareManager.rightArmElbowServo.setPosition(0.5);
+                HardwareManager.leftArmElbowServo.setPosition(0.5);
+                HardwareManager.rightArmElbowServo.setPosition(0.5);
             }
 
         };
         timer.schedule(stopElbowServoTask, 3625);
 
-        TTL3HardwareManager.armWristServo.setPosition(0.05);
+        HardwareManager.armWristServo.setPosition(0.05);
         rotateArmBase(85, 1.0);
     }
 
     private boolean liftMotorsNearTarget() {
-        int targetLeftLiftMotorPos = TTL3HardwareManager.leftArmBaseMotor.getTargetPosition();
-        int targetRightLiftMotorPos = TTL3HardwareManager.rightArmBaseMotor.getTargetPosition();
+        int targetLeftLiftMotorPos = HardwareManager.leftArmBaseMotor.getTargetPosition();
+        int targetRightLiftMotorPos = HardwareManager.rightArmBaseMotor.getTargetPosition();
 
-        int currentLeftLiftMotorPos = TTL3HardwareManager.leftArmBaseMotor.getCurrentPosition();
-        int currentRightLiftMotorPos = TTL3HardwareManager.rightArmBaseMotor.getCurrentPosition();
+        int currentLeftLiftMotorPos = HardwareManager.leftArmBaseMotor.getCurrentPosition();
+        int currentRightLiftMotorPos = HardwareManager.rightArmBaseMotor.getCurrentPosition();
 
         return Math.abs(currentLeftLiftMotorPos - targetLeftLiftMotorPos) < LIFT_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD
                 && Math.abs(currentRightLiftMotorPos - targetRightLiftMotorPos) < LIFT_MOTOR_TICKS_AWAY_FROM_TARGET_THRESHOLD;
     }
 
     private void clenchArm() {
-        TTL3HardwareManager.leftArmElbowServo.setPosition(0.5);
-        TTL3HardwareManager.rightArmElbowServo.setPosition(0.5);
-        TTL3HardwareManager.armWristServo.setPosition(0.95);
+        HardwareManager.leftArmElbowServo.setPosition(0.5);
+        HardwareManager.rightArmElbowServo.setPosition(0.5);
+        HardwareManager.armWristServo.setPosition(0.95);
     }
 
     protected void clenchMarkerClaw() {
-        TTL3HardwareManager.markerClawServo.setPosition(1.0);
+        HardwareManager.markerClawServo.setPosition(1.0);
         waitForMarkerClawServo();
     }
 
     protected void releaseMarker() {
-        TTL3HardwareManager.markerClawServo.setPosition(0.0);
+        HardwareManager.markerClawServo.setPosition(0.0);
         waitForMarkerClawServo();
     }
 

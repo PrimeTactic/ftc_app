@@ -1,4 +1,4 @@
-package teamcode.ttl3;
+package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -15,7 +15,7 @@ public class CraterSideTTL3Auto extends AbstractTTL3Auto {
         releaseMarker();
         driveVertical(-60, 1.0);
         fullyExtendArm();
-        TTL3HardwareManager.intakeServo.setPosition(0.0);
+        HardwareManager.intakeServo.setPosition(0.0);
     }
 
     private void knockGold() {
