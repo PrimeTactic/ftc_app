@@ -34,7 +34,6 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
         clenchMarkerClaw();
         waitForStart();
         run();
-        while (opModeIsActive()) ;
     }
 
     private void initialize() {
@@ -168,20 +167,6 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     protected void fullyExtendArm() {
-        HardwareManager.leftArmElbowServo.setPosition(1.0);
-        HardwareManager.rightArmElbowServo.setPosition(1.0);
-        Timer timer = new Timer();
-        TimerTask stopElbowServoTask = new TimerTask() {
-
-            @Override
-            public void run() {
-                HardwareManager.leftArmElbowServo.setPosition(0.5);
-                HardwareManager.rightArmElbowServo.setPosition(0.5);
-            }
-
-        };
-        timer.schedule(stopElbowServoTask, 3625);
-
         HardwareManager.armWristServo.setPosition(0.05);
         rotateArmBase(85, 1.0);
     }
@@ -198,8 +183,6 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     private void clenchArm() {
-        HardwareManager.leftArmElbowServo.setPosition(0.5);
-        HardwareManager.rightArmElbowServo.setPosition(0.5);
         HardwareManager.armWristServo.setPosition(0.95);
     }
 

@@ -16,10 +16,9 @@ public final class HardwareManager {
     private static final String BACK_RIGHT_DRIVE_NAME = "BackRightDrive";
     private static final String LEFT_ARM_BASE_MOTOR_NAME = "LiftMotorL";
     private static final String RIGHT_ARM_BASE_MOTOR_NAME = "LiftMotorR";
-    private static final String LEFT_ARM_ELBOW_SERVO_NAME = "LeftArmElbowServo";
-    private static final String RIGHT_ARM_ELBOW_SERVO_NAME = "RightArmElbowServo";
+    private static final String ARM_ELBOW_MOTOR_NAME = "ArmElbowMotor";
     private static final String ARM_WRIST_SERVO_NAME = "ArmWristServo";
-    private static final String INTAKE_SERVO_NAME = "IntakeServo";
+    private static final String INTAKE_MOTOR_NAME = "IntakeMotor";
     private static final String MARKER_CLAW_SERVO_NAME = "MarkerClawServo";
 
     // drive hardware
@@ -31,10 +30,9 @@ public final class HardwareManager {
     // arm hardware
     public static DcMotor leftArmBaseMotor;
     public static DcMotor rightArmBaseMotor;
-    public static Servo leftArmElbowServo;
-    public static Servo rightArmElbowServo;
+    public static DcMotor armElbowMotor;
     public static Servo armWristServo;
-    public static Servo intakeServo;
+    public static DcMotor intakeMotor;
 
     // marker
     public static Servo markerClawServo;
@@ -49,15 +47,12 @@ public final class HardwareManager {
         frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-//
+
 //        leftArmBaseMotor = hardwareMap.get(DcMotor.class, LEFT_ARM_BASE_MOTOR_NAME);
 //        rightArmBaseMotor = hardwareMap.get(DcMotor.class, RIGHT_ARM_BASE_MOTOR_NAME);
-//        leftArmElbowServo = hardwareMap.get(Servo.class, LEFT_ARM_ELBOW_SERVO_NAME);
-//        rightArmElbowServo = hardwareMap.get(Servo.class, RIGHT_ARM_ELBOW_SERVO_NAME);
+//        armElbowMotor = hardwareMap.get(DcMotor.class, ARM_ELBOW_MOTOR_NAME);
 //        armWristServo = hardwareMap.get(Servo.class, ARM_WRIST_SERVO_NAME);
-//        intakeServo = hardwareMap.get(Servo.class, INTAKE_SERVO_NAME);
-//
-//        rightArmElbowServo.setDirection(Servo.Direction.REVERSE);
+//        intakeMotor = hardwareMap.get(DcMotor.class, INTAKE_MOTOR_NAME);
 //
 //        markerClawServo = hardwareMap.get(Servo.class, MARKER_CLAW_SERVO_NAME);
     }

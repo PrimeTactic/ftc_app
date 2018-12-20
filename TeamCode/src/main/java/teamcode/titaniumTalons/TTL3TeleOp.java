@@ -25,7 +25,7 @@ public class TTL3TeleOp extends LinearOpMode {
         lockWristServoPosition();
         waitForStart();
         while (opModeIsActive()) {
-            driveInputUpdate();
+           // driveInputUpdate();
             armInputUpdate();
             intakeUpdate();
         }
@@ -99,14 +99,11 @@ public class TTL3TeleOp extends LinearOpMode {
         }
 
         if (gamepad1.dpad_left) {
-            HardwareManager.leftArmElbowServo.setPosition(0.5 + MANUAL_ELBOW_SERVO_SPEED);
-            HardwareManager.rightArmElbowServo.setPosition(0.5 + MANUAL_ELBOW_SERVO_SPEED);
+            HardwareManager.armElbowMotor.setPower(-MANUAL_ELBOW_SERVO_SPEED);
         } else if (gamepad1.dpad_right) {
-            HardwareManager.leftArmElbowServo.setPosition(0.5 - MANUAL_ELBOW_SERVO_SPEED);
-            HardwareManager.rightArmElbowServo.setPosition(0.5 - MANUAL_ELBOW_SERVO_SPEED);
+            HardwareManager.armElbowMotor.setPower(MANUAL_ELBOW_SERVO_SPEED);
         } else {
-            HardwareManager.rightArmElbowServo.setPosition(0.5);
-            HardwareManager.leftArmElbowServo.setPosition(0.5);
+            HardwareManager.armElbowMotor.setPower(0.0);
         }
 
         if (gamepad1.dpad_up) {
@@ -136,13 +133,15 @@ public class TTL3TeleOp extends LinearOpMode {
     private void intakeUpdate() {
         double intakePower;
         if (gamepad1.left_trigger > 0.0f) {
-            intakePower = 1.0;
+            // in
+            intakePower = -1.0;
         } else if (gamepad1.right_trigger > 0.0f) {
-            intakePower = 0.0;
+            // out
+            intakePower = 1.0;
         } else {
-            intakePower = 0.5;
+            intakePower = 0.0;
         }
-        HardwareManager.intakeServo.setPosition(intakePower);
+        HardwareManager.intakeMotor.setPower(intakePower);
     }
 
     private void driveVertical(double power) {
@@ -217,19 +216,6 @@ public class TTL3TeleOp extends LinearOpMode {
     private void retractArmToScore() {
         rotateArmBase(-95, 1.0, false);
         sleep(1500);
-        new Thread() {
-
-            @Override
-            public void run() {
-                HardwareManager.leftArmElbowServo.setPosition(0.75);
-                HardwareManager.rightArmElbowServo.setPosition(0.75);
-
-                TTL3TeleOp.this.sleep(500);
-                HardwareManager.leftArmElbowServo.setPosition(0.5);
-                HardwareManager.rightArmElbowServo.setPosition(0.5);
-            }
-
-        };
         HardwareManager.armWristServo.setPosition(0.65);
         while (opModeIsActive() && !liftMotorsNearTarget()) ;
     }

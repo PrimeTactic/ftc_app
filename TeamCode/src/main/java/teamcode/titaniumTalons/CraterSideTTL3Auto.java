@@ -15,7 +15,7 @@ public class CraterSideTTL3Auto extends AbstractTTL3Auto {
         releaseMarker();
         driveVertical(-60, 1.0);
         fullyExtendArm();
-        HardwareManager.intakeServo.setPosition(0.0);
+        HardwareManager.intakeMotor.setPower(-1.0);
     }
 
     private void knockGold() {

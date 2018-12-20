@@ -20,13 +20,11 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
     }
 
     private void driveInputUpdate() {
-        float driveX = -gamepad1.right_stick_x;
-        float driveY = -gamepad1.right_stick_y;
-        Vector2 driveVector = new Vector2(driveX, driveY);
-        Drive.driveIndefinite(driveVector);
-
-        double turnPower = gamepad1.left_stick_x;
-        Drive.turnIndefinite(turnPower);
+        float driveX = gamepad1.right_stick_x;
+        float driveY = gamepad1.right_stick_y;
+        Vector2 driveVector = new Vector2(-driveX, driveY);
+        double turnSpeed = gamepad1.left_stick_x;
+        Drive.driveIndefinite(driveVector, turnSpeed);
     }
 
 }

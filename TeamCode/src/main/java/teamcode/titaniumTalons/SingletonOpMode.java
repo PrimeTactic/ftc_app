@@ -16,6 +16,13 @@ public abstract class SingletonOpMode extends LinearOpMode {
     }
 
     /**
+     * Returns whether the current OpMode instance is active.
+     */
+    public static boolean active() {
+        return instance.opModeIsActive();
+    }
+
+    /**
      * Invoked when the 'init' button is pressed on the driver phone.
      */
     protected abstract void onInitialize();
