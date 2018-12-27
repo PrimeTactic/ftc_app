@@ -1,8 +1,8 @@
-package teamcode.titaniumTalons;
+package teamcode.obsolete;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "TTL3AutoDriveDiagnostics", group = "Linear OpMode")
+// @Autonomous(name = "TTL3AutoDriveDiagnostics", group = "Linear OpMode")
 public class TTL3AutoDriveDiagnostics extends AbstractTTL3Auto {
 
     @Override

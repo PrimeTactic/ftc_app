@@ -1,14 +1,13 @@
-package teamcode.titaniumTalons;
+package teamcode.obsolete;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import teamcode.tensorFlow.Mineral;
 import teamcode.tensorFlow.TensorFlowManager;
+import teamcode.titaniumTalons.HardwareManager;
 
 public abstract class AbstractTTL3Auto extends LinearOpMode {
 
@@ -167,7 +166,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     protected void fullyExtendArm() {
-        HardwareManager.armWristServo.setPosition(0.05);
+        HardwareManager.rightArmWristServo.setPosition(0.05);
         rotateArmBase(85, 1.0);
     }
 
@@ -183,7 +182,7 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     private void clenchArm() {
-        HardwareManager.armWristServo.setPosition(0.95);
+        HardwareManager.rightArmWristServo.setPosition(0.95);
     }
 
     protected void clenchMarkerClaw() {

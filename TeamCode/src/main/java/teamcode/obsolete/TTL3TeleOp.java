@@ -1,9 +1,11 @@
-package teamcode.titaniumTalons;
+package teamcode.obsolete;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TTL3TeleOp", group = "Linear OpMode")
+import teamcode.titaniumTalons.HardwareManager;
+
+// @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TTL3TeleOp", group = "Linear OpMode")
 public class TTL3TeleOp extends LinearOpMode {
 
     /**
@@ -32,7 +34,7 @@ public class TTL3TeleOp extends LinearOpMode {
     }
 
     private void lockWristServoPosition() {
-        HardwareManager.armWristServo.setPosition(0.05);
+        HardwareManager.rightArmWristServo.setPosition(0.05);
     }
 
     private boolean reducedDriveSpeed;
@@ -93,9 +95,9 @@ public class TTL3TeleOp extends LinearOpMode {
         }
 
         if (gamepad1.x) {
-            HardwareManager.armWristServo.setPosition(0.05);
+            HardwareManager.rightArmWristServo.setPosition(0.05);
         } else if (gamepad1.b) {
-            HardwareManager.armWristServo.setPosition(0.95);
+            HardwareManager.rightArmWristServo.setPosition(0.95);
         }
 
         if (gamepad1.dpad_left) {
@@ -122,11 +124,11 @@ public class TTL3TeleOp extends LinearOpMode {
         }
 
         if (gamepad1.left_bumper) {
-            double wristPos = HardwareManager.armWristServo.getPosition() - WRIST_SERVO_POS_DELTA;
-            HardwareManager.armWristServo.setPosition(wristPos);
+            double wristPos = HardwareManager.rightArmWristServo.getPosition() - WRIST_SERVO_POS_DELTA;
+            HardwareManager.rightArmWristServo.setPosition(wristPos);
         } else if (gamepad1.right_bumper) {
-            double wristPos = HardwareManager.armWristServo.getPosition() + WRIST_SERVO_POS_DELTA;
-            HardwareManager.armWristServo.setPosition(wristPos);
+            double wristPos = HardwareManager.rightArmWristServo.getPosition() + WRIST_SERVO_POS_DELTA;
+            HardwareManager.rightArmWristServo.setPosition(wristPos);
         }
     }
 
@@ -209,14 +211,14 @@ public class TTL3TeleOp extends LinearOpMode {
     }
 
     private void fullyExtendArm() {
-        HardwareManager.armWristServo.setPosition(0.05);
+        HardwareManager.rightArmWristServo.setPosition(0.05);
         rotateArmBase(85, 1.0, true);
     }
 
     private void retractArmToScore() {
         rotateArmBase(-95, 1.0, false);
         sleep(1500);
-        HardwareManager.armWristServo.setPosition(0.65);
+        HardwareManager.rightArmWristServo.setPosition(0.65);
         while (opModeIsActive() && !liftMotorsNearTarget()) ;
     }
 

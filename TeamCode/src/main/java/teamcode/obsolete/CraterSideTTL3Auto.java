@@ -1,8 +1,10 @@
-package teamcode.titaniumTalons;
+package teamcode.obsolete;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "CraterSideTTL3Auto", group = "Linear OpMode")
+import teamcode.titaniumTalons.HardwareManager;
+
+// @Autonomous(name = "CraterSideTTL3Auto", group = "Linear OpMode")
 public class CraterSideTTL3Auto extends AbstractTTL3Auto {
 
     @Override

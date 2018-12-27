@@ -1,9 +1,11 @@
-package teamcode.titaniumTalons;
+package teamcode.obsolete;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "DriveMotorIdentifier", group = "Linear OpMode")
+import teamcode.titaniumTalons.HardwareManager;
+
+// @Autonomous(name = "DriveMotorIdentifier", group = "Linear OpMode")
 public class DriveMotorIdentifier extends LinearOpMode {
 
     private static final double POWER = 0.25;
