@@ -24,8 +24,9 @@ public final class Arm {
         if (status == ArmStatus.EXTENDED) {
             throw new IllegalStateException("Arm is already extended!");
         }
+        closeIntakeGate();
         setWristServoPos(0.65);
-        rotateArmBaseDefinite(100.0, 1.0);
+        rotateArmBaseDefinite(105.0, 1.0);
         status = ArmStatus.EXTENDED;
     }
 
@@ -34,7 +35,7 @@ public final class Arm {
             throw new IllegalStateException("Arm is already retracted!");
         }
         setWristServoPos(0.3);
-        rotateArmBaseDefinite(-100.0, 1.0);
+        rotateArmBaseDefinite(-105.0, 1.0);
         status = ArmStatus.RETRACTED;
     }
 
@@ -69,6 +70,16 @@ public final class Arm {
         HardwareManager.rightArmBaseMotor.setPower(power);
     }
 
+    public static void lockBaseMotors() {
+        HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        HardwareManager.leftArmBaseMotor.setPower(0.0);
+        HardwareManager.rightArmBaseMotor.setPower(0.0);
+    }
+
     /**
      * @param degrees make positive to extend, negative to retract
      * @param power
@@ -82,6 +93,10 @@ public final class Arm {
         HardwareManager.armElbowMotor.setPower(power);
         while (SingletonOpMode.active() &&
                 HardwareManager.armElbowMotor.isBusy()) ;
+    }
+
+    public static double getWristServoPos() {
+        return HardwareManager.leftArmWristServo.getPosition();
     }
 
     /**
@@ -114,10 +129,11 @@ public final class Arm {
     }
 
     /**
-     * Resets the arm status to {@link ArmStatus#EXTENDED}.
+     * Resets the arm status to {@link ArmStatus#EXTENDED} and closes the intake gate.
      */
     public static void reset() {
         status = ArmStatus.EXTENDED;
+        closeIntakeGate();
     }
 
 }

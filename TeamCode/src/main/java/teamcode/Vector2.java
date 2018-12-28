@@ -21,6 +21,10 @@ public final class Vector2 {
         return y;
     }
 
+    public Vector2 multiply(double scalar) {
+        return new Vector2(x * scalar, y * scalar);
+    }
+
     public double magnitude() {
         return Math.sqrt(x * x + y * y);
     }
