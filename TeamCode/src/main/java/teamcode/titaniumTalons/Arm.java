@@ -26,6 +26,7 @@ public final class Arm {
         }
         closeIntakeGate();
         setWristServoPos(0.65);
+        lockElbow();
         rotateArmBaseDefinite(105.0, 1.0);
         status = ArmStatus.EXTENDED;
     }
@@ -35,8 +36,17 @@ public final class Arm {
             throw new IllegalStateException("Arm is already retracted!");
         }
         setWristServoPos(0.3);
+        lockElbow();
         rotateArmBaseDefinite(-105.0, 1.0);
         status = ArmStatus.RETRACTED;
+    }
+
+    public static void lockElbow() {
+        HardwareManager.armElbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HardwareManager.armElbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        HardwareManager.armElbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        HardwareManager.armElbowMotor.setPower(0.0);
     }
 
     /**
@@ -76,6 +86,8 @@ public final class Arm {
         HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        HardwareManager.leftArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         HardwareManager.leftArmBaseMotor.setPower(0.0);
         HardwareManager.rightArmBaseMotor.setPower(0.0);
     }
@@ -93,6 +105,12 @@ public final class Arm {
         HardwareManager.armElbowMotor.setPower(power);
         while (SingletonOpMode.active() &&
                 HardwareManager.armElbowMotor.isBusy()) ;
+    }
+
+    public static void rotateElbowIndefinite(double power) {
+        HardwareManager.armElbowMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        HardwareManager.armElbowMotor.setPower(power);
     }
 
     public static double getWristServoPos() {
