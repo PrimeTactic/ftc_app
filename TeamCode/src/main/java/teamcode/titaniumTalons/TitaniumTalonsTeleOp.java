@@ -102,9 +102,9 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
         }
 
         if (gamepad1.dpad_left) {
-            Arm.rotateElbowIndefinite(-MANUAL_ELBOW_MOTOR_SPEED);
-        } else if (gamepad1.dpad_right) {
             Arm.rotateElbowIndefinite(MANUAL_ELBOW_MOTOR_SPEED);
+        } else if (gamepad1.dpad_right) {
+            Arm.rotateElbowIndefinite(-MANUAL_ELBOW_MOTOR_SPEED);
         } else {
             Arm.lockElbow();
         }
