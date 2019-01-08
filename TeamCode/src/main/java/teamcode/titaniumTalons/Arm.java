@@ -25,7 +25,7 @@ public final class Arm {
             throw new IllegalStateException("Arm is already extended!");
         }
         closeIntakeGate();
-        setWristServoPos(0.35);
+        setWristServoPos(0.3);
         lockElbow();
         rotateArmBaseDefinite(105.0, 1.0);
         status = ArmStatus.EXTENDED;
