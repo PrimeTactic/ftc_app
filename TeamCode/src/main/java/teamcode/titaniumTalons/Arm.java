@@ -25,7 +25,7 @@ public final class Arm {
             throw new IllegalStateException("Arm is already extended!");
         }
         closeIntakeGate();
-        setWristServoPos(0.65);
+        setWristServoPos(0.35);
         lockElbow();
         rotateArmBaseDefinite(105.0, 1.0);
         status = ArmStatus.EXTENDED;
@@ -35,9 +35,9 @@ public final class Arm {
         if (status == ArmStatus.RETRACTED) {
             throw new IllegalStateException("Arm is already retracted!");
         }
-        setWristServoPos(0.3);
         lockElbow();
         rotateArmBaseDefinite(-105.0, 1.0);
+        setWristServoPos(0.7);
         status = ArmStatus.RETRACTED;
     }
 
@@ -49,7 +49,7 @@ public final class Arm {
         HardwareManager.armElbowMotor.setPower(0.0);
     }
 
-    /**
+    /**+
      * @param degrees make positive to extend, negative to retract
      * @param power
      */
