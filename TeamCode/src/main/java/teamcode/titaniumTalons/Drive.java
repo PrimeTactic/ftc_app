@@ -32,11 +32,13 @@ public final class Drive {
      * Causes the robot to drive vertically a definite, specified number of inches. The thread from
      * which this method is called is forced to wait until the robot finishes driving.
      *
-     * @param inches The number of inches that the robot should travel. If positive, the robot
-     *               will drive forward. If negative, the robot will drive backward.
-     * @param power  the power that the drive motors should be set to
+     * @param inches         The number of inches that the robot should travel. If positive, the robot
+     *                       will drive forward. If negative, the robot will drive backward.
+     * @param power          the power that the drive motors should be set to
+     * @param makeThreadWait make {@code true} to make the Thread from which this method is called wait for
+     *                       the drive motors to reach their target position
      */
-    public static void driveVerticallyDefinite(double inches, double power) {
+    public static void driveVerticallyDefinite(double inches, double power, boolean makeThreadWait) {
         setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL);
@@ -51,19 +53,23 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        while (SingletonOpMode.active() && driveMotorsBusy()) ;
-        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (makeThreadWait) {
+            makeThreadWaitForMotors();
+        }
     }
 
     /**
      * Causes the robot to drive laterally a definite, specified number of inches. The thread from
      * which this method is called is forced to wait until the robot finishes driving.
      *
-     * @param inches The number of inches that the robot should travel. If positive, the robot
-     *               will drive to the right. If negative, the robot will drive to the left.
-     * @param power  the power that the drive motors should be set to
+     * @param inches         The number of inches that the robot should travel. If positive, the robot
+     *                       will drive to the right. If negative, the robot will drive to the left.
+     * @param power          the power that the drive motors should be set to
+     * @param makeThreadWait make {@code true} to make the Thread from which this method is called wait for
+     *                       the drive motors to reach their target position
      */
-    public static void driveLateralDefinite(double inches, double power) {
+    public static void driveLateralDefinite(double inches, double power, boolean makeThreadWait) {
+        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL);
 
@@ -77,8 +83,9 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        while (SingletonOpMode.active() && driveMotorsBusy()) ;
-        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (makeThreadWait) {
+            makeThreadWaitForMotors();
+        }
     }
 
     /**
@@ -96,13 +103,16 @@ public final class Drive {
      */
     public static void driveIndefinite(Vector2 v, double turnSpeed) {
         setDriveRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double direction = Math.atan2(-v.getX(), v.getY());
+        double direction = Math.atan2(-v.getX(), -v.getY());
         double power = v.magnitude();
 
-        double frontLeftPow = power * Math.sin(-direction + Math.PI / 4) + turnSpeed;
-        double frontRightPow = power * Math.cos(-direction + Math.PI / 4) - turnSpeed;
-        double backLeftPow = power * Math.cos(-direction + Math.PI / 4) + turnSpeed;
-        double backRightPow = power * Math.sin(-direction + Math.PI / 4) - turnSpeed;
+        double sin = Math.sin(-direction + Math.PI / 4);
+        double cos = Math.cos(-direction + Math.PI / 4);
+
+        double frontLeftPow = power * sin + turnSpeed;
+        double frontRightPow = power * cos - turnSpeed;
+        double backLeftPow = power * cos + turnSpeed;
+        double backRightPow = power * sin - turnSpeed;
 
         HardwareManager.frontLeftDrive.setPower(frontLeftPow);
         HardwareManager.frontRightDrive.setPower(frontRightPow);
@@ -114,11 +124,14 @@ public final class Drive {
      * Causes the robot to turn a definite number of degrees at the specified power. The thread
      * from which this method is called is forced to wait until the robot finishes turning.
      *
-     * @param degrees The degrees that the robot should turn. The robot will turn clockwise if this
-     *                value is positive, and will turn counterclockwise if this value is negative.
-     * @param power   the power that the drive motors should be set to
+     * @param degrees        The degrees that the robot should turn. The robot will turn clockwise if this
+     *                       value is positive, and will turn counterclockwise if this value is negative.
+     * @param power          the power that the drive motors should be set to
+     * @param makeThreadWait make {@code true} to make the Thread from which this method is called wait for
+     *                       the drive motors to reach their target position
      */
-    public static void turnDefinite(double degrees, double power) {
+    public static void turnDefinite(double degrees, double power, boolean makeThreadWait) {
+        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (degrees * DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED);
 
@@ -132,8 +145,9 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        while (SingletonOpMode.active() && driveMotorsBusy()) ;
-        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (makeThreadWait) {
+            makeThreadWaitForMotors();
+        }
     }
 
     /**
@@ -145,8 +159,7 @@ public final class Drive {
      *              turn clockwise. If negative, the robot will turn counterclockwise.
      */
     public static void turnIndefinite(double power) {
-        setDriveRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -167,6 +180,13 @@ public final class Drive {
                 || HardwareManager.frontRightDrive.isBusy()
                 || HardwareManager.backLeftDrive.isBusy()
                 || HardwareManager.backRightDrive.isBusy();
+    }
+
+    /**
+     * Forces the current Thread to wait until the drive motors reach their target position.
+     */
+    private static void makeThreadWaitForMotors() {
+        while (SingletonOpMode.active() && driveMotorsBusy()) ;
     }
 
 }

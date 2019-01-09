@@ -13,10 +13,19 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
     private static final double MANUAL_ARM_BASE_MOTOR_SPEED = 0.5;
     private static final double MANUAL_ELBOW_MOTOR_SPEED = 0.5;
     private static final double LOWER_DRIVE_SPEED_MULTIPLIER = 0.5;
-    private static final double LOWER_ROTATE_SPEED_MULTIPLIER = 0.25;
+    private static final double LOWER_TURN_SPEED_MULTIPLIER = 0.25;
     private static final double WRIST_SERVO_ADJUST_DELTA = 0.05;
 
     private Timer timer;
+
+    private boolean lowerDriveSpeed = false;
+    private int driveSpeedToggle = 0;
+    private boolean lowerTurnSpeed = false;
+    private int turnSpeedToggle = 0;
+
+    private boolean intakeGateOpened = false;
+    private boolean gateOnCooldown = false;
+    private boolean wristAdjustButtonDownLastUpdate = false;
 
     @Override
     protected void onInitialize() {
@@ -30,22 +39,22 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
         while (opModeIsActive()) {
             driveInputUpdate();
             armInputUpdate();
+            armBaseInputUpdate();
+            elbowInputUpdate();
+            wristInputUpdate();
+            intakeInputUpdate();
+            gateInputUpdate();
         }
     }
 
-    private boolean lowerDriveSpeed = false;
-    private boolean lowerRotateSpeed = false;
-    private int driveSpeedToggle = 0;
-    private int rotateSpeedToggle = 0;
-
     private void driveInputUpdate() {
-        if (rotateSpeedToggle == 0 && gamepad1.left_stick_button) {
-            rotateSpeedToggle++;
-        } else if (rotateSpeedToggle == 1 && !gamepad1.left_stick_button) {
-            rotateSpeedToggle++;
-        } else if (rotateSpeedToggle == 2) {
-            lowerRotateSpeed = !lowerRotateSpeed;
-            rotateSpeedToggle = 0;
+        if (turnSpeedToggle == 0 && gamepad1.left_stick_button) {
+            turnSpeedToggle++;
+        } else if (turnSpeedToggle == 1 && !gamepad1.left_stick_button) {
+            turnSpeedToggle++;
+        } else if (turnSpeedToggle == 2) {
+            lowerTurnSpeed = !lowerTurnSpeed;
+            turnSpeedToggle = 0;
         }
 
         if (driveSpeedToggle == 0 && gamepad1.right_stick_button) {
@@ -58,17 +67,14 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
         }
 
         double driveSpeedMultiplier = lowerDriveSpeed ? LOWER_DRIVE_SPEED_MULTIPLIER : 1.0;
-        double rotateSpeedMultiplier = lowerRotateSpeed ? LOWER_ROTATE_SPEED_MULTIPLIER : 1.0;
+        double turnSpeedMultiplier = lowerTurnSpeed ? LOWER_TURN_SPEED_MULTIPLIER : 1.0;
         float driveX = gamepad1.right_stick_x;
         float driveY = gamepad1.right_stick_y;
-        Vector2 driveVector = new Vector2(-driveX, driveY);
-        double turnSpeed = gamepad1.left_stick_x;
-        Drive.driveIndefinite(driveVector.multiply(driveSpeedMultiplier), turnSpeed * rotateSpeedMultiplier);
+        Vector2 driveVector = new Vector2(-driveX, -driveY);
+        driveVector = driveVector.multiply(driveSpeedMultiplier);
+        double turnSpeed = gamepad1.left_stick_x * turnSpeedMultiplier;
+        Drive.driveIndefinite(driveVector, turnSpeed);
     }
-
-    private boolean intakeGateOpened = false;
-    private boolean gateOnCooldown = false;
-    private boolean wristAdjustButtonDownLastUpdate = false;
 
     private void armInputUpdate() {
         if (gamepad1.y) {
@@ -80,20 +86,9 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
                 Arm.extend();
             }
         }
+    }
 
-        if (gamepad1.x) {
-            if (!gateOnCooldown) {
-                if (intakeGateOpened) {
-                    Arm.closeIntakeGate();
-                    startGateCooldown();
-                } else {
-                    Arm.openIntakeGate();
-                    startGateCooldown();
-                }
-                intakeGateOpened = !intakeGateOpened;
-            }
-        }
-
+    private void armBaseInputUpdate() {
         if (gamepad1.dpad_up) {
             Arm.rotateArmBaseIndefinite(-MANUAL_ARM_BASE_MOTOR_SPEED);
         } else if (gamepad1.dpad_down) {
@@ -101,7 +96,9 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
         } else {
             Arm.lockBaseMotors();
         }
+    }
 
+    private void elbowInputUpdate() {
         if (gamepad1.dpad_left) {
             Arm.rotateElbowIndefinite(MANUAL_ELBOW_MOTOR_SPEED);
         } else if (gamepad1.dpad_right) {
@@ -109,7 +106,9 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
         } else {
             Arm.lockElbow();
         }
+    }
 
+    private void wristInputUpdate() {
         if (!wristAdjustButtonDownLastUpdate) {
             if (gamepad1.left_bumper) {
                 double currentWristPos = Arm.getWristServoPos();
@@ -125,13 +124,30 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
                 wristAdjustButtonDownLastUpdate = false;
             }
         }
+    }
 
+    private void intakeInputUpdate() {
         if (gamepad1.right_trigger > gamepad1.left_trigger) {
             // intake
             Arm.setIntakePower(gamepad1.right_trigger);
         } else {
             // outtake
             Arm.setIntakePower(-gamepad1.left_trigger);
+        }
+    }
+
+    private void gateInputUpdate() {
+        if (gamepad1.x) {
+            if (!gateOnCooldown) {
+                if (intakeGateOpened) {
+                    Arm.closeIntakeGate();
+                    startGateCooldown();
+                } else {
+                    Arm.openIntakeGate();
+                    startGateCooldown();
+                }
+                intakeGateOpened = !intakeGateOpened;
+            }
         }
     }
 

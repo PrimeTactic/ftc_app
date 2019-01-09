@@ -27,7 +27,7 @@ public final class Arm {
         closeIntakeGate();
         setWristServoPos(0.3);
         lockElbow();
-        rotateArmBaseDefinite(105.0, 1.0);
+        rotateArmBaseDefinite(105.0, 1.0, false);
         status = ArmStatus.EXTENDED;
     }
 
@@ -36,7 +36,7 @@ public final class Arm {
             throw new IllegalStateException("Arm is already retracted!");
         }
         lockElbow();
-        rotateArmBaseDefinite(-105.0, 1.0);
+        rotateArmBaseDefinite(-105.0, 1.0, false);
         setWristServoPos(0.7);
         status = ArmStatus.RETRACTED;
     }
@@ -49,11 +49,15 @@ public final class Arm {
         HardwareManager.armElbowMotor.setPower(0.0);
     }
 
-    /**+
-     * @param degrees make positive to extend, negative to retract
+    /**
+     * +
+     *
+     * @param degrees        make positive to extend, negative to retract
      * @param power
+     * @param makeThreadWait make {@code true} to make the Thread from which this method is called
+     *                       wait for the arm motors to reach their target position
      */
-    public static void rotateArmBaseDefinite(double degrees, double power) {
+    public static void rotateArmBaseDefinite(double degrees, double power, boolean makeThreadWait) {
         HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -64,9 +68,11 @@ public final class Arm {
         HardwareManager.rightArmBaseMotor.setTargetPosition(pos);
         HardwareManager.leftArmBaseMotor.setPower(power);
         HardwareManager.rightArmBaseMotor.setPower(power);
-        while (SingletonOpMode.active() &&
-                (HardwareManager.leftArmBaseMotor.isBusy() ||
-                        HardwareManager.rightArmBaseMotor.isBusy())) ;
+        if (makeThreadWait) {
+            while (SingletonOpMode.active() &&
+                    (HardwareManager.leftArmBaseMotor.isBusy() ||
+                            HardwareManager.rightArmBaseMotor.isBusy())) ;
+        }
     }
 
     /**
@@ -93,18 +99,22 @@ public final class Arm {
     }
 
     /**
-     * @param degrees make positive to extend, negative to retract
+     * @param degrees        make positive to extend, negative to retract
      * @param power
+     * @param makeThreadWait make {@code true} to make the Thread from which this method is called
+     *                       wait for the elbow motor to reach its target position
      */
-    public static void rotateElbowDefinite(double degrees, double power) {
+    public static void rotateElbowDefinite(double degrees, double power, boolean makeThreadWait) {
         HardwareManager.armElbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HardwareManager.armElbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         int pos = (int) (degrees * ELBOW_MOTOR_TICKS_PER_DEGREE);
         HardwareManager.armElbowMotor.setTargetPosition(pos);
         HardwareManager.armElbowMotor.setPower(power);
-        while (SingletonOpMode.active() &&
-                HardwareManager.armElbowMotor.isBusy()) ;
+        if (makeThreadWait) {
+            while (SingletonOpMode.active() &&
+                    HardwareManager.armElbowMotor.isBusy()) ;
+        }
     }
 
     public static void rotateElbowIndefinite(double power) {
