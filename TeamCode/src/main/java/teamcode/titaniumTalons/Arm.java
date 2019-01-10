@@ -20,23 +20,23 @@ public final class Arm {
         return status;
     }
 
-    public static void extend() {
+    public static void extend(boolean makeThreadWait) {
         if (status == ArmStatus.EXTENDED) {
             throw new IllegalStateException("Arm is already extended!");
         }
         closeIntakeGate();
-        setWristServoPos(0.3);
+        setWristServoPos(0.4);
         lockElbow();
-        rotateArmBaseDefinite(105.0, 1.0, false);
+        rotateArmBaseDefinite(105.0, 1.0, makeThreadWait);
         status = ArmStatus.EXTENDED;
     }
 
-    public static void retract() {
+    public static void retract(boolean makeThreadWait) {
         if (status == ArmStatus.RETRACTED) {
             throw new IllegalStateException("Arm is already retracted!");
         }
         lockElbow();
-        rotateArmBaseDefinite(-105.0, 1.0, false);
+        rotateArmBaseDefinite(-105.0, 1.0, makeThreadWait);
         setWristServoPos(0.7);
         status = ArmStatus.RETRACTED;
     }
@@ -89,13 +89,12 @@ public final class Arm {
     public static void lockBaseMotors() {
         HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        HardwareManager.leftArmBaseMotor.setPower(0.0);
+        HardwareManager.rightArmBaseMotor.setPower(0.0);
 
         HardwareManager.leftArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        HardwareManager.leftArmBaseMotor.setPower(0.0);
-        HardwareManager.rightArmBaseMotor.setPower(0.0);
     }
 
     /**
