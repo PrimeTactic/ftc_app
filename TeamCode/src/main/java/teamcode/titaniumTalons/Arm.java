@@ -160,6 +160,8 @@ public final class Arm {
      */
     public static void reset() {
         status = ArmStatus.EXTENDED;
+        lockBaseMotors();
+        lockElbow();
         closeIntakeGate();
     }
 

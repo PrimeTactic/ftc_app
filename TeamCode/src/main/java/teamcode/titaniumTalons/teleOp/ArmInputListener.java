@@ -2,8 +2,6 @@ package teamcode.titaniumTalons.teleOp;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -12,13 +10,13 @@ import teamcode.titaniumTalons.SingletonOpMode;
 
 class ArmInputListener {
 
-    private Gamepad gamepad1;
-    private Gamepad gamepad2;
-    private Timer timer;
-
     private static final double MANUAL_ARM_BASE_MOTOR_SPEED = 0.5;
     private static final double MANUAL_ELBOW_MOTOR_SPEED = 0.5;
     private static final double WRIST_SERVO_ADJUST_DELTA = 0.05;
+
+    private Gamepad gamepad1;
+    private Gamepad gamepad2;
+    private Timer timer;
 
     private boolean intakeGateOpened = false;
     private boolean gateOnCooldown = false;
@@ -32,7 +30,7 @@ class ArmInputListener {
 
             @Override
             public void run() {
-                while (true) {
+                while (SingletonOpMode.instance.opModeIsActive()) {
                     update();
                 }
             }
@@ -45,7 +43,6 @@ class ArmInputListener {
         baseInputUpdate();
         elbowInputUpdate();
         wristInputUpdate();
-        intakeSpeedUpdate();
         intakeInputUpdate();
         gateInputUpdate();
     }
@@ -67,6 +64,8 @@ class ArmInputListener {
             Arm.rotateArmBaseIndefinite(-MANUAL_ARM_BASE_MOTOR_SPEED);
         } else if (gamepad1.dpad_down) {
             Arm.rotateArmBaseIndefinite(MANUAL_ARM_BASE_MOTOR_SPEED);
+        } else if (gamepad1.right_bumper) {
+            Arm.rotateArmBaseIndefinite(-1.0);
         } else {
             Arm.lockBaseMotors();
         }
@@ -100,22 +99,24 @@ class ArmInputListener {
         }
     }
 
-    private void intakeSpeedUpdate() {
-        //intakeSpeed = asfd;
-    }
-
     private void intakeInputUpdate() {
-        if (gamepad1.right_trigger > gamepad1.left_trigger) {
-            // intake
-            Arm.setIntakePower(gamepad1.right_trigger * intakeSpeed);
+        if (gamepad2.right_trigger > 0.0f) {
+            Arm.setIntakePower(gamepad2.right_trigger);
+        } else if (gamepad1.left_trigger > 0.0f || gamepad1.right_trigger > 0.0f) {
+            if (gamepad1.right_trigger > gamepad1.left_trigger) {
+                // intake
+                Arm.setIntakePower(gamepad1.right_trigger);
+            } else {
+                // outtake
+                Arm.setIntakePower(-gamepad1.left_trigger);
+            }
         } else {
-            // outtake
-            Arm.setIntakePower(-gamepad1.left_trigger * intakeSpeed);
+            Arm.setIntakePower(0.0);
         }
     }
 
     private void gateInputUpdate() {
-        if (gamepad1.x) {
+        if (gamepad2.x) {
             if (!gateOnCooldown) {
                 if (intakeGateOpened) {
                     Arm.closeIntakeGate();

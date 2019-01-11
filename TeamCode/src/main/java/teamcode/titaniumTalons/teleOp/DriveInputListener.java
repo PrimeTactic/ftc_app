@@ -12,6 +12,7 @@ public class DriveInputListener {
     private static final double LOWER_TURN_SPEED_MULTIPLIER = 0.25;
 
     private Gamepad gamepad1;
+    private Gamepad gamepad2;
 
     private boolean lowerDriveSpeed;
     private int driveSpeedToggle;
@@ -20,11 +21,12 @@ public class DriveInputListener {
 
     DriveInputListener() {
         gamepad1 = SingletonOpMode.instance.gamepad1;
+        gamepad2 = SingletonOpMode.instance.gamepad2;
         new Thread() {
 
             @Override
             public void run() {
-                while (true) {
+                while (SingletonOpMode.instance.opModeIsActive()) {
                     update();
                 }
             }
@@ -38,19 +40,21 @@ public class DriveInputListener {
     }
 
 
-   private void speedAdjustUpdate(){
-        if (turnSpeedToggle == 0 && gamepad1.left_stick_button) {
+    private void speedAdjustUpdate() {
+        boolean leftStickDown = gamepad1.left_stick_button || gamepad2.left_stick_button;
+        if (turnSpeedToggle == 0 && leftStickDown) {
             turnSpeedToggle++;
-        } else if (turnSpeedToggle == 1 && !gamepad1.left_stick_button) {
+        } else if (turnSpeedToggle == 1 && !leftStickDown) {
             turnSpeedToggle++;
         } else if (turnSpeedToggle == 2) {
             lowerTurnSpeed = !lowerTurnSpeed;
             turnSpeedToggle = 0;
         }
 
-        if (driveSpeedToggle == 0 && gamepad1.right_stick_button) {
+        boolean rightStickDown = gamepad1.right_stick_button || gamepad2.right_stick_button;
+        if (driveSpeedToggle == 0 && rightStickDown) {
             driveSpeedToggle++;
-        } else if (driveSpeedToggle == 1 && !gamepad1.right_stick_button) {
+        } else if (driveSpeedToggle == 1 && !leftStickDown) {
             driveSpeedToggle++;
         } else if (driveSpeedToggle == 2) {
             lowerDriveSpeed = !lowerDriveSpeed;
@@ -58,7 +62,7 @@ public class DriveInputListener {
         }
     }
 
-    private void driveUpdate(){
+    private void driveUpdate() {
         double driveSpeedMultiplier = lowerDriveSpeed ? LOWER_DRIVE_SPEED_MULTIPLIER : 1.0;
         double turnSpeedMultiplier = lowerTurnSpeed ? LOWER_TURN_SPEED_MULTIPLIER : 1.0;
         float driveX = gamepad1.right_stick_x;
