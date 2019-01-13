@@ -2,7 +2,7 @@ package teamcode.titaniumTalons.teleOp;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import teamcode.Vector2;
+import teamcode.utils.Vector2;
 import teamcode.titaniumTalons.Drive;
 import teamcode.titaniumTalons.SingletonOpMode;
 

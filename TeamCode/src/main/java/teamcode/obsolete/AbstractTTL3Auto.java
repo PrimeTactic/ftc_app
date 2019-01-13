@@ -186,12 +186,12 @@ public abstract class AbstractTTL3Auto extends LinearOpMode {
     }
 
     protected void clenchMarkerClaw() {
-        HardwareManager.markerClawServo.setPosition(1.0);
+        //HardwareManager.markerClawServo.setPosition(1.0);
         waitForMarkerClawServo();
     }
 
     protected void releaseMarker() {
-        HardwareManager.markerClawServo.setPosition(0.0);
+        //HardwareManager.markerClawServo.setPosition(0.0);
         waitForMarkerClawServo();
     }
 

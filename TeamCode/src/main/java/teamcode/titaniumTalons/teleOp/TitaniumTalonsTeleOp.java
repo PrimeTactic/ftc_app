@@ -11,7 +11,7 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
 
     @Override
     protected void onInitialize(){
-        // nothing
+        Arm.status = Arm.ArmStatus.EXTENDED;
     }
 
     @Override

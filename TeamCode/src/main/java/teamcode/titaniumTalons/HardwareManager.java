@@ -21,7 +21,7 @@ public final class HardwareManager {
     private static final String RIGHT_ARM_WRIST_SERVO_NAME = "RightArmWristServo";
     private static final String INTAKE_MOTOR_NAME = "IntakeMotor";
     private static final String INTAKE_GATE_SERVO_NAME = "IntakeGateServo";
-    private static final String MARKER_CLAW_SERVO_NAME = "MarkerClawServo";
+    private static final String PIN_SERVO_NAME = "PinServo";
 
     // drive hardware
     public static DcMotor frontLeftDrive;
@@ -37,9 +37,7 @@ public final class HardwareManager {
     public static Servo rightArmWristServo;
     public static DcMotor intakeMotor;
     public static Servo intakeGateServo;
-
-    // marker
-    public static Servo markerClawServo;
+    public static Servo pinServo;
 
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftDrive = hardwareMap.get(DcMotor.class, FRONT_LEFT_DRIVE_NAME);
@@ -54,13 +52,12 @@ public final class HardwareManager {
         rightArmWristServo = hardwareMap.get(Servo.class, RIGHT_ARM_WRIST_SERVO_NAME);
         intakeMotor = hardwareMap.get(DcMotor.class, INTAKE_MOTOR_NAME);
         intakeGateServo = hardwareMap.get(Servo.class, INTAKE_GATE_SERVO_NAME);
+        pinServo = hardwareMap.get(Servo.class, PIN_SERVO_NAME);
 
-//        markerClawServo = hardwareMap.get(Servo.class, MARKER_CLAW_SERVO_NAME);
-
-        setDirections();
+        correctDirections();
     }
 
-    private static void setDirections() {
+    private static void correctDirections() {
         frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 

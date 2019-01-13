@@ -2,6 +2,8 @@ package teamcode.tensorFlow;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
+import teamcode.utils.Vector2;
+
 public class Mineral {
     private float left;
     private float right;

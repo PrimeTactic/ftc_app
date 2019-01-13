@@ -2,7 +2,7 @@ package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import teamcode.Vector2;
+import teamcode.utils.Vector2;
 
 // USEFUL INFORMATION FOR MECANUM WHEEL MATH:
 // https://pmtischler-ftc-app.readthedocs.io/en/latest/tutorials/mecanum.html
@@ -11,6 +11,8 @@ import teamcode.Vector2;
  * Contains methods pertaining to the drive system of the robot.
  */
 public final class Drive {
+
+    private static final Vector2 STRAIGHT = new Vector2(0.0, 1.0);
 
     /**
      * The number of ticks that each drive motor will have to turn to make the robot drive
@@ -32,13 +34,11 @@ public final class Drive {
      * Causes the robot to drive vertically a definite, specified number of inches. The thread from
      * which this method is called is forced to wait until the robot finishes driving.
      *
-     * @param inches         The number of inches that the robot should travel. If positive, the robot
-     *                       will drive forward. If negative, the robot will drive backward.
-     * @param power          the power that the drive motors should be set to
-     * @param makeThreadWait make {@code true} to make the Thread from which this method is called wait for
-     *                       the drive motors to reach their target position
+     * @param inches The number of inches that the robot should travel. If positive, the robot
+     *               will drive forward. If negative, the robot will drive backward.
+     * @param power  the power that the drive motors should be set to
      */
-    public static void driveVerticallyDefinite(double inches, double power, boolean makeThreadWait) {
+    public static void driveVerticallyDefinite(double inches, double power) {
         setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL);
@@ -53,22 +53,18 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        if (makeThreadWait) {
-            makeThreadWaitForMotors();
-        }
+        makeThreadWaitForMotors();
     }
 
     /**
      * Causes the robot to drive laterally a definite, specified number of inches. The thread from
      * which this method is called is forced to wait until the robot finishes driving.
      *
-     * @param inches         The number of inches that the robot should travel. If positive, the robot
-     *                       will drive to the right. If negative, the robot will drive to the left.
-     * @param power          the power that the drive motors should be set to
-     * @param makeThreadWait make {@code true} to make the Thread from which this method is called wait for
-     *                       the drive motors to reach their target position
+     * @param inches The number of inches that the robot should travel. If positive, the robot
+     *               will drive to the right. If negative, the robot will drive to the left.
+     * @param power  the power that the drive motors should be set to
      */
-    public static void driveLateralDefinite(double inches, double power, boolean makeThreadWait) {
+    public static void driveLateralDefinite(double inches, double power) {
         setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL);
@@ -83,9 +79,21 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        if (makeThreadWait) {
-            makeThreadWaitForMotors();
-        }
+        makeThreadWaitForMotors();
+    }
+
+    /**
+     * Causes the robot to turn in the direction of the specified vector and then drive forward a
+     * distance equal to the specified vector's magnitude. The robot's vector at the start is
+     * (0, 1).
+     *
+     * @param v The vector that the robot should use to drive. It's magnitude is the
+     *          distance that the robot will drive.
+     */
+    public static void driveDefinite(Vector2 v, double turnSpeed, double forwardSpeed) {
+        double radians = v.angleBetween(STRAIGHT);
+        turnDefinite(-Math.toDegrees(radians), turnSpeed);
+        driveVerticallyDefinite(v.magnitude(), forwardSpeed);
     }
 
     /**
@@ -124,13 +132,11 @@ public final class Drive {
      * Causes the robot to turn a definite number of degrees at the specified power. The thread
      * from which this method is called is forced to wait until the robot finishes turning.
      *
-     * @param degrees        The degrees that the robot should turn. The robot will turn clockwise if this
-     *                       value is positive, and will turn counterclockwise if this value is negative.
-     * @param power          the power that the drive motors should be set to
-     * @param makeThreadWait make {@code true} to make the Thread from which this method is called wait for
-     *                       the drive motors to reach their target position
+     * @param degrees The degrees that the robot should turn. The robot will turn clockwise if this
+     *                value is positive, and will turn counterclockwise if this value is negative.
+     * @param power   the power that the drive motors should be set to
      */
-    public static void turnDefinite(double degrees, double power, boolean makeThreadWait) {
+    public static void turnDefinite(double degrees, double power) {
         setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (degrees * DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED);
@@ -145,9 +151,7 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        if (makeThreadWait) {
-            makeThreadWaitForMotors();
-        }
+        makeThreadWaitForMotors();
     }
 
     /**

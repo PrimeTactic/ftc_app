@@ -1,4 +1,4 @@
-package teamcode;
+package teamcode.utils;
 
 /**
  * Represents an immutable 2-dimensional vector.
@@ -32,6 +32,17 @@ public final class Vector2 {
     public Vector2 normalized() {
         double magnitude = magnitude();
         return new Vector2(x / magnitude, y / magnitude);
+    }
+
+    public double dotProduct(Vector2 other) {
+        return this.x * other.x + this.y * other.y;
+    }
+
+    /**
+     * @return the angle in radians
+     */
+    public double angleBetween(Vector2 other) {
+        return Math.acos(dotProduct(other) / (magnitude() * other.magnitude()));
     }
 
     public boolean isZero() {

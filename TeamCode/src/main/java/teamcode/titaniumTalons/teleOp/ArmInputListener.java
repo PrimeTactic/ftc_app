@@ -49,12 +49,12 @@ class ArmInputListener {
 
     private void presetUpdate() {
         if (gamepad1.y) {
-            if (Arm.getStatus() == Arm.ArmStatus.EXTENDED) {
-                Arm.retract(true);
+            if (Arm.status == Arm.ArmStatus.EXTENDED) {
+                Arm.retract();
             }
         } else if (gamepad1.a) {
-            if (Arm.getStatus() == Arm.ArmStatus.RETRACTED) {
-                Arm.extend(true);
+            if (Arm.status == Arm.ArmStatus.RETRACTED) {
+                Arm.extend();
             }
         }
     }

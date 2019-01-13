@@ -37,19 +37,18 @@ public class TensorFlowManager {
     }
 
     public List<Mineral> getRecognizedMinerals() {
-        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-        if (updatedRecognitions != null) {
-            List<Mineral> minerals = new ArrayList<Mineral>();
-            for (Recognition recognition : updatedRecognitions) {
-                Mineral mineral = new Mineral(recognition);
-                minerals.add(mineral);
-            }
-
-            Collections.sort(minerals, new MineralComparator());
-            return minerals;
-        } else {
-            return null;
+        List<Recognition> updatedRecognitions = null;
+        while (updatedRecognitions == null) {
+            updatedRecognitions = tfod.getUpdatedRecognitions();
         }
+        List<Mineral> minerals = new ArrayList<Mineral>();
+        for (Recognition recognition : updatedRecognitions) {
+            Mineral mineral = new Mineral(recognition);
+            minerals.add(mineral);
+        }
+
+        Collections.sort(minerals, new MineralComparator());
+        return minerals;
     }
 
     public void initialize() {
