@@ -13,12 +13,12 @@ public final class Arm {
     public static ArmStatus status;
 
     public enum ArmStatus {
-        EXTENDED, RETRACTED
+        LATCHED, EXTENDED, RETRACTED
     }
 
     public static void extend() {
-        if (status == ArmStatus.EXTENDED) {
-            throw new IllegalStateException("Arm is already extended!");
+        if (status != ArmStatus.RETRACTED) {
+            throw new IllegalStateException("Arm cannot be extended!");
         }
         closeIntakeGate();
         setWristServoPos(0.4);
@@ -28,8 +28,8 @@ public final class Arm {
     }
 
     public static void retract() {
-        if (status == ArmStatus.RETRACTED) {
-            throw new IllegalStateException("Arm is already retracted!");
+        if (status != ArmStatus.EXTENDED) {
+            throw new IllegalStateException("Arm cannot be retracted!");
         }
         lockElbow();
         rotateArmBaseDefinite(-105.0, 1.0);
@@ -38,8 +38,8 @@ public final class Arm {
     }
 
     public static void lowerFromLatch() {
-        if (status == ArmStatus.EXTENDED) {
-            throw new IllegalStateException("Arm is already extended!");
+        if (status != ArmStatus.LATCHED) {
+            throw new IllegalStateException("Robot is already lowered from latch!");
         }
         HardwareManager.leftArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -156,10 +156,9 @@ public final class Arm {
     }
 
     /**
-     * Resets the arm status to {@link ArmStatus#EXTENDED} and closes the intake gate.
+     * Locks the arm's position and closes the intake gate.
      */
-    public static void reset() {
-        status = ArmStatus.EXTENDED;
+    public static void initialize() {
         lockBaseMotors();
         lockElbow();
         closeIntakeGate();

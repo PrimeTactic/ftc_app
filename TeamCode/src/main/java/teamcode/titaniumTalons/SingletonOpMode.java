@@ -10,7 +10,7 @@ public abstract class SingletonOpMode extends LinearOpMode {
     public void runOpMode() {
         instance = this;
         HardwareManager.initialize(hardwareMap);
-        Arm.reset();
+        Arm.initialize();
         onInitialize();
         waitForStart();
         onStart();

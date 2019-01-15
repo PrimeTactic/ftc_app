@@ -15,7 +15,7 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
     protected void onInitialize() {
         tfManager = new TensorFlowManager(hardwareMap);
         tfManager.initialize();
-        Arm.status = Arm.ArmStatus.RETRACTED;
+        Arm.status = Arm.ArmStatus.LATCHED;
     }
 
     /**

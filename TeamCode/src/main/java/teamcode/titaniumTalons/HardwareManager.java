@@ -1,5 +1,6 @@
 package teamcode.titaniumTalons;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -22,6 +23,7 @@ public final class HardwareManager {
     private static final String INTAKE_MOTOR_NAME = "IntakeMotor";
     private static final String INTAKE_GATE_SERVO_NAME = "IntakeGateServo";
     private static final String PIN_SERVO_NAME = "PinServo";
+    private static final String LED_DRIVER_NAME = "LedDriver";
 
     // drive hardware
     public static DcMotor frontLeftDrive;
@@ -39,6 +41,8 @@ public final class HardwareManager {
     public static Servo intakeGateServo;
     public static Servo pinServo;
 
+    public static RevBlinkinLedDriver ledDriver;
+
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftDrive = hardwareMap.get(DcMotor.class, FRONT_LEFT_DRIVE_NAME);
         frontRightDrive = hardwareMap.get(DcMotor.class, FRONT_RIGHT_DRIVE_NAME);
@@ -53,6 +57,8 @@ public final class HardwareManager {
         intakeMotor = hardwareMap.get(DcMotor.class, INTAKE_MOTOR_NAME);
         intakeGateServo = hardwareMap.get(Servo.class, INTAKE_GATE_SERVO_NAME);
         pinServo = hardwareMap.get(Servo.class, PIN_SERVO_NAME);
+
+        ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, LED_DRIVER_NAME);
 
         correctDirections();
     }

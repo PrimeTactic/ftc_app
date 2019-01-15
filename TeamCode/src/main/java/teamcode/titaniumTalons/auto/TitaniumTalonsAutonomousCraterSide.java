@@ -1,5 +1,6 @@
 package teamcode.titaniumTalons.auto;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import teamcode.titaniumTalons.Arm;

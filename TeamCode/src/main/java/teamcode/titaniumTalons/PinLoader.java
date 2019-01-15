@@ -3,8 +3,8 @@ package teamcode.titaniumTalons;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Pin", group = "Linear OpMode")
-public class Pin extends SingletonOpMode {
+@TeleOp(name = "PinLoader", group = "Linear OpMode")
+public class PinLoader extends SingletonOpMode {
 
     @Override
     public void onInitialize() {

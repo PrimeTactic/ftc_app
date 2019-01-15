@@ -6,6 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import teamcode.titaniumTalons.Arm;
+import teamcode.titaniumTalons.RobotTimer;
 import teamcode.titaniumTalons.SingletonOpMode;
 
 class ArmInputListener {
@@ -16,7 +17,7 @@ class ArmInputListener {
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
-    private Timer timer;
+    private RobotTimer timer;
 
     private boolean intakeGateOpened = false;
     private boolean gateOnCooldown = false;
@@ -25,7 +26,7 @@ class ArmInputListener {
     ArmInputListener() {
         gamepad1 = SingletonOpMode.instance.gamepad1;
         gamepad2 = SingletonOpMode.instance.gamepad2;
-        timer = new Timer();
+        timer = new RobotTimer(SingletonOpMode.instance);
         new Thread() {
 
             @Override
@@ -138,7 +139,7 @@ class ArmInputListener {
                 gateOnCooldown = false;
             }
         };
-        timer.schedule(task, 500);
+        timer.schedule(task, 0.5);
     }
 
 }
