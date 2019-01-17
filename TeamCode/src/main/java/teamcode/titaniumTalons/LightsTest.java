@@ -18,22 +18,22 @@ public class LightsTest extends LinearOpMode {
 
         final RevBlinkinLedDriver ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, "LedDriver");
 
-        RevBlinkinLedDriver.BlinkinPattern green = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+        RevBlinkinLedDriver.BlinkinPattern green = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE;
         ledDriver.setPattern(green);
-
-        TimerTask lime = new TimerTask() {
-            @Override
-            public void run() {
-                RevBlinkinLedDriver.BlinkinPattern lime = RevBlinkinLedDriver.BlinkinPattern.LIME;
-                ledDriver.setPattern(lime);
-            }
-        };
 
         TimerTask yellow = new TimerTask() {
             @Override
             public void run() {
-                RevBlinkinLedDriver.BlinkinPattern yellow = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+                RevBlinkinLedDriver.BlinkinPattern yellow = RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET;
                 ledDriver.setPattern(yellow);
+            }
+        };
+
+        TimerTask orange = new TimerTask() {
+            @Override
+            public void run() {
+                RevBlinkinLedDriver.BlinkinPattern orange = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                ledDriver.setPattern(orange);
             }
         };
 
@@ -61,8 +61,8 @@ public class LightsTest extends LinearOpMode {
             }
         };
 
-        timer.schedule(lime, 30.0);
-        timer.schedule(yellow, 60.0);
+        timer.schedule(yellow, 30.0);
+        timer.schedule(orange, 60.0);
         timer.schedule(solidRed, 90.0);
         timer.schedule(flashingRed, 105.0);
         timer.schedule(flashingWhite, 115.0);

@@ -12,6 +12,8 @@ public final class Arm {
 
     public static ArmStatus status;
 
+    private RobotTimer timer;
+
     public enum ArmStatus {
         LATCHED, EXTENDED, RETRACTED
     }
@@ -151,8 +153,18 @@ public final class Arm {
     /**
      * @param power make positive to intake, negative to exhale
      */
-    public static void setIntakePower(double power) {
+    public static void setIntakePower(final double power) {
         HardwareManager.intakeMotor.setPower(power);
+//        HardwareManager.intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        HardwareManager.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        new Thread(){
+//            @Override
+//            public void run(){
+//                HardwareManager.intakeMotor.setTargetPosition(0);
+//                HardwareManager.intakeMotor.setPower(power);
+//            }
+//        }.start();
     }
 
     /**
