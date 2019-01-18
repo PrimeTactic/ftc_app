@@ -25,7 +25,7 @@ public final class Arm {
         closeIntakeGate();
         setWristServoPos(0.4);
         lockElbow();
-        rotateArmBaseDefinite(105.0, 1.0);
+        rotateArmBaseDefinite(100.0, 1.0);
         status = ArmStatus.EXTENDED;
     }
 
@@ -34,7 +34,7 @@ public final class Arm {
             throw new IllegalStateException("Arm cannot be retracted!");
         }
         lockElbow();
-        rotateArmBaseDefinite(-105.0, 1.0);
+        rotateArmBaseDefinite(-100.0, 1.0);
         setWristServoPos(0.7);
         status = ArmStatus.RETRACTED;
     }
@@ -147,12 +147,9 @@ public final class Arm {
      * Closes the intake gate, trapping balls inside the intake chamber.
      */
     public static void closeIntakeGate() {
-        HardwareManager.intakeGateServo.setPosition(0.0);
+        HardwareManager.intakeGateServo.setPosition(0.05);
     }
 
-    /**
-     * @param power make positive to intake, negative to exhale
-     */
     public static void setIntakePower(final double power) {
         HardwareManager.intakeMotor.setPower(power);
 //        HardwareManager.intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

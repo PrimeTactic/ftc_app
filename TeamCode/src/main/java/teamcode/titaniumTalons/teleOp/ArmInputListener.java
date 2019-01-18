@@ -104,18 +104,18 @@ class ArmInputListener {
         if (gamepad1.left_trigger > 0.0f || gamepad1.right_trigger > 0.0f) {
             if (gamepad1.right_trigger > gamepad1.left_trigger) {
                 // intake
-                Arm.setIntakePower(gamepad1.right_trigger);
+                Arm.setIntakePower(-gamepad1.right_trigger);
             } else {
                 // outtake
-                Arm.setIntakePower(-gamepad1.left_trigger);
+                Arm.setIntakePower(gamepad1.left_trigger);
             }
         } else if (gamepad2.left_trigger > 0.0f || gamepad2.right_trigger > 0.0f) {
             if (gamepad2.right_trigger > gamepad2.left_trigger) {
                 // intake
-                Arm.setIntakePower(0.5 * gamepad2.right_trigger);
+                Arm.setIntakePower(-0.5 * gamepad2.right_trigger);
             } else {
                 // outtake
-                Arm.setIntakePower(0.5 * -gamepad2.left_trigger);
+                Arm.setIntakePower(0.5 * gamepad2.left_trigger);
             }
         } else {
             Arm.setIntakePower(0.0);
