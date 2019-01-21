@@ -14,10 +14,10 @@ public class DriveInputListener {
     private Gamepad gamepad1;
     private Gamepad gamepad2;
 
+    private boolean lowerDriveSpeedButtonDownLastUpdate;
+    private boolean lowerTurnSpeedButtonDownLastUpdate;
     private boolean lowerDriveSpeed;
-    private int driveSpeedToggle;
     private boolean lowerTurnSpeed;
-    private int turnSpeedToggle;
 
     DriveInputListener() {
         gamepad1 = SingletonOpMode.instance.gamepad1;
@@ -42,23 +42,25 @@ public class DriveInputListener {
 
     private void speedAdjustUpdate() {
         boolean leftStickDown = gamepad1.left_stick_button || gamepad2.left_stick_button;
-        if (turnSpeedToggle == 0 && leftStickDown) {
-            turnSpeedToggle++;
-        } else if (turnSpeedToggle == 1 && !leftStickDown) {
-            turnSpeedToggle++;
-        } else if (turnSpeedToggle == 2) {
-            lowerTurnSpeed = !lowerTurnSpeed;
-            turnSpeedToggle = 0;
+        if(leftStickDown){
+            if(!lowerTurnSpeedButtonDownLastUpdate){
+                lowerTurnSpeed = !lowerTurnSpeed;
+            }
+            lowerTurnSpeedButtonDownLastUpdate = true;
+        }
+        else {
+            lowerTurnSpeedButtonDownLastUpdate = false;
         }
 
         boolean rightStickDown = gamepad1.right_stick_button || gamepad2.right_stick_button;
-        if (driveSpeedToggle == 0 && rightStickDown) {
-            driveSpeedToggle++;
-        } else if (driveSpeedToggle == 1 && !leftStickDown) {
-            driveSpeedToggle++;
-        } else if (driveSpeedToggle == 2) {
-            lowerDriveSpeed = !lowerDriveSpeed;
-            driveSpeedToggle = 0;
+        if(rightStickDown){
+            if(!lowerDriveSpeedButtonDownLastUpdate){
+                lowerDriveSpeed = !lowerDriveSpeed;
+            }
+            lowerDriveSpeedButtonDownLastUpdate = true;
+        }
+        else {
+            lowerDriveSpeedButtonDownLastUpdate = false;
         }
     }
 

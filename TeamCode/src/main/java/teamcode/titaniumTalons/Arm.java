@@ -2,6 +2,8 @@ package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import java.util.TimerTask;
+
 /**
  * Contains methods pertaining to the arm system of the robot.
  */
@@ -11,8 +13,6 @@ public final class Arm {
     private static final double ELBOW_MOTOR_TICKS_PER_DEGREE = 0.8;
 
     public static ArmStatus status;
-
-    private RobotTimer timer;
 
     public enum ArmStatus {
         LATCHED, EXTENDED, RETRACTED
@@ -25,7 +25,7 @@ public final class Arm {
         closeIntakeGate();
         setWristServoPos(0.4);
         lockElbow();
-        rotateArmBaseDefinite(100.0, 1.0);
+        rotateArmBaseDefinite(105.0, 1.0);
         status = ArmStatus.EXTENDED;
     }
 
@@ -34,7 +34,7 @@ public final class Arm {
             throw new IllegalStateException("Arm cannot be retracted!");
         }
         lockElbow();
-        rotateArmBaseDefinite(-100.0, 1.0);
+        rotateArmBaseDefinite(-105.0, 1.0);
         setWristServoPos(0.7);
         status = ArmStatus.RETRACTED;
     }
@@ -54,9 +54,6 @@ public final class Arm {
     }
 
     public static void lockElbow() {
-        HardwareManager.armElbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        HardwareManager.armElbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         HardwareManager.armElbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         HardwareManager.armElbowMotor.setPower(0.0);
     }
@@ -150,19 +147,11 @@ public final class Arm {
         HardwareManager.intakeGateServo.setPosition(0.05);
     }
 
-    public static void setIntakePower(final double power) {
+    public static void setIntakePower(double power) {
         HardwareManager.intakeMotor.setPower(power);
-//        HardwareManager.intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        HardwareManager.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        new Thread(){
-//            @Override
-//            public void run(){
-//                HardwareManager.intakeMotor.setTargetPosition(0);
-//                HardwareManager.intakeMotor.setPower(power);
-//            }
-//        }.start();
     }
+
+    private static final double TICKS_PER_HALF_INTAKE_REVOLUTION = 144;
 
     /**
      * Locks the arm's position and closes the intake gate.

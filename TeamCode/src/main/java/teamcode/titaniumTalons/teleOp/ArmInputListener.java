@@ -26,25 +26,32 @@ class ArmInputListener {
     ArmInputListener() {
         gamepad1 = SingletonOpMode.instance.gamepad1;
         gamepad2 = SingletonOpMode.instance.gamepad2;
-        timer = new RobotTimer(SingletonOpMode.instance);
+        timer = new RobotTimer();
         new Thread() {
 
             @Override
             public void run() {
                 while (SingletonOpMode.instance.opModeIsActive()) {
-                    update();
+                    armUpdate();
                 }
             }
 
         }.start();
+        new Thread(){
+            @Override
+            public void run(){
+                while (SingletonOpMode.instance.opModeIsActive()) {
+                    intakeInputUpdate();
+                }
+            }
+        }.start();
     }
 
-    private void update() {
+    private void armUpdate() {
         presetUpdate();
         baseInputUpdate();
         elbowInputUpdate();
         wristInputUpdate();
-        intakeInputUpdate();
         gateInputUpdate();
     }
 
@@ -65,8 +72,10 @@ class ArmInputListener {
             Arm.rotateArmBaseIndefinite(-MANUAL_ARM_BASE_MOTOR_SPEED);
         } else if (gamepad1.dpad_down) {
             Arm.rotateArmBaseIndefinite(MANUAL_ARM_BASE_MOTOR_SPEED);
+        } else if (gamepad1.left_bumper) {
+            Arm.rotateArmBaseIndefinite(1.0);
         } else if (gamepad1.right_bumper) {
-            Arm.rotateArmBaseIndefinite(-1.0);
+                Arm.rotateArmBaseIndefinite(-1.0);
         } else {
             Arm.lockBaseMotors();
         }
@@ -112,10 +121,10 @@ class ArmInputListener {
         } else if (gamepad2.left_trigger > 0.0f || gamepad2.right_trigger > 0.0f) {
             if (gamepad2.right_trigger > gamepad2.left_trigger) {
                 // intake
-                Arm.setIntakePower(-0.5 * gamepad2.right_trigger);
+                Arm.setIntakePower(-0.25 * gamepad2.right_trigger);
             } else {
                 // outtake
-                Arm.setIntakePower(0.5 * gamepad2.left_trigger);
+                Arm.setIntakePower(0.25 * gamepad2.left_trigger);
             }
         } else {
             Arm.setIntakePower(0.0);
