@@ -2,6 +2,7 @@ package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import teamcode.tensorFlow.RobotUtils;
 import teamcode.utils.Vector2;
 
 // USEFUL INFORMATION FOR MECANUM WHEEL MATH:
@@ -13,7 +14,6 @@ import teamcode.utils.Vector2;
 public final class Drive {
 
     private static final Vector2 STRAIGHT = new Vector2(0.0, 1.0);
-
     /**
      * The number of ticks that each drive motor will have to turn to make the robot drive
      * vertically one inch.
@@ -30,6 +30,8 @@ public final class Drive {
      */
     private static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = 22.7111913357;
 
+    private static final double MOTOR_TICKS_WITHIN_TARGET = 5.0;
+
     /**
      * Causes the robot to drive vertically a definite, specified number of inches. The thread from
      * which this method is called is forced to wait until the robot finishes driving.
@@ -38,7 +40,7 @@ public final class Drive {
      *               will drive forward. If negative, the robot will drive backward.
      * @param power  the power that the drive motors should be set to
      */
-    public static void driveVerticallyDefinite(double inches, double power) {
+    public static void driveVerticalDefinite(double inches, double power) {
         setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL);
@@ -53,8 +55,8 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        makeThreadWaitForMotors();
-    }
+        while (SingletonOpMode.active() && !driveMotorsNearTarget()) ;
+        zeroDriveMotorPower();    }
 
     /**
      * Causes the robot to drive laterally a definite, specified number of inches. The thread from
@@ -79,8 +81,8 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        makeThreadWaitForMotors();
-    }
+        while (SingletonOpMode.active() && !driveMotorsNearTarget()) ;
+        zeroDriveMotorPower();    }
 
     /**
      * Causes the robot to turn in the direction of the specified vector and then drive forward a
@@ -93,7 +95,7 @@ public final class Drive {
     public static void driveDefinite(Vector2 v, double turnSpeed, double forwardSpeed) {
         double radians = v.angleBetween(STRAIGHT);
         turnDefinite(-Math.toDegrees(radians), turnSpeed);
-        driveVerticallyDefinite(v.magnitude(), forwardSpeed);
+        driveVerticalDefinite(v.magnitude(), forwardSpeed);
     }
 
     /**
@@ -151,8 +153,8 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        makeThreadWaitForMotors();
-    }
+        while (SingletonOpMode.active() && !driveMotorsNearTarget()) ;
+        zeroDriveMotorPower();    }
 
     /**
      * Causes the robot to turn an indefinite angle until the motors are explicitly told
@@ -179,18 +181,18 @@ public final class Drive {
     /**
      * Returns whether the drive motors are running.
      */
-    private static boolean driveMotorsBusy() {
-        return HardwareManager.frontLeftDrive.isBusy()
-                || HardwareManager.frontRightDrive.isBusy()
-                || HardwareManager.backLeftDrive.isBusy()
-                || HardwareManager.backRightDrive.isBusy();
+    private static boolean driveMotorsNearTarget() {
+        return RobotUtils.motorNearTarget(HardwareManager.frontLeftDrive, MOTOR_TICKS_WITHIN_TARGET)
+                && RobotUtils.motorNearTarget(HardwareManager.frontRightDrive, MOTOR_TICKS_WITHIN_TARGET)
+                && RobotUtils.motorNearTarget(HardwareManager.backLeftDrive, MOTOR_TICKS_WITHIN_TARGET)
+                && RobotUtils.motorNearTarget(HardwareManager.backRightDrive, MOTOR_TICKS_WITHIN_TARGET);
     }
 
-    /**
-     * Forces the current Thread to wait until the drive motors reach their target position.
-     */
-    private static void makeThreadWaitForMotors() {
-        while (SingletonOpMode.active() && driveMotorsBusy()) ;
+    private static void zeroDriveMotorPower() {
+        HardwareManager.frontLeftDrive.setPower(0.0);
+        HardwareManager.frontRightDrive.setPower(0.0);
+        HardwareManager.backLeftDrive.setPower(0.0);
+        HardwareManager.backRightDrive.setPower(0.0);
     }
 
 }

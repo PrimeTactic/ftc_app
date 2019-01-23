@@ -1,6 +1,7 @@
 package teamcode.titaniumTalons.auto;
 
 import teamcode.tensorFlow.Mineral;
+import teamcode.tensorFlow.MineralCriteria;
 import teamcode.tensorFlow.TensorFlowManager;
 import teamcode.titaniumTalons.Arm;
 import teamcode.titaniumTalons.Drive;
@@ -22,32 +23,42 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
      * @return the location that the gold mineral was at
      */
     protected MineralLocation sample() {
-        if (goldAhead()) {
-            double driveDist = 25.0;
-            Drive.driveVerticallyDefinite(driveDist, 0.75);
-            return MineralLocation.MIDDLE;
+        MineralLocation goldLoc = locateGold();
+
+        switch (goldLoc) {
+            case LEFT:
+                Drive.turnDefinite(-30.0, 0.75);
+                Drive.driveVerticalDefinite(30.0, 1.0);
+                break;
+            case MIDDLE:
+                Drive.driveVerticalDefinite(24.0, 1.0);
+                break;
+            case RIGHT:
+                Drive.turnDefinite(30.0, 0.75);
+                Drive.driveVerticalDefinite(30.0, 1.0);
+                break;
         }
 
-        Drive.turnDefinite(-30.0, 0.5);
-        if (goldAhead()) {
-            double driveDist = 25.0;
-            Drive.driveVerticallyDefinite(driveDist, 0.75);
-            return MineralLocation.LEFT;
-        }
-
-        Drive.turnDefinite(60, 0.5);
-        double driveDist = 25.0;
-        Drive.driveVerticallyDefinite(driveDist, 0.75);
-        return MineralLocation.RIGHT;
+        return goldLoc;
     }
 
-    private boolean goldAhead() {
+    private static final MineralCriteria LEFT_MINERAL_CRITERIA = new MineralCriteria(0, 200, 25, 50);
+    private static final MineralCriteria MIDDLE_MINERAL_CRITERIA = new MineralCriteria(500, 900, 10, 100);
+    private static final MineralCriteria RIGHT_MINERAL_CRITERIA = new MineralCriteria(1000, 1280, 25, 50);
+
+    private MineralLocation locateGold() {
         for (Mineral mineral : tfManager.getRecognizedMinerals()) {
             if (mineral.isGold()) {
-                return true;
+                if (mineral.matchesCriteria(LEFT_MINERAL_CRITERIA)) {
+                    return MineralLocation.LEFT;
+                } else if (mineral.matchesCriteria(MIDDLE_MINERAL_CRITERIA)) {
+                    return MineralLocation.MIDDLE;
+                } else if (mineral.matchesCriteria(RIGHT_MINERAL_CRITERIA)) {
+                    return MineralLocation.RIGHT;
+                }
             }
         }
-        return false;
+        return MineralLocation.RIGHT;
     }
 
     protected void releaseMarker() {

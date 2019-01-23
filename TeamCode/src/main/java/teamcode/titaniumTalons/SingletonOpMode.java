@@ -25,12 +25,12 @@ public abstract class SingletonOpMode extends LinearOpMode {
     }
 
     /**
-     * Invoked when the 'init' button is pressed on the driver phone.
+     * Invoked when the init button is pressed on the driver phone.
      */
     protected abstract void onInitialize();
 
     /**
-     * Invoked when the 'start' button is pressed on the driver phone.
+     * Invoked when the play button is pressed on the driver phone.
      */
     protected abstract void onStart();
 

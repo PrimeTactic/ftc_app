@@ -16,7 +16,6 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
 
     @Override
     protected void onStart() {
-        Arm.lockElbow();
         Arm.setWristServoPos(0.4);
         new DriveInputListener();
         new ArmInputListener();

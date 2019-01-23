@@ -2,8 +2,6 @@ package teamcode.tensorFlow;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
-import teamcode.utils.Vector2;
-
 public class Mineral {
     private float left;
     private float right;
@@ -54,17 +52,55 @@ public class Mineral {
     }
 
     // degrees
-    public double getAngle() { return angle; }
+    public double getAngle() {
+        return angle;
+    }
 
     // degrees
-    public void setAngle(double newAngle) { angle = newAngle; }
+    public void setAngle(double newAngle) {
+        angle = newAngle;
+    }
 
-    public void setA(double a) { this.a = a; }
-    public double getA() { return this.a; }
+    public void setA(double a) {
+        this.a = a;
+    }
 
-    public void setB(double b) { this.b = b; }
-    public double getB() { return this.b; }
+    public double getA() {
+        return this.a;
+    }
 
-    public void setC(double c) { this.c = c; }
-    public double getC() { return this.c; }
+    public void setB(double b) {
+        this.b = b;
+    }
+
+    public double getB() {
+        return this.b;
+    }
+
+    public void setC(double c) {
+        this.c = c;
+    }
+
+    public double getC() {
+        return this.c;
+    }
+
+    public double getCenter() {
+        return (left + right) / 2;
+    }
+
+    public double getWidth() {
+        return right - left;
+    }
+
+    /**
+     * Returns true if this mineral matches the specified {@link MineralCriteria}.
+     */
+    public boolean matchesCriteria(MineralCriteria criteria) {
+        double centr = getCenter();
+        double width = getWidth();
+        return (centr > criteria.getMinCenter() && centr < criteria.getMaxCenter()
+                && width > criteria.getMinWidth() && width < criteria.getMaxWidth());
+    }
+
 }

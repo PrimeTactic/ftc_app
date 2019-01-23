@@ -1,7 +1,5 @@
 package teamcode.titaniumTalons.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 import teamcode.titaniumTalons.Arm;
 import teamcode.titaniumTalons.Drive;
 
@@ -32,7 +30,7 @@ public class TitaniumTalonsAutonomousDepotSide extends AbstractTitaniumTalonsAut
 
     private void driveToCrater() {
         double inches = 25.0;
-        Drive.driveVerticallyDefinite(inches, 1.0);
+        Drive.driveVerticalDefinite(inches, 1.0);
     }
 
 }
