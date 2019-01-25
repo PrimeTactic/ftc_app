@@ -2,7 +2,6 @@ package teamcode.titaniumTalons.teleOp;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import java.util.Timer;
 import java.util.TimerTask;
 
 import teamcode.titaniumTalons.Arm;
@@ -58,10 +57,10 @@ class ArmInputListener {
     private void presetUpdate() {
         if (gamepad1.y) {
             if (Arm.status == Arm.ArmStatus.EXTENDED) {
-                Arm.retract();
+                Arm.partiallyRetract();
             }
         } else if (gamepad1.a) {
-            if (Arm.status == Arm.ArmStatus.RETRACTED) {
+            if (Arm.status == Arm.ArmStatus.PARTIALLY_RETRACTED) {
                 Arm.extend();
             }
         }

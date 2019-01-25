@@ -30,7 +30,7 @@ public final class Drive {
      */
     private static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = 22.7111913357;
 
-    private static final double MOTOR_TICKS_WITHIN_TARGET = 5.0;
+    private static final double MOTOR_TICKS_WITHIN_TARGET = 10.0;
 
     /**
      * Causes the robot to drive vertically a definite, specified number of inches. The thread from
@@ -56,7 +56,8 @@ public final class Drive {
         HardwareManager.backRightDrive.setPower(power);
 
         while (SingletonOpMode.active() && !driveMotorsNearTarget()) ;
-        zeroDriveMotorPower();    }
+        zeroDriveMotorPower();
+    }
 
     /**
      * Causes the robot to drive laterally a definite, specified number of inches. The thread from
@@ -82,7 +83,8 @@ public final class Drive {
         HardwareManager.backRightDrive.setPower(power);
 
         while (SingletonOpMode.active() && !driveMotorsNearTarget()) ;
-        zeroDriveMotorPower();    }
+        zeroDriveMotorPower();
+    }
 
     /**
      * Causes the robot to turn in the direction of the specified vector and then drive forward a
@@ -154,7 +156,8 @@ public final class Drive {
         HardwareManager.backRightDrive.setPower(power);
 
         while (SingletonOpMode.active() && !driveMotorsNearTarget()) ;
-        zeroDriveMotorPower();    }
+        zeroDriveMotorPower();
+    }
 
     /**
      * Causes the robot to turn an indefinite angle until the motors are explicitly told

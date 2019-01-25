@@ -13,13 +13,17 @@ public class TitaniumTalonsAutonomousCraterSide extends AbstractTitaniumTalonsAu
     @Override
     protected void onStart() {
         Arm.lowerFromLatch();
-        Drive.driveLateralDefinite(-5, 1.0);
+        Drive.driveLateralDefinite(-5.0, 0.75);
+        Arm.fullyRetract();
+        Drive.driveLateralDefinite(5.0, 0.75);
+        Drive.driveVerticalDefinite(-5.0, 0.75);
+
         goldLocation = super.sample();
 
-//        dropOffMarker();
-//        driveToCrater();
+        dropOffMarker();
+        driveToCrater();
+        Arm.extend();
     }
-
 
     private void dropOffMarker() {
         switch (goldLocation) {
@@ -27,20 +31,20 @@ public class TitaniumTalonsAutonomousCraterSide extends AbstractTitaniumTalonsAu
                 Drive.turnDefinite(-60.0, 0.75);
                 break;
             case MIDDLE:
-                Drive.turnDefinite(-90.0, 0.75);
+                Drive.driveVerticalDefinite(-8.0, 0.75);
+                Drive.driveLateralDefinite(-48.0, 1.0);
+                Drive.turnDefinite(-135.0, 0.75);
+                Drive.driveLateralDefinite(6.0, 0.75);
                 Drive.driveVerticalDefinite(36.0, 1.0);
                 break;
             case RIGHT:
                 break;
         }
-        Drive.turnDefinite(-45.0, 0.75);
-        Drive.driveVerticalDefinite(48.0, 1.0);
         releaseMarker();
     }
 
     private void driveToCrater() {
-        double inches = -25.0;
-        Drive.driveVerticalDefinite(inches, 1.0);
+        Drive.driveVerticalDefinite(-44.0, 1.0);
     }
 
 }

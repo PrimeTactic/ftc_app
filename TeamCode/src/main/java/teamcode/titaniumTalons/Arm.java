@@ -2,41 +2,57 @@ package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import java.util.TimerTask;
-
 /**
  * Contains methods pertaining to the arm system of the robot.
  */
 public final class Arm {
 
     private static final double BASE_MOTOR_TICKS_PER_DEGREE = 5.73333333333;
-    private static final double ELBOW_MOTOR_TICKS_PER_DEGREE = 0.8;
+    private static final double ELBOW_MOTOR_TICKS_PER_DEGREE = 4.0;
+    private static final double TICKS_PER_HALF_INTAKE_REVOLUTION = 144.0;
 
     public static ArmStatus status;
 
     public enum ArmStatus {
-        LATCHED, EXTENDED, RETRACTED
+        LATCHED, EXTENDED, PARTIALLY_RETRACTED, FULLY_RETRACTED
     }
 
     public static void extend() {
-        if (status != ArmStatus.RETRACTED) {
-            throw new IllegalStateException("Arm cannot be extended!");
+        if (status != ArmStatus.PARTIALLY_RETRACTED) {
         }
         closeIntakeGate();
-        setWristServoPos(0.4);
-        lockElbow();
-        rotateArmBaseDefinite(105.0, 1.0);
+        if (status == ArmStatus.PARTIALLY_RETRACTED) {
+            setWristServoPos(0.4);
+            lockElbow();
+            rotateArmBaseDefinite(105.0, 1.0);
+        } else if (status == ArmStatus.FULLY_RETRACTED) {
+            setWristServoPos(0.4);
+            rotateElbowDefinite(125.0, 1.0);
+            rotateArmBaseDefinite(195.0, 1.0);
+        } else {
+            throw new IllegalStateException("Arm cannot be extended!");
+        }
         status = ArmStatus.EXTENDED;
     }
 
-    public static void retract() {
+    public static void partiallyRetract() {
         if (status != ArmStatus.EXTENDED) {
-            throw new IllegalStateException("Arm cannot be retracted!");
+            throw new IllegalStateException("Arm cannot be partially retracted!");
         }
         lockElbow();
         rotateArmBaseDefinite(-105.0, 1.0);
         setWristServoPos(0.7);
-        status = ArmStatus.RETRACTED;
+        status = ArmStatus.PARTIALLY_RETRACTED;
+    }
+
+    public static void fullyRetract() {
+        if (status != ArmStatus.PARTIALLY_RETRACTED) {
+            throw new IllegalStateException("Arm cannot be fully retracted");
+        }
+        setWristServoPos(0.0);
+        rotateElbowDefinite(250.0, 1.0);
+        rotateArmBaseDefinite(-70.0, 1.0);
+        status = ArmStatus.FULLY_RETRACTED;
     }
 
     public static void lowerFromLatch() {
@@ -47,10 +63,10 @@ public final class Arm {
         HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         HardwareManager.pinServo.setPosition(0.5);
         // rotateArmBaseDefinite(90.0,0.5);
-        SingletonOpMode.instance.sleep(5000);
+        SingletonOpMode.instance.sleep(3000);
         HardwareManager.leftArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        status = ArmStatus.EXTENDED;
+        status = ArmStatus.PARTIALLY_RETRACTED;
     }
 
     public static void lockElbow() {
@@ -59,7 +75,7 @@ public final class Arm {
     }
 
     /**
-     * @param degrees make positive to extend, negative to retract
+     * @param degrees make positive to extend, negative to partiallyRetract
      * @param power
      */
     public static void rotateArmBaseDefinite(double degrees, double power) {
@@ -79,7 +95,7 @@ public final class Arm {
     }
 
     /**
-     * @param power make positive to extend, negative to retract
+     * @param power make positive to extend, negative to partiallyRetract
      */
     public static void rotateArmBaseIndefinite(double power) {
         HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -101,7 +117,7 @@ public final class Arm {
     }
 
     /**
-     * @param degrees make positive to extend, negative to retract
+     * @param degrees make positive to extend, negative to partiallyRetract
      * @param power
      */
     public static void rotateElbowDefinite(double degrees, double power) {
@@ -150,8 +166,6 @@ public final class Arm {
     public static void setIntakePower(double power) {
         HardwareManager.intakeMotor.setPower(power);
     }
-
-    private static final double TICKS_PER_HALF_INTAKE_REVOLUTION = 144;
 
     /**
      * Locks the arm's position and closes the intake gate.
