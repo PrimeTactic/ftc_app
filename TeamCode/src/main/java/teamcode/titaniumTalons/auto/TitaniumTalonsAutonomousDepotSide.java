@@ -6,31 +6,14 @@ import teamcode.titaniumTalons.Drive;
 //@Autonomous(name = "TitaniumTalonsAutonomousDepotSide", group = "Linear OpMode")
 public class TitaniumTalonsAutonomousDepotSide extends AbstractTitaniumTalonsAuto {
 
-    private MineralLocation goldLocation;
+    @Override
+    protected void driveToDepot(){
+
+    }
 
     @Override
-    protected void onStart() {
-        Arm.lowerFromLatch();
-        goldLocation = super.sample();
-        dropOffMarker();
-        driveToCrater();
-    }
+    protected void driveToCrater(){
 
-
-    private void dropOffMarker() {
-        switch (goldLocation) {
-            case LEFT:
-                break;
-            case MIDDLE:
-                break;
-            case RIGHT:
-                break;
-        }
-    }
-
-    private void driveToCrater() {
-        double inches = 25.0;
-        Drive.driveVerticalDefinite(inches, 1.0);
     }
 
 }

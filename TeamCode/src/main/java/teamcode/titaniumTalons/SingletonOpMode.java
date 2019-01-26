@@ -13,8 +13,11 @@ public abstract class SingletonOpMode extends LinearOpMode {
         Arm.initialize();
         onInitialize();
         waitForStart();
+        if (!opModeIsActive()) {
+            return;
+        }
         onStart();
-        while(opModeIsActive());
+        while (opModeIsActive()) ;
     }
 
     /**

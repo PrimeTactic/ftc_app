@@ -2,6 +2,8 @@ package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import java.util.TimerTask;
+
 /**
  * Contains methods pertaining to the arm system of the robot.
  */
@@ -9,26 +11,28 @@ public final class Arm {
 
     private static final double BASE_MOTOR_TICKS_PER_DEGREE = 5.73333333333;
     private static final double ELBOW_MOTOR_TICKS_PER_DEGREE = 4.0;
-    private static final double TICKS_PER_HALF_INTAKE_REVOLUTION = 144.0;
 
     public static ArmStatus status;
 
+    private static RobotTimer timer = new RobotTimer();
+
     public enum ArmStatus {
-        LATCHED, EXTENDED, PARTIALLY_RETRACTED, FULLY_RETRACTED
+        LATCHED, EXTENDED, PARTIALLY_RETRACTED, FULLY_RETRACTED, CRANE
     }
 
     public static void extend() {
-        if (status != ArmStatus.PARTIALLY_RETRACTED) {
-        }
         closeIntakeGate();
         if (status == ArmStatus.PARTIALLY_RETRACTED) {
             setWristServoPos(0.4);
             lockElbow();
             rotateArmBaseDefinite(105.0, 1.0);
         } else if (status == ArmStatus.FULLY_RETRACTED) {
+            rotateArmBaseDefinite(80, 1.0);
             setWristServoPos(0.4);
-            rotateElbowDefinite(125.0, 1.0);
-            rotateArmBaseDefinite(195.0, 1.0);
+            rotateElbowDefinite(-100, 0.5);
+            rotateArmBaseDefinite(70, 1.0);
+        } else if (status == ArmStatus.CRANE) {
+            //asdfsadfsafs
         } else {
             throw new IllegalStateException("Arm cannot be extended!");
         }
@@ -51,8 +55,17 @@ public final class Arm {
         }
         setWristServoPos(0.0);
         rotateElbowDefinite(250.0, 1.0);
-        rotateArmBaseDefinite(-70.0, 1.0);
+
+        rotateArmBaseDefinite(-60.0, 0.5);
         status = ArmStatus.FULLY_RETRACTED;
+    }
+
+    public static void crane() {
+        if (status == ArmStatus.PARTIALLY_RETRACTED) {
+            rotateArmBaseDefinite(25.0, 1.0);
+            rotateElbowDefinite(0.0, 1.0);
+            setWristServoPos(0.0);
+        }
     }
 
     public static void lowerFromLatch() {
@@ -63,7 +76,7 @@ public final class Arm {
         HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         HardwareManager.pinServo.setPosition(0.5);
         // rotateArmBaseDefinite(90.0,0.5);
-        SingletonOpMode.instance.sleep(3000);
+        SingletonOpMode.instance.sleep(1500);
         HardwareManager.leftArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         status = ArmStatus.PARTIALLY_RETRACTED;
@@ -103,6 +116,7 @@ public final class Arm {
 
         HardwareManager.leftArmBaseMotor.setPower(power);
         HardwareManager.rightArmBaseMotor.setPower(power);
+        lockBaseMotors();
     }
 
     public static void lockBaseMotors() {
@@ -129,6 +143,7 @@ public final class Arm {
         HardwareManager.armElbowMotor.setPower(power);
         while (SingletonOpMode.active() &&
                 HardwareManager.armElbowMotor.isBusy()) ;
+        lockElbow();
     }
 
     public static void rotateElbowIndefinite(double power) {

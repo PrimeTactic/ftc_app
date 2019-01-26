@@ -10,11 +10,13 @@ import teamcode.titaniumTalons.SingletonOpMode;
 
 public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
 
-    private TensorFlowManager tfManager;
-
     private static final MineralCriteria LEFT_MINERAL_CRITERIA = new MineralCriteria(0, 200, 25, 50);
     private static final MineralCriteria MIDDLE_MINERAL_CRITERIA = new MineralCriteria(500, 900, 10, 100);
     private static final MineralCriteria RIGHT_MINERAL_CRITERIA = new MineralCriteria(1000, 1280, 25, 50);
+
+    protected MineralLocation goldLocation;
+
+    private TensorFlowManager tfManager;
 
     @Override
     protected void onInitialize() {
@@ -23,13 +25,29 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
         Arm.status = Arm.ArmStatus.LATCHED;
     }
 
-    /**
-     * @return the location that the gold mineral was at
-     */
-    protected MineralLocation sample() {
-        MineralLocation goldLoc = locateGold();
+    @Override
+    protected void onStart() {
+//        Arm.lowerFromLatch();
+//        Drive.driveLateralDefinite(-5.0, 1.0);
+//        Arm.fullyRetract();
+//        Drive.driveLateralDefinite(5.0, 1.0);
+//        Drive.driveVerticalDefinite(-5.0, 1.0);
+//
+//        sample();
+//
+//        driveToDepot();
+//        releaseMarker();
+//        driveToCrater();
+//        Arm.extend();
+        Arm.status = Arm.ArmStatus.FULLY_RETRACTED;
+        Arm.extend();
+        while (opModeIsActive()) ;
+    }
 
-        switch (goldLoc) {
+    protected void sample() {
+        goldLocation = locateGold();
+
+        switch (goldLocation) {
             case LEFT:
                 Drive.turnDefinite(-30.0, 1.0);
                 Drive.driveVerticalDefinite(30.0, 1.0);
@@ -42,8 +60,6 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
                 Drive.driveVerticalDefinite(30.0, 1.0);
                 break;
         }
-
-        return goldLoc;
     }
 
     private MineralLocation locateGold() {
@@ -62,9 +78,14 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
 //        return MineralLocation.RIGHT;
     }
 
-    protected void releaseMarker() {
+    protected abstract void driveToDepot();
+
+    private void releaseMarker() {
         HardwareManager.pinServo.setPosition(0.0);
+        sleep(500);
     }
+
+    protected abstract void driveToCrater();
 
     protected enum MineralLocation {
         LEFT, MIDDLE, RIGHT
