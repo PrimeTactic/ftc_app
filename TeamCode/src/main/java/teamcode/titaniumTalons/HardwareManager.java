@@ -61,7 +61,7 @@ public final class HardwareManager {
         ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, LED_DRIVER_NAME);
 
         correctDirections();
-    }
+}
 
     private static void correctDirections() {
         frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);

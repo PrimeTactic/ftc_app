@@ -85,8 +85,12 @@ public class Mineral {
         return this.c;
     }
 
-    public double getCenter() {
+    public double getHorizontalCenter() {
         return (left + right) / 2;
+    }
+
+    public double getVerticalCenter() {
+        return (top + bottom) / 2;
     }
 
     public double getWidth() {
@@ -97,10 +101,10 @@ public class Mineral {
      * Returns true if this mineral matches the specified {@link MineralCriteria}.
      */
     public boolean matchesCriteria(MineralCriteria criteria) {
-        double centr = getCenter();
+        double centr = getVerticalCenter();
         double width = getWidth();
-        return (centr > criteria.getMinCenter() && centr < criteria.getMaxCenter()
-                && width > criteria.getMinWidth() && width < criteria.getMaxWidth());
+        return (centr > criteria.getMinVerticalCenter() && centr < criteria.getMaxVerticalCenter()
+                && width > criteria.getMinVerticalWidth() && width < criteria.getMaxVerticalWidth());
     }
 
 }

@@ -15,9 +15,8 @@ public final class Arm {
     public static ArmStatus status;
 
     private static RobotTimer timer = new RobotTimer();
-
     public enum ArmStatus {
-        LATCHED, EXTENDED, PARTIALLY_RETRACTED, FULLY_RETRACTED, CRANE
+        LATCHED, UNLATCHED, EXTENDED, PARTIALLY_RETRACTED, FULLY_RETRACTED, CRANE
     }
 
     public static void extend() {
@@ -27,10 +26,19 @@ public final class Arm {
             lockElbow();
             rotateArmBaseDefinite(105.0, 1.0);
         } else if (status == ArmStatus.FULLY_RETRACTED) {
-            rotateArmBaseDefinite(80, 1.0);
             setWristServoPos(0.4);
-            rotateElbowDefinite(-100, 0.5);
-            rotateArmBaseDefinite(70, 1.0);
+            TimerTask rotateElbowTask = new TimerTask() {
+                @Override
+                public void run() {
+                    rotateElbowDefinite(-100, 0.5);
+                }
+            };
+            RobotTimer.schedule(rotateElbowTask, 400);
+            rotateArmBaseDefinite(165, 1.0);
+        } else if (status == ArmStatus.UNLATCHED) {
+            rotateArmBaseDefinite(90, 1.0);
+            rotateElbowDefinite(180, 1.0);
+            setWristServoPos(0.4);
         } else if (status == ArmStatus.CRANE) {
             //asdfsadfsafs
         } else {
@@ -79,7 +87,7 @@ public final class Arm {
         SingletonOpMode.instance.sleep(1500);
         HardwareManager.leftArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        status = ArmStatus.PARTIALLY_RETRACTED;
+        status = ArmStatus.UNLATCHED;
     }
 
     public static void lockElbow() {
@@ -116,7 +124,6 @@ public final class Arm {
 
         HardwareManager.leftArmBaseMotor.setPower(power);
         HardwareManager.rightArmBaseMotor.setPower(power);
-        lockBaseMotors();
     }
 
     public static void lockBaseMotors() {
@@ -178,6 +185,10 @@ public final class Arm {
         HardwareManager.intakeGateServo.setPosition(0.05);
     }
 
+    /**
+     *
+     * @param power make negative to intake
+     */
     public static void setIntakePower(double power) {
         HardwareManager.intakeMotor.setPower(power);
     }

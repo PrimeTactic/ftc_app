@@ -2,29 +2,29 @@ package teamcode.tensorFlow;
 
 public class MineralCriteria {
 
-    private double minCenter, maxCenter, minWidth, maxWidth;
+    private double minVerticalCenter, maxVerticalCenter, minVerticalWidth, maxVerticalWidth;
 
-    public MineralCriteria(double minCenter, double maxCenter, double minWidth, double maxWidth) {
-        this.minCenter = minCenter;
-        this.maxCenter = maxCenter;
-        this.minWidth = minWidth;
-        this.maxWidth = maxWidth;
+    public MineralCriteria(double minVerticalCenter, double maxVerticalCenter, double minVerticalWidth, double maxVerticalWidth) {
+        this.minVerticalCenter = minVerticalCenter;
+        this.maxVerticalCenter = maxVerticalCenter;
+        this.minVerticalWidth = minVerticalWidth;
+        this.maxVerticalWidth = maxVerticalWidth;
     }
 
-    public double getMinCenter() {
-        return minCenter;
+    public double getMinVerticalCenter() {
+        return minVerticalCenter;
     }
 
-    public double getMaxCenter(){
-        return maxCenter;
+    public double getMaxVerticalCenter(){
+        return maxVerticalCenter;
     }
 
-    public double getMinWidth() {
-        return minWidth;
+    public double getMinVerticalWidth() {
+        return minVerticalWidth;
     }
 
-    public double getMaxWidth() {
-        return maxWidth;
+    public double getMaxVerticalWidth() {
+        return maxVerticalWidth;
     }
 
 }

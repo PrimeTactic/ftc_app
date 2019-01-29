@@ -10,9 +10,9 @@ import teamcode.titaniumTalons.SingletonOpMode;
 
 public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
 
-    private static final MineralCriteria LEFT_MINERAL_CRITERIA = new MineralCriteria(0, 200, 25, 50);
-    private static final MineralCriteria MIDDLE_MINERAL_CRITERIA = new MineralCriteria(500, 900, 10, 100);
-    private static final MineralCriteria RIGHT_MINERAL_CRITERIA = new MineralCriteria(1000, 1280, 25, 50);
+    // resolution is 720 x 1280
+    private static final MineralCriteria LEFT_MINERAL_CRITERIA = new MineralCriteria(950, 1280, 75, 250);
+    private static final MineralCriteria MIDDLE_MINERAL_CRITERIA = new MineralCriteria(250, 600, 75, 250);
 
     protected MineralLocation goldLocation;
 
@@ -27,21 +27,22 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
 
     @Override
     protected void onStart() {
-//        Arm.lowerFromLatch();
-//        Drive.driveLateralDefinite(-5.0, 1.0);
-//        Arm.fullyRetract();
-//        Drive.driveLateralDefinite(5.0, 1.0);
-//        Drive.driveVerticalDefinite(-5.0, 1.0);
-//
-//        sample();
-//
-//        driveToDepot();
-//        releaseMarker();
-//        driveToCrater();
-//        Arm.extend();
-        Arm.status = Arm.ArmStatus.FULLY_RETRACTED;
+        Arm.lowerFromLatch();
+        Drive.driveLateralDefinite(-5.0, 1.0);
+        Drive.driveVerticalDefinite(2.0, 1.0);
+        Drive.driveLateralDefinite(5.0, 1.0);
+
+        goldLocation = locateGold();
+        telemetry.addData("Gold Location", goldLocation);
+        telemetry.update();
+
+        sample();
+
+        driveToDepot();
+        releaseMarker();
+        driveToCrater();
         Arm.extend();
-        while (opModeIsActive()) ;
+        Arm.setIntakePower(-1.0);
     }
 
     protected void sample() {
@@ -50,32 +51,30 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
         switch (goldLocation) {
             case LEFT:
                 Drive.turnDefinite(-30.0, 1.0);
-                Drive.driveVerticalDefinite(30.0, 1.0);
+                Drive.driveVerticalDefinite(27.0, 1.0);
                 break;
             case MIDDLE:
-                Drive.driveVerticalDefinite(28.0, 1.0);
+                Drive.driveVerticalDefinite(25.0, 1.0);
                 break;
             case RIGHT:
-                Drive.turnDefinite(30.0, 1.0);
-                Drive.driveVerticalDefinite(30.0, 1.0);
+                Drive.turnDefinite(35.0, 1.0);
+                Drive.driveVerticalDefinite(27.0, 1.0);
                 break;
         }
     }
 
     private MineralLocation locateGold() {
-        return MineralLocation.MIDDLE;
-//        for (Mineral mineral : tfManager.getRecognizedMinerals()) {
-//            if (mineral.isGold()) {
-//                if (mineral.matchesCriteria(LEFT_MINERAL_CRITERIA)) {
-//                    return MineralLocation.LEFT;
-//                } else if (mineral.matchesCriteria(MIDDLE_MINERAL_CRITERIA)) {
-//                    return MineralLocation.MIDDLE;
-//                } else if (mineral.matchesCriteria(RIGHT_MINERAL_CRITERIA)) {
-//                    return MineralLocation.RIGHT;
-//                }
-//            }
-//        }
-//        return MineralLocation.RIGHT;
+        for (Mineral mineral : tfManager.getRecognizedMinerals()) {
+            if (mineral.isGold()) {
+                if (mineral.matchesCriteria(LEFT_MINERAL_CRITERIA)) {
+                    return MineralLocation.LEFT;
+                } else if (mineral.matchesCriteria(MIDDLE_MINERAL_CRITERIA)) {
+                    return MineralLocation.MIDDLE;
+                }
+            }
+        }
+        // the default
+        return MineralLocation.RIGHT;
     }
 
     protected abstract void driveToDepot();
@@ -85,7 +84,9 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
         sleep(500);
     }
 
-    protected abstract void driveToCrater();
+    private void driveToCrater() {
+        Drive.driveVerticalDefinite(-60.0, 1.0);
+    }
 
     protected enum MineralLocation {
         LEFT, MIDDLE, RIGHT

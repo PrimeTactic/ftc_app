@@ -12,8 +12,6 @@ import teamcode.titaniumTalons.RobotTimer;
 public class TeleOpLights {
 
     public void enable() {
-        RobotTimer timer = new RobotTimer();
-
         HardwareManager.ledDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE);
 
         TimerTask shift0 = new TimerTask() {
@@ -51,11 +49,11 @@ public class TeleOpLights {
             }
         };
 
-        timer.schedule(shift0, 30.0);
-        timer.schedule(shift1, 60.0);
-        timer.schedule(shift2, 90.0);
-        timer.schedule(shift3, 105.0);
-        timer.schedule(shift4, 115.0);
+        RobotTimer.schedule(shift0, 30.0);
+        RobotTimer.schedule(shift1, 60.0);
+        RobotTimer.schedule(shift2, 90.0);
+        RobotTimer.schedule(shift3, 105.0);
+        RobotTimer.schedule(shift4, 115.0);
     }
 
 }

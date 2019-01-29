@@ -16,7 +16,6 @@ class ArmInputListener {
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
-    private RobotTimer timer;
 
     private boolean intakeGateOpened = false;
     private boolean gateOnCooldown = false;
@@ -25,7 +24,6 @@ class ArmInputListener {
     ArmInputListener() {
         gamepad1 = SingletonOpMode.instance.gamepad1;
         gamepad2 = SingletonOpMode.instance.gamepad2;
-        timer = new RobotTimer();
         new Thread() {
 
             @Override
@@ -153,7 +151,7 @@ class ArmInputListener {
                 gateOnCooldown = false;
             }
         };
-        timer.schedule(task, 0.5);
+        RobotTimer.schedule(task, 0.5);
     }
 
 }

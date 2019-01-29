@@ -2,7 +2,6 @@ package teamcode.titaniumTalons.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import teamcode.titaniumTalons.Arm;
 import teamcode.titaniumTalons.Drive;
 
 @Autonomous(name = "TitaniumTalonsAutonomousCraterSide", group = "Linear OpMode")
@@ -12,22 +11,40 @@ public class TitaniumTalonsAutonomousCraterSide extends AbstractTitaniumTalonsAu
     protected void driveToDepot() {
         switch (goldLocation) {
             case LEFT:
-                Drive.turnDefinite(-60.0, 1.0);
+                goldLeftDriveToDepot();
                 break;
             case MIDDLE:
-                Drive.driveVerticalDefinite(-8.0, 1.0);
-                Drive.driveLateralDefinite(-84.0, 1.0);
-                Drive.turnDefinite(-135.0, 1.0);
-                Drive.driveVerticalDefinite(12.0, 1.0);
+                goldMiddleDriveToDepot();
                 break;
             case RIGHT:
+                goldRightDriveToDepot();
                 break;
         }
     }
 
-    @Override
-    protected void driveToCrater() {
-        Drive.driveVerticalDefinite(-60.0, 1.0);
+    private void goldLeftDriveToDepot() {
+        Drive.turnDefinite(30, 1.0);
+        Drive.driveLateralDefinite(-20.0, 1.0);
+        Drive.turnDefinite(-135.0, 1.0);
+        Drive.driveLateralDefinite(10.0, 1.0);
+        Drive.driveVerticalDefinite(48.0, 1.0);
+    }
+
+    private void goldMiddleDriveToDepot() {
+        Drive.driveVerticalDefinite(-8.0, 1.0);
+        Drive.driveLateralDefinite(-40.0, 1.0);
+        Drive.turnDefinite(-135.0, 1.0);
+        Drive.driveLateralDefinite(11.0, 1.0);
+        Drive.driveVerticalDefinite(44.0, 1.0);
+    }
+
+    private void goldRightDriveToDepot() {
+        Drive.driveVerticalDefinite(-8.0, 1.0);
+        Drive.turnDefinite(-35, 1.0);
+        Drive.driveLateralDefinite(-60.0, 1.0);
+        Drive.turnDefinite(-135.0, 1.0);
+        Drive.driveLateralDefinite(11.0, 1.0);
+        Drive.driveVerticalDefinite(33.0, 1.0);
     }
 
 }

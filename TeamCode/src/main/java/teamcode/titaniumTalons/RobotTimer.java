@@ -13,37 +13,22 @@ public class RobotTimer {
 
     private static final long CHECK_FOR_DESTRUCT_PERIOD = 10L;
 
-    private Timer timer;
+    private static Timer timer = new Timer();
 
-    /**
-     * Uses the current {@link SingletonOpMode} in use.
-     */
-    public RobotTimer() {
-        this(SingletonOpMode.instance);
+    private RobotTimer() {
+        // do not instantiate
     }
 
-    /**
-     * Allows you to specify the OpMode. Use this for testing
-     */
-    public RobotTimer(final LinearOpMode opMode) {
-        timer = new Timer();
-        TimerTask selfDestructTask = new TimerTask() {
-            @Override
-            public void run() {
-                if (!opMode.opModeIsActive()) {
-                    timer.cancel();
-                }
-            }
-        };
-        timer.scheduleAtFixedRate(selfDestructTask, 0, CHECK_FOR_DESTRUCT_PERIOD);
-    }
-
-    public void schedule(TimerTask task, double delaySeconds) {
+    public static void schedule(TimerTask task, double delaySeconds) {
         timer.schedule(task, (long) (delaySeconds * 1000));
     }
 
-    public void scheduleAtFixedRate(TimerTask task, double periodSeconds) {
+    public static void scheduleAtFixedRate(TimerTask task, double periodSeconds) {
         timer.scheduleAtFixedRate(task, 0L, (long) (periodSeconds * 1000));
+    }
+
+    public static void cancel() {
+        timer.cancel();
     }
 
 }

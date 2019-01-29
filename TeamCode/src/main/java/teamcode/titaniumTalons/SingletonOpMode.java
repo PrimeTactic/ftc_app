@@ -13,11 +13,9 @@ public abstract class SingletonOpMode extends LinearOpMode {
         Arm.initialize();
         onInitialize();
         waitForStart();
-        if (!opModeIsActive()) {
-            return;
-        }
         onStart();
         while (opModeIsActive()) ;
+        RobotTimer.cancel();
     }
 
     /**
@@ -28,7 +26,7 @@ public abstract class SingletonOpMode extends LinearOpMode {
     }
 
     /**
-     * Invoked when the init button is pressed on the driver phone.
+     * Invoked when the initialize button is pressed on the driver phone.
      */
     protected abstract void onInitialize();
 
