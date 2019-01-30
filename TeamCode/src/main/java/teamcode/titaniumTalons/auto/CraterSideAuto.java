@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import teamcode.titaniumTalons.Drive;
 
-@Autonomous(name = "TitaniumTalonsAutonomousCraterSide", group = "Linear OpMode")
-public class TitaniumTalonsAutonomousCraterSide extends AbstractTitaniumTalonsAuto {
+@Autonomous(name = "CraterSideAuto", group = "Linear OpMode")
+public class CraterSideAuto extends AbstractAuto {
 
     @Override
     protected void driveToDepot() {
@@ -26,7 +26,7 @@ public class TitaniumTalonsAutonomousCraterSide extends AbstractTitaniumTalonsAu
         Drive.turnDefinite(30, 1.0);
         Drive.driveLateralDefinite(-20.0, 1.0);
         Drive.turnDefinite(-135.0, 1.0);
-        Drive.driveLateralDefinite(10.0, 1.0);
+        Drive.driveLateralDefinite(6.0, 1.0);
         Drive.driveVerticalDefinite(48.0, 1.0);
     }
 
@@ -39,11 +39,11 @@ public class TitaniumTalonsAutonomousCraterSide extends AbstractTitaniumTalonsAu
     }
 
     private void goldRightDriveToDepot() {
-        Drive.driveVerticalDefinite(-8.0, 1.0);
-        Drive.turnDefinite(-35, 1.0);
+        Drive.turnDefinite(-35.0, 1.0);
+        Drive.driveVerticalDefinite(-6.0, 1.0);
         Drive.driveLateralDefinite(-60.0, 1.0);
         Drive.turnDefinite(-135.0, 1.0);
-        Drive.driveLateralDefinite(11.0, 1.0);
+        Drive.driveLateralDefinite(12.0, 1.0);
         Drive.driveVerticalDefinite(33.0, 1.0);
     }
 

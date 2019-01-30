@@ -14,7 +14,6 @@ public final class Arm {
 
     public static ArmStatus status;
 
-    private static RobotTimer timer = new RobotTimer();
     public enum ArmStatus {
         LATCHED, UNLATCHED, EXTENDED, PARTIALLY_RETRACTED, FULLY_RETRACTED, CRANE
     }
@@ -33,11 +32,17 @@ public final class Arm {
                     rotateElbowDefinite(-100, 0.5);
                 }
             };
-            RobotTimer.schedule(rotateElbowTask, 400);
+            RobotTimer.schedule(rotateElbowTask, 0.4);
             rotateArmBaseDefinite(165, 1.0);
         } else if (status == ArmStatus.UNLATCHED) {
+            TimerTask rotateElbowTask = new TimerTask() {
+                @Override
+                public void run() {
+                    rotateElbowDefinite(180, 1.0);
+                }
+            };
+            RobotTimer.schedule(rotateElbowTask, 0.4);
             rotateArmBaseDefinite(90, 1.0);
-            rotateElbowDefinite(180, 1.0);
             setWristServoPos(0.4);
         } else if (status == ArmStatus.CRANE) {
             //asdfsadfsafs
@@ -186,7 +191,6 @@ public final class Arm {
     }
 
     /**
-     *
      * @param power make negative to intake
      */
     public static void setIntakePower(double power) {

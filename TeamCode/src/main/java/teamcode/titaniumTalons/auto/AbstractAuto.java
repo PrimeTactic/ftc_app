@@ -8,7 +8,7 @@ import teamcode.titaniumTalons.Drive;
 import teamcode.titaniumTalons.HardwareManager;
 import teamcode.titaniumTalons.SingletonOpMode;
 
-public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
+public abstract class AbstractAuto extends SingletonOpMode {
 
     // resolution is 720 x 1280
     private static final MineralCriteria LEFT_MINERAL_CRITERIA = new MineralCriteria(950, 1280, 75, 250);
@@ -39,7 +39,7 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
         sample();
 
         driveToDepot();
-        releaseMarker();
+       // releaseMarker();
         driveToCrater();
         Arm.extend();
         Arm.setIntakePower(-1.0);
@@ -85,7 +85,7 @@ public abstract class AbstractTitaniumTalonsAuto extends SingletonOpMode {
     }
 
     private void driveToCrater() {
-        Drive.driveVerticalDefinite(-60.0, 1.0);
+        Drive.driveVerticalDefinite(-55.0, 1.0);
     }
 
     protected enum MineralLocation {
