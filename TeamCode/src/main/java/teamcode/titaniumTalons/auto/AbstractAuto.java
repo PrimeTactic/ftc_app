@@ -46,8 +46,6 @@ public abstract class AbstractAuto extends SingletonOpMode {
     }
 
     protected void sample() {
-        goldLocation = locateGold();
-
         switch (goldLocation) {
             case LEFT:
                 Drive.turnDefinite(-30.0, 1.0);

@@ -9,6 +9,7 @@ public abstract class SingletonOpMode extends LinearOpMode {
     @Override
     public void runOpMode() {
         instance = this;
+        RobotTimer.initialize();
         HardwareManager.initialize(hardwareMap);
         Arm.initialize();
         onInitialize();

@@ -7,16 +7,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * A timer that cancels all tasks scheduled to it once the current OpMode becomes inactive.
+ * Provides access to a timer that cancels all tasks scheduled to it once the current OpMode becomes inactive.
  */
 public class RobotTimer {
 
-    private static final long CHECK_FOR_DESTRUCT_PERIOD = 10L;
-
-    private static Timer timer = new Timer();
+    private static Timer timer;
 
     private RobotTimer() {
         // do not instantiate
+    }
+
+    public static void initialize() {
+        timer = new Timer();
     }
 
     public static void schedule(TimerTask task, double delaySeconds) {
