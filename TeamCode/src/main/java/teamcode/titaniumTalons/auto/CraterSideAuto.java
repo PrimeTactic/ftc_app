@@ -20,13 +20,14 @@ public class CraterSideAuto extends AbstractAuto {
                 goldRightDriveToDepot();
                 break;
         }
+        releaseMarker();
     }
 
     private void goldLeftDriveToDepot() {
         Drive.turnDefinite(30, 1.0);
         Drive.driveLateralDefinite(-20.0, 1.0);
         Drive.turnDefinite(-135.0, 1.0);
-        Drive.driveLateralDefinite(6.0, 1.0);
+        Drive.driveLateralDefinite(8.0, 1.0);
         Drive.driveVerticalDefinite(48.0, 1.0);
     }
 

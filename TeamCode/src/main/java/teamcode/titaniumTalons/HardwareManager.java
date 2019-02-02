@@ -43,6 +43,10 @@ public final class HardwareManager {
 
     public static RevBlinkinLedDriver ledDriver;
 
+    private HardwareManager() {
+        // do not instantiate
+    }
+
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftDrive = hardwareMap.get(DcMotor.class, FRONT_LEFT_DRIVE_NAME);
         frontRightDrive = hardwareMap.get(DcMotor.class, FRONT_RIGHT_DRIVE_NAME);

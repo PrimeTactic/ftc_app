@@ -18,8 +18,11 @@ public final class Arm {
         LATCHED, UNLATCHED, EXTENDED, PARTIALLY_RETRACTED, FULLY_RETRACTED, CRANE
     }
 
+    private Arm() {
+        // do not instantiate
+    }
+
     public static void extend() {
-        closeIntakeGate();
         if (status == ArmStatus.PARTIALLY_RETRACTED) {
             setWristServoPos(0.4);
             lockElbow();
@@ -38,14 +41,14 @@ public final class Arm {
             TimerTask rotateElbowTask = new TimerTask() {
                 @Override
                 public void run() {
-                    rotateElbowDefinite(180, 1.0);
+                    rotateElbowDefinite(150, 1.0);
                 }
             };
             RobotTimer.schedule(rotateElbowTask, 0.4);
-            rotateArmBaseDefinite(90, 1.0);
+            rotateArmBaseDefinite(100, 1.0);
             setWristServoPos(0.4);
         } else if (status == ArmStatus.CRANE) {
-            //asdfsadfsafs
+            throw new UnsupportedOperationException();
         } else {
             throw new IllegalStateException("Arm cannot be extended!");
         }

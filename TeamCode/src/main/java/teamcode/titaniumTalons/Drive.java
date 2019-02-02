@@ -32,6 +32,10 @@ public final class Drive {
 
     private static final double MOTOR_TICKS_WITHIN_TARGET = 10.0;
 
+    private Drive() {
+        // do not instantiate
+    }
+
     /**
      * Causes the robot to drive vertically a definite, specified number of inches. The thread from
      * which this method is called is forced to wait until the robot finishes driving.

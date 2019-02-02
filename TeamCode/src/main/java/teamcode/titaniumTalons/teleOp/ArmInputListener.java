@@ -11,8 +11,7 @@ import teamcode.titaniumTalons.SingletonOpMode;
 class ArmInputListener {
 
     private static final double MANUAL_ARM_BASE_MOTOR_SPEED = 0.5;
-    private static final double MANUAL_ELBOW_MOTOR_SPEED = 0.5;
-    private static final double WRIST_SERVO_ADJUST_DELTA = 0.05;
+    private static final double WRIST_SERVO_ADJUST_DELTA = -0.05;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
@@ -60,6 +59,7 @@ class ArmInputListener {
         } else if (gamepad1.a) {
             if (Arm.status == Arm.ArmStatus.PARTIALLY_RETRACTED) {
                 Arm.extend();
+                Arm.closeIntakeGate();
             }
         }
     }
@@ -80,9 +80,13 @@ class ArmInputListener {
 
     private void elbowInputUpdate() {
         if (gamepad2.dpad_left) {
-            Arm.rotateElbowIndefinite(MANUAL_ELBOW_MOTOR_SPEED);
+            Arm.rotateElbowIndefinite(0.75);
         } else if (gamepad2.dpad_right) {
-            Arm.rotateElbowIndefinite(-MANUAL_ELBOW_MOTOR_SPEED);
+            Arm.rotateElbowIndefinite(-0.75);
+        } else if (gamepad2.dpad_down) {
+            Arm.rotateElbowIndefinite(0.5);
+        } else if (gamepad2.dpad_up) {
+            Arm.rotateElbowIndefinite(-0.5);
         } else {
             Arm.lockElbow();
         }

@@ -39,7 +39,6 @@ public abstract class AbstractAuto extends SingletonOpMode {
         sample();
 
         driveToDepot();
-       // releaseMarker();
         driveToCrater();
         Arm.extend();
         Arm.setIntakePower(-1.0);
@@ -77,7 +76,7 @@ public abstract class AbstractAuto extends SingletonOpMode {
 
     protected abstract void driveToDepot();
 
-    private void releaseMarker() {
+    protected void releaseMarker() {
         HardwareManager.pinServo.setPosition(0.0);
         sleep(500);
     }
