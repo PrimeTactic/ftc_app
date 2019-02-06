@@ -8,15 +8,20 @@ import teamcode.titaniumTalons.Arm;
 import teamcode.titaniumTalons.RobotTimer;
 import teamcode.titaniumTalons.SingletonOpMode;
 
+/**
+ * Handles arm-related input during teleoperation.
+ */
 class ArmInputListener {
 
     private static final double MANUAL_ARM_BASE_MOTOR_SPEED = 0.5;
-    private static final double WRIST_SERVO_ADJUST_DELTA = -0.05;
+    private static final double WRIST_SERVO_ADJUST_DELTA = 0.05;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
 
     private boolean intakeGateOpened = false;
+    // whether intake is automatically enabled
+    private boolean autoIntake = false;
     private boolean gateOnCooldown = false;
     private boolean wristAdjustButtonDownLastUpdate = false;
 
@@ -33,9 +38,9 @@ class ArmInputListener {
             }
 
         }.start();
-        new Thread(){
+        new Thread() {
             @Override
-            public void run(){
+            public void run() {
                 while (SingletonOpMode.instance.opModeIsActive()) {
                     intakeInputUpdate();
                 }
@@ -54,7 +59,16 @@ class ArmInputListener {
     private void presetUpdate() {
         if (gamepad1.y) {
             if (Arm.status == Arm.ArmStatus.EXTENDED) {
+                autoIntake = true;
+                Arm.setIntakePower(-1.0);
                 Arm.partiallyRetract();
+                TimerTask disableAutoIntakeTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        autoIntake = false;
+                    }
+                };
+                RobotTimer.schedule(disableAutoIntakeTask, 1.0);
             }
         } else if (gamepad1.a) {
             if (Arm.status == Arm.ArmStatus.PARTIALLY_RETRACTED) {
@@ -72,7 +86,7 @@ class ArmInputListener {
         } else if (gamepad1.left_bumper) {
             Arm.rotateArmBaseIndefinite(1.0);
         } else if (gamepad1.right_bumper) {
-                Arm.rotateArmBaseIndefinite(-1.0);
+            Arm.rotateArmBaseIndefinite(-1.0);
         } else {
             Arm.lockBaseMotors();
         }
@@ -87,6 +101,12 @@ class ArmInputListener {
             Arm.rotateElbowIndefinite(0.5);
         } else if (gamepad2.dpad_up) {
             Arm.rotateElbowIndefinite(-0.5);
+        } else if (gamepad2.b) {
+            //in
+            Arm.rotateElbowDefinite(-45.0, 1.0);
+        } else if (gamepad2.y) {
+            //out
+            Arm.rotateElbowDefinite(45.0, 1.0);
         } else {
             Arm.lockElbow();
         }
@@ -96,11 +116,11 @@ class ArmInputListener {
         if (!wristAdjustButtonDownLastUpdate) {
             if (gamepad2.right_bumper) {
                 double currentWristPos = Arm.getWristServoPos();
-                Arm.setWristServoPos(currentWristPos - WRIST_SERVO_ADJUST_DELTA);
+                Arm.setWristServoPos(currentWristPos + WRIST_SERVO_ADJUST_DELTA);
                 wristAdjustButtonDownLastUpdate = true;
             } else if (gamepad2.left_bumper) {
                 double currentWristPos = Arm.getWristServoPos();
-                Arm.setWristServoPos(currentWristPos + WRIST_SERVO_ADJUST_DELTA);
+                Arm.setWristServoPos(currentWristPos - WRIST_SERVO_ADJUST_DELTA);
                 wristAdjustButtonDownLastUpdate = true;
             }
         } else {
@@ -111,6 +131,9 @@ class ArmInputListener {
     }
 
     private void intakeInputUpdate() {
+        if (autoIntake) {
+            return;
+        }
         if (gamepad1.left_trigger > 0.0f || gamepad1.right_trigger > 0.0f) {
             if (gamepad1.right_trigger > gamepad1.left_trigger) {
                 // intake
@@ -122,10 +145,10 @@ class ArmInputListener {
         } else if (gamepad2.left_trigger > 0.0f || gamepad2.right_trigger > 0.0f) {
             if (gamepad2.right_trigger > gamepad2.left_trigger) {
                 // intake
-                Arm.setIntakePower(-0.25 * gamepad2.right_trigger);
+                Arm.setIntakePower(-0.5 * gamepad2.right_trigger);
             } else {
                 // outtake
-                Arm.setIntakePower(0.25 * gamepad2.left_trigger);
+                Arm.setIntakePower(0.5 * gamepad2.left_trigger);
             }
         } else {
             Arm.setIntakePower(0.0);

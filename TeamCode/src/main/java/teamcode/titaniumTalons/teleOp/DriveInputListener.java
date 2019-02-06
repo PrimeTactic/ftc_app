@@ -6,6 +6,9 @@ import teamcode.utils.Vector2;
 import teamcode.titaniumTalons.Drive;
 import teamcode.titaniumTalons.SingletonOpMode;
 
+/**
+ * Handles drive-related input during teleoperation.
+ */
 public class DriveInputListener {
 
     private static final double LOWER_DRIVE_SPEED_MULTIPLIER = 0.5;
@@ -42,24 +45,22 @@ public class DriveInputListener {
 
     private void speedAdjustUpdate() {
         boolean leftStickDown = gamepad1.left_stick_button || gamepad2.left_stick_button;
-        if(leftStickDown){
-            if(!lowerTurnSpeedButtonDownLastUpdate){
+        if (leftStickDown) {
+            if (!lowerTurnSpeedButtonDownLastUpdate) {
                 lowerTurnSpeed = !lowerTurnSpeed;
             }
             lowerTurnSpeedButtonDownLastUpdate = true;
-        }
-        else {
+        } else {
             lowerTurnSpeedButtonDownLastUpdate = false;
         }
 
         boolean rightStickDown = gamepad1.right_stick_button || gamepad2.right_stick_button;
-        if(rightStickDown){
-            if(!lowerDriveSpeedButtonDownLastUpdate){
+        if (rightStickDown) {
+            if (!lowerDriveSpeedButtonDownLastUpdate) {
                 lowerDriveSpeed = !lowerDriveSpeed;
             }
             lowerDriveSpeedButtonDownLastUpdate = true;
-        }
-        else {
+        } else {
             lowerDriveSpeedButtonDownLastUpdate = false;
         }
     }
