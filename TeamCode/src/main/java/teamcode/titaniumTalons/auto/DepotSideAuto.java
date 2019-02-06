@@ -36,7 +36,7 @@ public class DepotSideAuto extends AbstractAuto {
     }
 
     private void goldMiddleDriveToDepot() {
-        Drive.driveVerticalDefinite(24.0, 1.0);
+        Drive.driveVerticalDefinite(27.0, 1.0);
         releaseMarker();
         // IMPORTANT: THE DEGREE VALUE BELOW MIGHT NEED TO BE INCREASED WHEN ON A DIFFERENT FIELD
         Drive.turnDefinite(38.0, 1.0);

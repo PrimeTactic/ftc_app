@@ -122,8 +122,9 @@ public final class Drive {
         double direction = Math.atan2(-v.getX(), -v.getY());
         double power = v.magnitude();
 
-        double sin = Math.sin(-direction + Math.PI / 4);
-        double cos = Math.cos(-direction + Math.PI / 4);
+        double angle = -direction + Math.PI / 4;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
 
         double frontLeftPow = power * sin + turnSpeed;
         double frontRightPow = power * cos - turnSpeed;

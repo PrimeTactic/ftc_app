@@ -32,20 +32,20 @@ public class CraterSideAuto extends AbstractAuto {
     }
 
     private void goldMiddleDriveToDepot() {
-        Drive.driveVerticalDefinite(-8.0, 1.0);
+        Drive.driveVerticalDefinite(-4.0, 1.0);
         Drive.driveLateralDefinite(-40.0, 1.0);
         Drive.turnDefinite(-135.0, 1.0);
-        Drive.driveLateralDefinite(11.0, 1.0);
+        Drive.driveLateralDefinite(14.0, 1.0);
         Drive.driveVerticalDefinite(40.0, 1.0);
     }
 
     private void goldRightDriveToDepot() {
         Drive.turnDefinite(-35.0, 1.0);
-        Drive.driveVerticalDefinite(-6.0, 1.0);
-        Drive.driveLateralDefinite(-60.0, 1.0);
+        Drive.driveVerticalDefinite(-4.0, 1.0);
+        Drive.driveLateralDefinite(-60.0, 0.8);
         Drive.turnDefinite(-135.0, 1.0);
-        Drive.driveLateralDefinite(8.0, 1.0);
-        Drive.driveVerticalDefinite(33.0, 1.0);
+        Drive.driveLateralDefinite(14.0, 1.0);
+        Drive.driveVerticalDefinite(39.0, 1.0);
     }
 
 }

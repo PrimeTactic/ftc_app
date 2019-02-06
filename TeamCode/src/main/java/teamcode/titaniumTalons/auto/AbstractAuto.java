@@ -51,7 +51,7 @@ public abstract class AbstractAuto extends SingletonOpMode {
                 Drive.driveVerticalDefinite(27.0, 1.0);
                 break;
             case MIDDLE:
-                Drive.driveVerticalDefinite(25.0, 1.0);
+                Drive.driveVerticalDefinite(22.0, 1.0);
                 break;
             case RIGHT:
                 Drive.turnDefinite(35.0, 1.0);
