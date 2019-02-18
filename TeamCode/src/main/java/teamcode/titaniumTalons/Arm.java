@@ -23,12 +23,13 @@ public final class Arm {
     }
 
     public static void extend() {
+        double wristServoPos = 0.35;
         if (status == ArmStatus.PARTIALLY_RETRACTED) {
-            setWristServoPos(0.4);
+            setWristServoPos(wristServoPos);
             lockElbow();
-            rotateArmBaseDefinite(105.0, 1.0);
+            rotateArmBaseDefinite(95.0, 1.0);
         } else if (status == ArmStatus.FULLY_RETRACTED) {
-            setWristServoPos(0.4);
+            setWristServoPos(wristServoPos);
             TimerTask rotateElbowTask = new TimerTask() {
                 @Override
                 public void run() {
@@ -46,7 +47,7 @@ public final class Arm {
             };
             RobotTimer.schedule(rotateElbowTask, 0.4);
             rotateArmBaseDefinite(100, 1.0);
-            setWristServoPos(0.4);
+            setWristServoPos(wristServoPos);
         } else if (status == ArmStatus.CRANE) {
             throw new UnsupportedOperationException();
         } else {
@@ -60,8 +61,8 @@ public final class Arm {
             throw new IllegalStateException("Arm cannot be partially retracted!");
         }
         lockElbow();
-        rotateArmBaseDefinite(-105.0, 1.0);
-        setWristServoPos(0.7);
+        rotateArmBaseDefinite(-95.0, 1.0);
+        setWristServoPos(0.55);
         status = ArmStatus.PARTIALLY_RETRACTED;
     }
 
@@ -93,8 +94,8 @@ public final class Arm {
         HardwareManager.pinServo.setPosition(0.5);
         // rotateArmBaseDefinite(90.0,0.5);
         SingletonOpMode.instance.sleep(1500);
-        HardwareManager.leftArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        HardwareManager.rightArmBaseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lockBaseMotors();
+        lockElbow();
         status = ArmStatus.UNLATCHED;
     }
 
@@ -135,9 +136,6 @@ public final class Arm {
     }
 
     public static void lockBaseMotors() {
-        HardwareManager.leftArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        HardwareManager.rightArmBaseMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         HardwareManager.leftArmBaseMotor.setPower(0.0);
         HardwareManager.rightArmBaseMotor.setPower(0.0);
 

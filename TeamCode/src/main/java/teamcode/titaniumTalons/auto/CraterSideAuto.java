@@ -40,7 +40,7 @@ public class CraterSideAuto extends AbstractAuto {
     }
 
     private void goldRightDriveToDepot() {
-        Drive.turnDefinite(-35.0, 1.0);
+        Drive.turnDefinite(-30.0, 1.0);
         Drive.driveVerticalDefinite(-4.0, 1.0);
         Drive.driveLateralDefinite(-60.0, 0.8);
         Drive.turnDefinite(-135.0, 1.0);

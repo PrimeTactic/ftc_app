@@ -11,8 +11,8 @@ import teamcode.titaniumTalons.SingletonOpMode;
 public abstract class AbstractAuto extends SingletonOpMode {
 
     // resolution is 720 x 1280
-    private static final MineralCriteria LEFT_MINERAL_CRITERIA = new MineralCriteria(950, 1280, 75, 250);
-    private static final MineralCriteria MIDDLE_MINERAL_CRITERIA = new MineralCriteria(250, 600, 75, 250);
+    private static final MineralCriteria LEFT_MINERAL_CRITERIA = new MineralCriteria(700, 1300, 75, 250);
+    private static final MineralCriteria MIDDLE_MINERAL_CRITERIA = new MineralCriteria(0, 500, 75, 250);
 
     protected MineralLocation goldLocation;
 
@@ -28,13 +28,14 @@ public abstract class AbstractAuto extends SingletonOpMode {
     @Override
     protected void onStart() {
         Arm.lowerFromLatch();
-        Drive.driveLateralDefinite(-5.0, 1.0);
-        Drive.driveVerticalDefinite(2.0, 1.0);
-        Drive.driveLateralDefinite(5.0, 1.0);
+        Drive.driveLateralDefinite(-8.0, 0.75);
 
         goldLocation = locateGold();
         telemetry.addData("Gold Location", goldLocation);
         telemetry.update();
+
+        Drive.driveVerticalDefinite(2.0, 1.0);
+        Drive.driveLateralDefinite(8.0, 0.75);
 
         sample();
 
@@ -54,7 +55,7 @@ public abstract class AbstractAuto extends SingletonOpMode {
                 Drive.driveVerticalDefinite(22.0, 1.0);
                 break;
             case RIGHT:
-                Drive.turnDefinite(35.0, 1.0);
+                Drive.turnDefinite(30.0, 1.0);
                 Drive.driveVerticalDefinite(27.0, 1.0);
                 break;
         }

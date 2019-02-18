@@ -45,7 +45,7 @@ public class DepotSideAuto extends AbstractAuto {
     }
 
     private void goldRightDriveToDepot() {
-        Drive.turnDefinite(-35.0, 1.0);
+        Drive.turnDefinite(-30.0, 1.0);
         Drive.driveVerticalDefinite(12.0, 1.0);
         Drive.turnDefinite(-45.0, 1.0);
         Drive.driveVerticalDefinite(24.0, 1.0);
