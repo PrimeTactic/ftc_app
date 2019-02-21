@@ -20,7 +20,7 @@ class ArmInputListener {
     private Gamepad gamepad2;
 
     private boolean intakeGateOpened = false;
-    // whether intake is automatically enabled
+    // whether the intake is running automatically, without driver input
     private boolean autoIntake = false;
     private boolean gateOnCooldown = false;
     private boolean wristAdjustButtonDownLastUpdate = false;

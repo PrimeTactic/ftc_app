@@ -93,8 +93,12 @@ public class Mineral {
         return (top + bottom) / 2;
     }
 
-    public double getWidth() {
+    public double gethorizontalWidth() {
         return right - left;
+    }
+
+    public double getVerticalWidth() {
+        return top - bottom;
     }
 
     /**
@@ -102,7 +106,7 @@ public class Mineral {
      */
     public boolean matchesCriteria(MineralCriteria criteria) {
         double centr = getVerticalCenter();
-        double width = getWidth();
+        double width = getVerticalWidth();
         return (centr > criteria.getMinVerticalCenter() && centr < criteria.getMaxVerticalCenter()
                 && width > criteria.getMinVerticalWidth() && width < criteria.getMaxVerticalWidth());
     }
