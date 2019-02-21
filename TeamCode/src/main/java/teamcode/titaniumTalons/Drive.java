@@ -9,11 +9,10 @@ import teamcode.utils.Vector2;
 // https://pmtischler-ftc-app.readthedocs.io/en/latest/tutorials/mecanum.html
 
 /**
- * Contains methods pertaining to the drive system of the robot.
+ * Contains methods related to the drive system of the robot.
  */
 public final class Drive {
 
-    private static final Vector2 STRAIGHT = new Vector2(0.0, 1.0);
     /**
      * The number of ticks that each drive motor will have to turn to make the robot drive
      * vertically one inch.
@@ -99,7 +98,7 @@ public final class Drive {
      *          distance that the robot will drive.
      */
     public static void driveDefinite(Vector2 v, double turnSpeed, double forwardSpeed) {
-        double radians = v.angleBetween(STRAIGHT);
+        double radians = v.angleBetween(Vector2.FORWARD);
         turnDefinite(-Math.toDegrees(radians), turnSpeed);
         driveVerticalDefinite(v.magnitude(), forwardSpeed);
     }

@@ -5,6 +5,11 @@ package teamcode.utils;
  */
 public final class Vector2 {
 
+    public static final Vector2 FORWARD = new Vector2(0.0, 1.0);
+    public static final Vector2 BACKWARD = new Vector2(0.0, -1.0);
+    public static final Vector2 LEFT = new Vector2(-1.0, 0.0);
+    public static final Vector2 RIGHT = new Vector2(1.0, 0.0);
+
     private final double x;
     private final double y;
 
