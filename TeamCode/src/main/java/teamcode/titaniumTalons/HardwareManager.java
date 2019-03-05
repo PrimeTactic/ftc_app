@@ -53,25 +53,25 @@ public final class HardwareManager {
         backLeftDrive = hardwareMap.get(DcMotor.class, BACK_LEFT_DRIVE_NAME);
         backRightDrive = hardwareMap.get(DcMotor.class, BACK_RIGHT_DRIVE_NAME);
 
-        leftArmBaseMotor = hardwareMap.get(DcMotor.class, LEFT_ARM_BASE_MOTOR_NAME);
-        rightArmBaseMotor = hardwareMap.get(DcMotor.class, RIGHT_ARM_BASE_MOTOR_NAME);
-        armElbowMotor = hardwareMap.get(DcMotor.class, ARM_ELBOW_MOTOR_NAME);
-        leftArmWristServo = hardwareMap.get(Servo.class, LEFT_ARM_WRIST_SERVO_NAME);
-        rightArmWristServo = hardwareMap.get(Servo.class, RIGHT_ARM_WRIST_SERVO_NAME);
-        intakeMotor = hardwareMap.get(DcMotor.class, INTAKE_MOTOR_NAME);
-        intakeGateServo = hardwareMap.get(Servo.class, INTAKE_GATE_SERVO_NAME);
-        pinServo = hardwareMap.get(Servo.class, PIN_SERVO_NAME);
-
-        ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, LED_DRIVER_NAME);
+//        leftArmBaseMotor = hardwareMap.get(DcMotor.class, LEFT_ARM_BASE_MOTOR_NAME);
+//        rightArmBaseMotor = hardwareMap.get(DcMotor.class, RIGHT_ARM_BASE_MOTOR_NAME);
+//        armElbowMotor = hardwareMap.get(DcMotor.class, ARM_ELBOW_MOTOR_NAME);
+//        leftArmWristServo = hardwareMap.get(Servo.class, LEFT_ARM_WRIST_SERVO_NAME);
+//        rightArmWristServo = hardwareMap.get(Servo.class, RIGHT_ARM_WRIST_SERVO_NAME);
+//        intakeMotor = hardwareMap.get(DcMotor.class, INTAKE_MOTOR_NAME);
+//        intakeGateServo = hardwareMap.get(Servo.class, INTAKE_GATE_SERVO_NAME);
+//        pinServo = hardwareMap.get(Servo.class, PIN_SERVO_NAME);
+//
+//        ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, LED_DRIVER_NAME);
 
         correctDirections();
 }
 
     private static void correctDirections() {
-        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        leftArmWristServo.setDirection(Servo.Direction.REVERSE);
+       // leftArmWristServo.setDirection(Servo.Direction.REVERSE);
     }
 
 }

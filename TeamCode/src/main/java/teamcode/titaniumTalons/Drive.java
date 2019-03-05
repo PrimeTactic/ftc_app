@@ -17,12 +17,12 @@ public final class Drive {
      * The number of ticks that each drive motor will have to turn to make the robot drive
      * vertically one inch.
      */
-    private static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL = 90.2;
+    private static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_VERTICAL = -10.82;
     /**
      * The number of ticks that each drive motor will have to turn to make the robot drive
      * laterally one inch.
      */
-    private static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL = 104.0;
+    private static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL = 27.7;
     /**
      * The number of ticks that each drive motor will have to turn to make the robot turn one
      * degree.
@@ -75,18 +75,29 @@ public final class Drive {
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL);
 
-        HardwareManager.frontLeftDrive.setTargetPosition(ticks);
-        HardwareManager.frontRightDrive.setTargetPosition(-ticks);
-        HardwareManager.backLeftDrive.setTargetPosition(-ticks);
-        HardwareManager.backRightDrive.setTargetPosition(ticks);
+        HardwareManager.frontLeftDrive.setTargetPosition(-ticks);
+        HardwareManager.frontRightDrive.setTargetPosition(ticks);
+        HardwareManager.backLeftDrive.setTargetPosition(ticks);
+        HardwareManager.backRightDrive.setTargetPosition(-ticks);
 
         HardwareManager.frontLeftDrive.setPower(power);
         HardwareManager.frontRightDrive.setPower(power);
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        while (SingletonOpMode.active() && !driveMotorsNearTarget()) ;
+        while (SingletonOpMode.active() && !driveMotorsNearTarget()) {
+            SingletonOpMode.instance.telemetry.addData("front left", test_PosString(HardwareManager.frontLeftDrive));
+            SingletonOpMode.instance.telemetry.addData("front right", test_PosString(HardwareManager.frontRightDrive));
+            SingletonOpMode.instance.telemetry.addData("back left", test_PosString(HardwareManager.backLeftDrive));
+            SingletonOpMode.instance.telemetry.addData("back right", test_PosString(HardwareManager.backRightDrive));
+            SingletonOpMode.instance.telemetry.update();
+        }
+        ;
         zeroDriveMotorPower();
+    }
+
+    private static String test_PosString(DcMotor motor) {
+        return "current: " + motor.getCurrentPosition() + " target: " + motor.getTargetPosition();
     }
 
     /**
@@ -125,10 +136,10 @@ public final class Drive {
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        double frontLeftPow = power * sin + turnSpeed;
-        double frontRightPow = power * cos - turnSpeed;
-        double backLeftPow = power * cos + turnSpeed;
-        double backRightPow = power * sin - turnSpeed;
+        double frontLeftPow = power * sin - turnSpeed;
+        double frontRightPow = power * cos + turnSpeed;
+        double backLeftPow = power * cos - turnSpeed;
+        double backRightPow = power * sin + turnSpeed;
 
         HardwareManager.frontLeftDrive.setPower(frontLeftPow);
         HardwareManager.frontRightDrive.setPower(frontRightPow);

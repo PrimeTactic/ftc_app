@@ -11,7 +11,7 @@ public abstract class SingletonOpMode extends LinearOpMode {
         instance = this;
         RobotTimer.initialize();
         HardwareManager.initialize(hardwareMap);
-        Arm.initialize();
+       // Arm.initialize();
         onInitialize();
         waitForStart();
         onStart();
