@@ -199,7 +199,7 @@ public final class Arm {
     }
 
     /**
-     * Locks the arm's position and closes the intake gate.
+     * Locks the base and elbow motors, closes the intake gate, and resets the pin servo position.
      */
     public static void initialize() {
         lockBaseMotors();

@@ -47,6 +47,11 @@ public final class HardwareManager {
         // do not instantiate
     }
 
+    /**
+     * Prepares the {@code HardwareManager} to be used.
+     *
+     * @param hardwareMap
+     */
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftDrive = hardwareMap.get(DcMotor.class, FRONT_LEFT_DRIVE_NAME);
         frontRightDrive = hardwareMap.get(DcMotor.class, FRONT_RIGHT_DRIVE_NAME);
@@ -65,13 +70,13 @@ public final class HardwareManager {
 //        ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, LED_DRIVER_NAME);
 
         correctDirections();
-}
+    }
 
     private static void correctDirections() {
         frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-       // leftArmWristServo.setDirection(Servo.Direction.REVERSE);
+        // leftArmWristServo.setDirection(Servo.Direction.REVERSE);
     }
 
 }
