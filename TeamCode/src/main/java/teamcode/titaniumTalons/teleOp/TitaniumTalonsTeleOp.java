@@ -23,7 +23,7 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
 
         Arm.setWristServoPos(0.4);
         new DriveInputListener();
-        new ArmInputListener();
+        //new ArmInputListener();
 
         // enableLights();
     }

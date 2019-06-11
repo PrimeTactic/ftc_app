@@ -70,6 +70,7 @@ public class DriveInputListener {
         double turnSpeedMultiplier = lowerTurnSpeed ? LOWER_TURN_SPEED_MULTIPLIER : 1.0;
         float driveX = gamepad1.right_stick_x;
         float driveY = gamepad1.right_stick_y;
+        driveX = 0.0f;
         Vector2 driveVector = new Vector2(-driveX, -driveY);
         driveVector = driveVector.multiply(driveSpeedMultiplier);
         double turnSpeed = gamepad1.left_stick_x * turnSpeedMultiplier;
