@@ -13,7 +13,7 @@ public abstract class FourWheelDriveSystem implements IDriveSystem {
         this.frontLeftMotor = frontLeftMotor;
         this.frontRightMotor = frontRightMotor;
         this.backLeftMotor = backLeftMotor;
-        this.backRightMotor = backLeftMotor;
+        this.backRightMotor = backRightMotor;
     }
 
     public DcMotor getFrontLeftMotor() {
