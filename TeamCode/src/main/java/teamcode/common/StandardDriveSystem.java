@@ -27,15 +27,16 @@ public class StandardDriveSystem extends FourWheelDriveSystem {
     public void turn(double degrees, double speed) {
 
         double absOfSpeed = Math.abs(speed);
+        int ticksToTurn = (int)((360 / degrees) * TICKS_FOR_ONE_ROTATION_OF_ROBOT);
         setMotorsToRunToPosition();
         
-        frontLeftMotor.setTargetPosition((int)((360 / degrees) * TICKS_FOR_ONE_ROTATION_OF_ROBOT));
-        backLeftMotor.setTargetPosition((int)((360 / degrees) * TICKS_FOR_ONE_ROTATION_OF_ROBOT));
-        frontRightMotor.setTargetPosition(-(int)((360 / degrees) * TICKS_FOR_ONE_ROTATION_OF_ROBOT));
-        backRightMotor.setTargetPosition(-(int)((360 / degrees) * TICKS_FOR_ONE_ROTATION_OF_ROBOT));
+        frontLeftMotor.setTargetPosition(ticksToTurn);
+        backLeftMotor.setTargetPosition(ticksToTurn);
+        frontRightMotor.setTargetPosition(-ticksToTurn);
+        backRightMotor.setTargetPosition(-ticksToTurn);
 
         //If turning counterclockwise, change power to negative
-        if((int)((360 / degrees) * TICKS_FOR_ONE_ROTATION_OF_ROBOT) < 0) absOfSpeed = -absOfSpeed;
+        if(ticksToTurn < 0) absOfSpeed = -absOfSpeed;
 
         pointTurnAtSpecifiedPower(absOfSpeed);
 
