@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public abstract class FourWheelDriveSystem implements IDriveSystem {
 
-    private final DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
+    protected final DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
 
     public FourWheelDriveSystem(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
         this.frontLeftMotor = frontLeftMotor;
