@@ -13,6 +13,7 @@ public class TTRobot extends Robot {
     private static final String FRONT_RIGHT_MOTOR_NAME = "frontRightMotor";
     private static final String BACK_LEFT_MOTOR_NAME = "backLeftMotor";
     private static final String BACK_RIGHT_MOTOR_NAME = "backRightMotor";
+    private static final double WHEEL_DIAMETER_INCHES = 10.0;
 
     public TTRobot(HardwareMap hardwareMap) {
         super(createDriveSystem(hardwareMap));
@@ -23,7 +24,7 @@ public class TTRobot extends Robot {
         DcMotor frontRightMotor = hardwareMap.get(DcMotor.class, FRONT_RIGHT_MOTOR_NAME);
         DcMotor backLeftMotor = hardwareMap.get(DcMotor.class, BACK_LEFT_MOTOR_NAME);
         DcMotor backRightMotor = hardwareMap.get(DcMotor.class, BACK_RIGHT_MOTOR_NAME);
-        return new StandardDriveSystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
+        return new StandardDriveSystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, WHEEL_DIAMETER_INCHES);
     }
 
 }

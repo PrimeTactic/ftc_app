@@ -12,12 +12,29 @@ public class MecanumDriveSystem extends FourWheelDriveSystem {
     }
 
     @Override
-    public void move(double x, double y, double speed) {
+    public void move(Vector2 velocity, double distance) {
+        int flPos = 0;
+        int frPos = 0;
+        int blPos = 0;
+        int brPos = 0;
+        double flPow = 0.0;
+        double frPow = 0.0;
+        double blPow = 0.0;
+        double brPow = 0.0;
 
+        frontLeftMotor.setTargetPosition(flPos);
+        frontRightMotor.setTargetPosition(frPos);
+        backLeftMotor.setTargetPosition(blPos);
+        backLeftMotor.setTargetPosition(brPos);
+
+        frontLeftMotor.setPower(flPow);
+        frontRightMotor.setPower(frPow);
+        backLeftMotor.setPower(blPow);
+        backRightMotor.setPower(brPow);
     }
 
     @Override
-    public void moveContinuously(double x, double y) {
+    public void moveContinuously(Vector2 velocity) {
 
     }
 
