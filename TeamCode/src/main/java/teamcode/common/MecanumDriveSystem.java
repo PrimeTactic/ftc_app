@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public class MecanumDriveSystem extends FourWheelDriveSystem {
 
-    public MecanumDriveSystem(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
+    public MecanumDriveSystem(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor, double wheelDiameter) {
         super(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
     }
 
@@ -35,7 +35,27 @@ public class MecanumDriveSystem extends FourWheelDriveSystem {
 
     @Override
     public void moveContinuously(Vector2 velocity) {
+        if (velocity.isZero()) {
+            zeroMotorPower();
+            return;
+        }
+        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double direction = velocity.getDirectionRadians();
+        double power = velocity.magnitude();
 
+        double angle = -direction + Math.PI / 4;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+
+        double frontLeftPow = power * sin;
+        double frontRightPow = power * cos;
+        double backLeftPow = power * cos;
+        double backRightPow = power * sin;
+
+        frontLeftMotor.setPower(frontLeftPow);
+        frontRightMotor.setPower(frontRightPow);
+        backLeftMotor.setPower(backLeftPow);
+        backRightMotor.setPower(backRightPow);
     }
 
     @Override
@@ -46,6 +66,20 @@ public class MecanumDriveSystem extends FourWheelDriveSystem {
     @Override
     public void turnContinuously(double speed) {
 
+    }
+
+    private void zeroMotorPower() {
+        frontLeftMotor.setPower(0.0);
+        frontRightMotor.setPower(0.0);
+        backLeftMotor.setPower(0.0);
+        backRightMotor.setPower(0.0);
+    }
+
+    private void setMotorRunModes(DcMotor.RunMode mode) {
+        frontLeftMotor.setMode(mode);
+        frontRightMotor.setMode(mode);
+        backLeftMotor.setMode(mode);
+        backRightMotor.setMode(mode);
     }
 
 }

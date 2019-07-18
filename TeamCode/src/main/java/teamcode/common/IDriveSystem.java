@@ -11,7 +11,7 @@ public interface IDriveSystem {
     void move(Vector2 velocity, double distance);
 
     /**
-     * Moves the robot continuously in the direction specified by the vector components.
+     * Moves the robot continuously in the direction specified by the vector components to the best of the drive system's ability.
      *
      * @param velocity the velocity
      */

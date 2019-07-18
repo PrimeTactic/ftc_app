@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import teamcode.common.IDriveSystem;
+import teamcode.common.MecanumDriveSystem;
 import teamcode.common.Robot;
 import teamcode.common.StandardDriveSystem;
 
@@ -24,7 +25,7 @@ public class TTRobot extends Robot {
         DcMotor frontRightMotor = hardwareMap.get(DcMotor.class, FRONT_RIGHT_MOTOR_NAME);
         DcMotor backLeftMotor = hardwareMap.get(DcMotor.class, BACK_LEFT_MOTOR_NAME);
         DcMotor backRightMotor = hardwareMap.get(DcMotor.class, BACK_RIGHT_MOTOR_NAME);
-        return new StandardDriveSystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, WHEEL_DIAMETER_INCHES);
+        return new MecanumDriveSystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, WHEEL_DIAMETER_INCHES);
     }
 
 }
