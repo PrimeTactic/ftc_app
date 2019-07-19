@@ -28,11 +28,12 @@ public class TestAutoOpMode extends LinearOpMode {
     }
 
     private void update() {
-        if (Math.abs(gamepad1.left_stick_y) > 0.0) {
+        telemetry.addData("x", gamepad1.left_stick_x);
+        telemetry.addData("y", gamepad1.left_stick_y);
+        telemetry.update();
+        if (gamepad1.left_stick_y != 0.0 && gamepad1.left_stick_x != 0.0) {
             Vector2 velocity = new Vector2(gamepad1.left_stick_x, gamepad1.left_stick_y);
             robot.getDriveSystem().moveContinuously(velocity);
-        } else if (gamepad1.right_stick_x > 0.0) {
-            robot.getDriveSystem().turnContinuously(gamepad1.right_stick_x);
         } else {
             robot.getDriveSystem().moveContinuously(Vector2.ZERO);
         }
