@@ -1,6 +1,7 @@
 package teamcode.titaniumTalons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import teamcode.utils.RobotUtils;
 import teamcode.utils.Vector2;
@@ -22,12 +23,12 @@ public final class Drive {
      * The number of ticks that each drive motor will have to turn to make the robot drive
      * laterally one inch.
      */
-    private static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL = 27.7;
+    private static final double DRIVE_MOTOR_TICKS_PER_INCHES_COVERED_LATERAL = 46.167;
     /**
      * The number of ticks that each drive motor will have to turn to make the robot turn one
      * degree.
      */
-    private static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = 22.7111913357;
+    private static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = -9.38525510202;
 
     private static final double MOTOR_TICKS_WITHIN_TARGET = 10.0;
 
@@ -58,7 +59,17 @@ public final class Drive {
         HardwareManager.backLeftDrive.setPower(power);
         HardwareManager.backRightDrive.setPower(power);
 
-        while (SingletonOpMode.active() && !driveMotorsNearTarget()) ;
+        while (SingletonOpMode.active()) {
+            double tickProgress = getTickProgress();
+            double ticksRemaining = getTicksRemaining();
+            if (tickProgress < TICKS_BEFORE_MAX_POWER) {
+
+            }
+            if (ticksRemaining < TICKS_REMAINING_TO_REDUCE_POWER) {
+
+
+            }
+        }
         zeroDriveMotorPower();
     }
 
@@ -86,17 +97,17 @@ public final class Drive {
         HardwareManager.backRightDrive.setPower(power);
 
         while (SingletonOpMode.active() && !driveMotorsNearTarget()) {
-            SingletonOpMode.instance.telemetry.addData("front left", test_PosString(HardwareManager.frontLeftDrive));
-            SingletonOpMode.instance.telemetry.addData("front right", test_PosString(HardwareManager.frontRightDrive));
-            SingletonOpMode.instance.telemetry.addData("back left", test_PosString(HardwareManager.backLeftDrive));
-            SingletonOpMode.instance.telemetry.addData("back right", test_PosString(HardwareManager.backRightDrive));
+            SingletonOpMode.instance.telemetry.addData("front left", positionString(HardwareManager.frontLeftDrive));
+            SingletonOpMode.instance.telemetry.addData("front right", positionString(HardwareManager.frontRightDrive));
+            SingletonOpMode.instance.telemetry.addData("back left", positionString(HardwareManager.backLeftDrive));
+            SingletonOpMode.instance.telemetry.addData("back right", positionString(HardwareManager.backRightDrive));
             SingletonOpMode.instance.telemetry.update();
         }
         ;
         zeroDriveMotorPower();
     }
 
-    private static String test_PosString(DcMotor motor) {
+    private static String positionString(DcMotor motor) {
         return "current: " + motor.getCurrentPosition() + " target: " + motor.getTargetPosition();
     }
 
@@ -200,6 +211,11 @@ public final class Drive {
      * Returns whether the drive motors are running.
      */
     private static boolean driveMotorsNearTarget() {
+        SingletonOpMode.instance.telemetry.addData("fl", positionString(HardwareManager.frontLeftDrive));
+        SingletonOpMode.instance.telemetry.addData("fr", positionString(HardwareManager.frontRightDrive));
+        SingletonOpMode.instance.telemetry.addData("bl", positionString(HardwareManager.backLeftDrive));
+        SingletonOpMode.instance.telemetry.addData("br", positionString(HardwareManager.backRightDrive));
+        SingletonOpMode.instance.telemetry.update();
         return RobotUtils.motorNearTarget(HardwareManager.frontLeftDrive, MOTOR_TICKS_WITHIN_TARGET)
                 && RobotUtils.motorNearTarget(HardwareManager.frontRightDrive, MOTOR_TICKS_WITHIN_TARGET)
                 && RobotUtils.motorNearTarget(HardwareManager.backLeftDrive, MOTOR_TICKS_WITHIN_TARGET)
@@ -211,6 +227,14 @@ public final class Drive {
         HardwareManager.frontRightDrive.setPower(0.0);
         HardwareManager.backLeftDrive.setPower(0.0);
         HardwareManager.backRightDrive.setPower(0.0);
+    }
+
+    /**
+     * 0 to 1: represents motor's progress toward reaching encoder target values.
+     */
+    private static double getMotorProgress() {
+        DcMotor driveMotor = HardwareManager.frontLeftDrive;
+        return driveMotor.getCurrentPosition() / driveMotor.getTargetPosition();
     }
 
 }

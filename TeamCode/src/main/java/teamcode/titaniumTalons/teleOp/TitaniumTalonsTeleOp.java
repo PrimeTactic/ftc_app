@@ -19,9 +19,9 @@ public class TitaniumTalonsTeleOp extends SingletonOpMode {
     @Override
     protected void onStart() {
         // in case the robot is stuck on the latch
-        HardwareManager.pinServo.setPosition(0.5);
+        //HardwareManager.pinServo.setPosition(0.5);
 
-        Arm.setWristServoPos(0.4);
+       // Arm.setWristServoPos(0.4);
         new DriveInputListener();
         //new ArmInputListener();
 
