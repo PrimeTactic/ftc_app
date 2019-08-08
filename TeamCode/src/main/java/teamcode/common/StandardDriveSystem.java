@@ -34,9 +34,24 @@ public class StandardDriveSystem extends FourWheelDriveSystem {
         this.inchesToTicks = inchesToTicks;
     }
 
-    public void move(Vector2 velocity, double distance) {
+    public void move(Vector2 velocity, double inches) {
+
         double speed = velocity.magnitude();
-        turn(velocity.getDirectionDegrees(), speed);
+        int ticks = (int)(inches * inchesToTicks);
+
+        setMotorRunModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setMotorRunModes(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeftMotor.setPower(speed);
+        backLeftMotor.setPower(speed);
+        frontRightMotor.setPower(speed);
+        backRightMotor.setPower(speed);
+
+        frontLeftMotor.setTargetPosition(ticks);
+        backLeftMotor.setTargetPosition(ticks);
+        frontRightMotor.setTargetPosition(ticks);
+        backRightMotor.setTargetPosition(ticks);
+
     }
 
     public void moveContinuously(Vector2 velocity) {
@@ -53,13 +68,26 @@ public class StandardDriveSystem extends FourWheelDriveSystem {
     }
 
     public void turn(double degrees, double speed) {
-        double ticks = degrees * degreesToTicks;
+
+        int ticks = (int)(degrees * degreesToTicks);
+
+        setMotorRunModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setMotorRunModes(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeftMotor.setPower(speed);
+        backLeftMotor.setPower(speed);
+        frontRightMotor.setPower(speed);
+        backRightMotor.setPower(speed);
+
+        frontRightMotor.setTargetPosition(ticks);
+        backRightMotor.setTargetPosition(ticks);
+        frontLeftMotor.setTargetPosition(-ticks);
+        backLeftMotor.setTargetPosition(-ticks);
 
     }
 
     public void turnContinuously(double speed) {
+        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeftMotor.setPower(speed);
         backLeftMotor.setPower(speed);
         frontRightMotor.setPower(-speed);
