@@ -23,8 +23,8 @@ public class InvertedMotors extends LinearOpMode
         while (opModeIsActive())
         {
 
-            motorOne.setPower(0.25);
-            motorTwo.setPower(-0.25);
+            motorOne.setPower(0.5);
+            motorTwo.setPower(-0.5);
 
         }
 
