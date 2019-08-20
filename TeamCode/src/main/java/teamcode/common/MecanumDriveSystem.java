@@ -1,12 +1,17 @@
 package teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import java.util.TimerTask;
 
 public class MecanumDriveSystem {
 
-    private static final double INCHES_TO_TICKS_VERTICAL = -10.82;
-    private static final double INCHES_TO_TICKS_LATERAL = 46.17;
-    private static final double INCHES_TO_TICKS_DIAGONAL = 30.0;
+    // correct ticks = current ticks * expected distance / actual distance
+
+    private static final double INCHES_TO_TICKS_VERTICAL = -43.4641507685;
+    private static final double INCHES_TO_TICKS_LATERAL = 40;
+    private static final double INCHES_TO_TICKS_DIAGONAL = 90.0;
     private static final double DEGREES_TO_TICKS = -9.39;
     private static final double TICKS_WITHIN_TARGET = 10.0;
 
@@ -17,6 +22,12 @@ public class MecanumDriveSystem {
         this.frontRight = frontRight;
         this.backLeft = backLeft;
         this.backRight = backRight;
+        correctDirections();
+    }
+
+    private void correctDirections() {
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void vertical(double inches, double speed) {
@@ -29,12 +40,11 @@ public class MecanumDriveSystem {
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
 
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(speed);
+        double[] powers = {speed,speed,speed,speed};
+        manageSpeed(powers);
 
-        while (TTOpMode.getOpMode().opModeIsActive() && !nearTarget()) ;
+        while (TTOpMode.getOpMode().opModeIsActive() && motorsBusy()) ;
+        //while (TTOpMode.getOpMode().opModeIsActive() && !nearTarget()) ;
         zeroPower();
     }
 
@@ -145,10 +155,20 @@ public class MecanumDriveSystem {
     }
 
     private boolean nearTarget() {
-        return Utils.motorNearTarget(frontLeft, TICKS_WITHIN_TARGET)
-                && Utils.motorNearTarget(frontRight, TICKS_WITHIN_TARGET)
-                && Utils.motorNearTarget(backLeft, TICKS_WITHIN_TARGET)
-                && Utils.motorNearTarget(backRight, TICKS_WITHIN_TARGET);
+        return motorNearTarget(frontLeft, TICKS_WITHIN_TARGET)
+                && motorNearTarget(frontRight, TICKS_WITHIN_TARGET)
+                && motorNearTarget(backLeft, TICKS_WITHIN_TARGET)
+                && motorNearTarget(backRight, TICKS_WITHIN_TARGET);
+    }
+
+
+    public static boolean motorNearTarget(DcMotor motor, double ticksWithinTarget) {
+        return Math.abs(motor.getTargetPosition() - motor.getCurrentPosition()) < ticksWithinTarget;
+    }
+
+
+    private boolean motorsBusy() {
+        return frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy();
     }
 
     public void zeroPower() {
@@ -156,6 +176,17 @@ public class MecanumDriveSystem {
         frontRight.setPower(0.0);
         backLeft.setPower(0.0);
         backRight.setPower(0.0);
+    }
+
+    public void manageSpeed(double[] powers) {
+        TimerTask adjustTask = new TimerTask() {
+            @Override
+            public void run() {
+
+            }
+        };
+        TTOpMode opMode = TTOpMode.getOpMode();
+        opMode.scheduleRepeatingTask(adjustTask, adjustPeriod);
     }
 
 }

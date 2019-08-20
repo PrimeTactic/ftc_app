@@ -1,10 +1,10 @@
 package teamcode.common;
 
-public class MecanumDriveCalibration {
+public class MecanumDriveTest {
 
     private final TTRobot robot;
 
-    public MecanumDriveCalibration(TTRobot robot) {
+    public MecanumDriveTest(TTRobot robot) {
         this.robot = robot;
     }
 
@@ -17,7 +17,7 @@ public class MecanumDriveCalibration {
         driveSystem.lateral(-10.0, speed);
         int quadrant = 0;
         driveSystem.diagonal(quadrant, Math.sqrt(50), speed);
-        driveSystem.turn(360.0,speed);
+        driveSystem.turn(360.0, speed);
     }
 
 }
