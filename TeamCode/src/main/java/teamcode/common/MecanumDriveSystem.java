@@ -13,15 +13,24 @@ public class MecanumDriveSystem {
     private static final double INCHES_TO_TICKS_LATERAL = 40;
     private static final double INCHES_TO_TICKS_DIAGONAL = 90.0;
     private static final double DEGREES_TO_TICKS = -9.39;
-    private static final double TICKS_WITHIN_TARGET = 10.0;
+    private static final double TICKS_WITHIN_TARGET = 15.0;
+    private static final double SPEED_ADJUST_WITH_ENCODERS_PERIOD = 0.1;
+    private static final double SPEED_PLATEAU_TICKS = 250.0;
+    private static final double MINIMUM_SPEED_MANAGEMENT_POWER = 0.01;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
+    private final DcMotor[] motors;
 
     public MecanumDriveSystem(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.backLeft = backLeft;
         this.backRight = backRight;
+        motors = new DcMotor[4];
+        motors[0] = frontLeft;
+        motors[1] = frontRight;
+        motors[2] = backLeft;
+        motors[3] = backRight;
         correctDirections();
     }
 
@@ -40,12 +49,8 @@ public class MecanumDriveSystem {
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
 
-        double[] powers = {speed,speed,speed,speed};
-        manageSpeed(powers);
-
-        while (TTOpMode.getOpMode().opModeIsActive() && motorsBusy()) ;
-        //while (TTOpMode.getOpMode().opModeIsActive() && !nearTarget()) ;
-        zeroPower();
+        double[] maxPowers = {speed, speed, speed, speed};
+        manageSpeedWithEncoders(maxPowers);
     }
 
     public void lateral(double inches, double speed) {
@@ -58,13 +63,8 @@ public class MecanumDriveSystem {
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(-ticks);
 
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(speed);
-
-        while (TTOpMode.getOpMode().opModeIsActive() && !nearTarget()) ;
-        zeroPower();
+        double[] maxPowers = {speed, speed, speed, speed};
+        manageSpeedWithEncoders(maxPowers);
     }
 
     /**
@@ -78,6 +78,7 @@ public class MecanumDriveSystem {
         setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * INCHES_TO_TICKS_DIAGONAL);
+        double[] maxPowers = new double[4];
 
         switch (quadrant) {
             case 0:
@@ -85,42 +86,41 @@ public class MecanumDriveSystem {
                 frontLeft.setTargetPosition(ticks);
                 backRight.setTargetPosition(ticks);
 
-                frontLeft.setPower(speed);
-                backRight.setPower(speed);
+                maxPowers[0] = speed;
+                maxPowers[3] = speed;
                 break;
             case 1:
                 // forward left
                 frontRight.setTargetPosition(ticks);
                 backLeft.setTargetPosition(ticks);
 
-                frontRight.setPower(speed);
-                backLeft.setPower(speed);
+                maxPowers[1] = speed;
+                maxPowers[2] = speed;
                 break;
             case 2:
                 // backward left
                 frontLeft.setTargetPosition(-ticks);
                 backRight.setTargetPosition(-ticks);
 
-                frontLeft.setPower(speed);
-                backRight.setPower(speed);
+                maxPowers[0] = speed;
+                maxPowers[3] = speed;
                 break;
             case 3:
                 // backward right
                 frontRight.setTargetPosition(-ticks);
                 backLeft.setTargetPosition(-ticks);
 
-                frontRight.setPower(speed);
-                backLeft.setPower(speed);
+                maxPowers[1] = speed;
+                maxPowers[2] = speed;
                 break;
             default:
                 throw new IllegalArgumentException("quadrant must be 0, 1, 2, or 3");
         }
 
-        while (TTOpMode.getOpMode().opModeIsActive() && !nearTarget()) ;
-        zeroPower();
+        manageSpeedWithEncoders(maxPowers);
     }
 
-    public void moveContinuous(Vector2 velocity) {
+    public void continuous(Vector2 velocity) {
 
     }
 
@@ -138,13 +138,8 @@ public class MecanumDriveSystem {
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(-ticks);
 
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(speed);
-
-        while (TTOpMode.getOpMode().opModeIsActive() && !nearTarget()) ;
-        zeroPower();
+        double[] maxPowers = {speed, speed, speed, speed};
+        manageSpeedWithEncoders(maxPowers);
     }
 
     private void setDriveRunMode(DcMotor.RunMode runMode) {
@@ -178,15 +173,52 @@ public class MecanumDriveSystem {
         backRight.setPower(0.0);
     }
 
-    public void manageSpeed(double[] powers) {
-        TimerTask adjustTask = new TimerTask() {
+    /**
+     * Forces the thread to wait until the motors reach their target.
+     *
+     * @param maxPowers must have a length of 4, each element represents the power of a motor that corresponds to that element's index
+     */
+    public void manageSpeedWithEncoders(final double[] maxPowers) {
+        final TimerTask speedAdjustTask = new TimerTask() {
             @Override
             public void run() {
-
+                for (int i = 0; i < 4; i++) {
+                    DcMotor motor = motors[i];
+                    double maxPower = maxPowers[i];
+                    int currentTicks = motor.getCurrentPosition();
+                    int targetTicks = motor.getTargetPosition();
+                    double currentPower = calculateCurrentPower(maxPower, currentTicks, targetTicks);
+                    motor.setPower(currentPower);
+                }
+                TTOpMode.getOpMode().telemetry.update();
             }
         };
-        TTOpMode opMode = TTOpMode.getOpMode();
-        opMode.scheduleRepeatingTask(adjustTask, adjustPeriod);
+        TTTimer.scheduleAtFixedRate(speedAdjustTask, SPEED_ADJUST_WITH_ENCODERS_PERIOD);
+        while (!nearTarget()) ;
+        zeroPower();
+    }
+
+    private double calculateCurrentPower(double maxPower, int currentTicks, int targetTicks) {
+        currentTicks = Math.abs(currentTicks);
+        targetTicks = Math.abs(targetTicks);
+        int midpoint = targetTicks / 2;
+        double currentPower;
+        if (currentTicks < midpoint) {
+            currentPower = currentTicks / SPEED_PLATEAU_TICKS * maxPower;
+            if (currentPower < MINIMUM_SPEED_MANAGEMENT_POWER) {
+                currentPower = MINIMUM_SPEED_MANAGEMENT_POWER;
+            }
+        } else {
+            currentPower = (targetTicks - currentTicks) / SPEED_PLATEAU_TICKS * maxPower;
+            if (currentPower <= MINIMUM_SPEED_MANAGEMENT_POWER) {
+                currentPower = 0.0;
+            }
+        }
+        if (currentPower > maxPower) {
+            currentPower = maxPower;
+        }
+        TTOpMode.getOpMode().telemetry.addData("cp", currentPower);
+        return currentPower;
     }
 
 }
