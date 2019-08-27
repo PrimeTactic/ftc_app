@@ -15,8 +15,8 @@ public class MecanumDriveSystem {
     private static final double DEGREES_TO_TICKS = -9.39;
     private static final double TICKS_WITHIN_TARGET = 15.0;
     private static final double SPEED_ADJUST_WITH_ENCODERS_PERIOD = 0.1;
-    private static final double SPEED_PLATEAU_TICKS = 250.0;
-    private static final double MINIMUM_SPEED_MANAGEMENT_POWER = 0.01;
+    private static final double SPEED_PLATEAU_TICKS = 500.0;
+    private static final double MINIMUM_SPEED_MANAGEMENT_POWER = 0.1;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
     private final DcMotor[] motors;
@@ -190,7 +190,6 @@ public class MecanumDriveSystem {
                     double currentPower = calculateCurrentPower(maxPower, currentTicks, targetTicks);
                     motor.setPower(currentPower);
                 }
-                TTOpMode.getOpMode().telemetry.update();
             }
         };
         TTTimer.scheduleAtFixedRate(speedAdjustTask, SPEED_ADJUST_WITH_ENCODERS_PERIOD);
@@ -217,7 +216,6 @@ public class MecanumDriveSystem {
         if (currentPower > maxPower) {
             currentPower = maxPower;
         }
-        TTOpMode.getOpMode().telemetry.addData("cp", currentPower);
         return currentPower;
     }
 

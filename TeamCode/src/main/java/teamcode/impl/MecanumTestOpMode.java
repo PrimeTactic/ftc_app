@@ -18,7 +18,7 @@ public class MecanumTestOpMode extends TTOpMode {
     protected void onStart() {
         TTRobot robot = getRobot();
         MecanumDriveSystem driveSystem = robot.getDriveSystem();
-        driveSystem.vertical(200.0, 0.5);
+        driveSystem.vertical(80.0, 1.0);
     }
 
 }

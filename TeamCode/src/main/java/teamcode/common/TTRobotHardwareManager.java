@@ -16,8 +16,10 @@ public class TTRobotHardwareManager {
         backLeftDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[2]);
         backRightDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[3]);
 
-        armElbow = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[4]);
-        armLift = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[5]);
+        armElbow = null;
+        armLift = null;
+        //armElbow = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[4]);
+        //armLift = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[5]);
     }
 
     public DcMotor getFrontLeftDrive() {
