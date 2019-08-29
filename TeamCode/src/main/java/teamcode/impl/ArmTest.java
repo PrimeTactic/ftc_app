@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.common.TTArm;
 import teamcode.common.TTHardwareManager;
+import teamcode.common.TTOpMode;
 import teamcode.common.TTTimer;
 
 import java.util.*;
@@ -15,17 +16,18 @@ import java.util.*;
  B Button moves 15 degrees and Y Button moves 45 degrees.
  */
 @TeleOp(name = "Arm Test")
-public class ArmTest extends LinearOpMode {
+public class ArmTest extends TTOpMode {
 
     private TTArm arm;
 
     @Override
-    public void runOpMode() {
-        TTHardwareManager hardwareManager = new TTHardwareManager(hardwareMap);
-        arm = new TTArm(hardwareManager.getArmLift(), hardwareManager.getArmElbow());
+    protected void onInitialize() {
+        setHardwareRestriction(TTHardwareManager.TTHardwareRestriction.ARM_ONLY);
+    }
 
-        waitForStart();
-
+    @Override
+    protected void onStart() {
+        arm = getRobot().getArm();
         while (opModeIsActive()) {
             update();
         }
@@ -57,14 +59,14 @@ public class ArmTest extends LinearOpMode {
             while (gamepad1.dpad_up) {
                 long time2 = System.currentTimeMillis();
                 if (time2 - time1 >= 100) {
-                    while(gamepad1.dpad_up) {
+                    while (gamepad1.dpad_up) {
                         arm.rotateContinuous(1.0);
                     }
                     arm.rotateContinuous(0);
                 }
             }
         } else if (gamepad1.b) {
-            arm.lift(3, 1);
+            arm.setLiftHeight(arm.getLiftHeight() + 3, 1);
             // arm.rotate(15,1);
         } else if (gamepad1.y) {
             arm.rotate(45, 1);
