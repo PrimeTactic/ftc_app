@@ -3,14 +3,14 @@ package teamcode.common;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class TTRobotHardwareManager {
+public class TTHardwareManager {
 
-    public static final String[] COMPONENT_NAMES = {"FrontLeftDrive", "FrontRightDrive", "BackLeftDrive", "BackRightDrive", "ArmElbow", "ArmLift"};
+    private static final String[] COMPONENT_NAMES = {"FrontLeftDrive", "FrontRightDrive", "BackLeftDrive", "BackRightDrive", "ArmElbow", "ArmLift"};
 
     private final DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private final DcMotor armElbow, armLift;
 
-    public TTRobotHardwareManager(HardwareMap hardwareMap) {
+    public TTHardwareManager(HardwareMap hardwareMap) {
         frontLeftDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[0]);
         frontRightDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[1]);
         backLeftDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[2]);

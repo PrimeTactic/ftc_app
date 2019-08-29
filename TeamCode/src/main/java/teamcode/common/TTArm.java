@@ -2,16 +2,14 @@ package teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class Arm {
+public class TTArm {
 
-    private static final double DRIVE_MOTOR_TICKS_PER_INCH_COVERED = 20;
-    // arbitrary value, need to change it.
-    // 3in/20tick = MeasuredValue (measured) (in)/ calculated Tick (X)
-    private static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = 3.506493506;
+    private static final double LIFT_INCHES_TO_TICKS = 20;
+    private static final double ELBOW_DEGREES_TO_TICKS = 3.506493506;
 
     private final DcMotor lift, elbow;
 
-    public Arm(DcMotor lift, DcMotor elbow) {
+    public TTArm(DcMotor lift, DcMotor elbow) {
         this.lift = lift;
         this.elbow = elbow;
     }
@@ -20,7 +18,7 @@ public class Arm {
         elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int) (degrees * DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED);
+        int ticks = (int) (degrees * ELBOW_DEGREES_TO_TICKS);
         elbow.setTargetPosition(ticks);
         elbow.setPower(power);
         while (elbow.isBusy()) ;
@@ -34,7 +32,7 @@ public class Arm {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int) (inches * DRIVE_MOTOR_TICKS_PER_INCH_COVERED);
+        int ticks = (int) (inches * LIFT_INCHES_TO_TICKS);
         lift.setTargetPosition(ticks);
         lift.setPower(power);
 

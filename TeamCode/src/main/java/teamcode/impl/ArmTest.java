@@ -2,25 +2,27 @@ package teamcode.impl;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import teamcode.common.Arm;
-import teamcode.common.TTOpMode;
-import teamcode.common.TTRobotHardwareManager;
+import teamcode.common.TTArm;
+import teamcode.common.TTHardwareManager;
 import teamcode.common.TTTimer;
 
 import java.util.*;
 
-@TeleOp(name = "ArmTest")
-public class ArmLiftPrototype extends LinearOpMode {
+/*
+ Linear lift lift is controlled by triggers.
+ Arm rotation is DPad.
+ B Button moves 15 degrees and Y Button moves 45 degrees.
+ */
+@TeleOp(name = "Arm Test")
+public class ArmTest extends LinearOpMode {
 
-    private static final double DRIVE_MOTOR_TICKS_PER_DEGREE_COVERED = 3.506493506;
-    private Arm arm;
+    private TTArm arm;
 
     @Override
     public void runOpMode() {
-        TTRobotHardwareManager hardwareManager = new TTRobotHardwareManager(hardwareMap);
-        arm = new Arm(hardwareManager.getArmLift(), hardwareManager.getArmElbow());
+        TTHardwareManager hardwareManager = new TTHardwareManager(hardwareMap);
+        arm = new TTArm(hardwareManager.getArmLift(), hardwareManager.getArmElbow());
 
         waitForStart();
 
@@ -88,6 +90,3 @@ public class ArmLiftPrototype extends LinearOpMode {
         }
     }
 }
-//linear lift lift is controlled by triggers
-//arm rotation is DPad
-//B Button moves 15 degrees and Y Button moves 45 degrees, opposite on the

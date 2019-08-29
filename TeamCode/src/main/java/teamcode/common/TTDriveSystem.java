@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.TimerTask;
 
-public class MecanumDriveSystem {
+public class TTDriveSystem {
 
     // correct ticks = current ticks * expected distance / actual distance
 
@@ -21,7 +21,7 @@ public class MecanumDriveSystem {
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
     private final DcMotor[] motors;
 
-    public MecanumDriveSystem(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
+    public TTDriveSystem(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.backLeft = backLeft;
@@ -40,8 +40,8 @@ public class MecanumDriveSystem {
     }
 
     public void vertical(double inches, double speed) {
-        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * INCHES_TO_TICKS_VERTICAL);
 
         frontLeft.setTargetPosition(ticks);
@@ -54,8 +54,8 @@ public class MecanumDriveSystem {
     }
 
     public void lateral(double inches, double speed) {
-        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * INCHES_TO_TICKS_LATERAL);
 
         frontLeft.setTargetPosition(-ticks);
@@ -75,8 +75,8 @@ public class MecanumDriveSystem {
      * @param speed    [0.0, 1.0]
      */
     public void diagonal(int quadrant, double inches, double speed) {
-        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * INCHES_TO_TICKS_DIAGONAL);
         double[] maxPowers = new double[4];
 
@@ -120,17 +120,13 @@ public class MecanumDriveSystem {
         manageSpeedWithEncoders(maxPowers);
     }
 
-    public void continuous(Vector2 velocity) {
-
-    }
-
     /**
      * @param degrees degrees to turn clockwise
      * @param speed   [0.0, 1.0]
      */
     public void turn(double degrees, double speed) {
-        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (degrees * DEGREES_TO_TICKS);
 
         frontLeft.setTargetPosition(ticks);
@@ -142,11 +138,40 @@ public class MecanumDriveSystem {
         manageSpeedWithEncoders(maxPowers);
     }
 
-    private void setDriveRunMode(DcMotor.RunMode runMode) {
-        frontLeft.setMode(runMode);
-        frontRight.setMode(runMode);
-        backLeft.setMode(runMode);
-        backRight.setMode(runMode);
+    public void brake() {
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setPower(0.0);
+        frontRight.setPower(0.0);
+        backLeft.setPower(0.0);
+        backRight.setPower(0.0);
+    }
+
+    public void continuous(Vector2 velocity) {
+        if (velocity.isZero()) {
+            brake();
+            return;
+        }
+        setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        double direction = velocity.getDirection();
+        double power = velocity.magnitude();
+        double angle = -direction + Math.PI / 4;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+
+        double frontLeftPow = power * sin;
+        double frontRightPow = power * cos;
+        double backLeftPow = power * cos;
+        double backRightPow = power * sin;
+
+        frontLeft.setPower(frontLeftPow);
+        frontRight.setPower(frontRightPow);
+        backLeft.setPower(backLeftPow);
+        backRight.setPower(backRightPow);
+    }
+
+    private boolean motorsBusy() {
+        return frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy();
     }
 
     private boolean nearTarget() {
@@ -157,20 +182,8 @@ public class MecanumDriveSystem {
     }
 
 
-    public static boolean motorNearTarget(DcMotor motor, double ticksWithinTarget) {
+    private static boolean motorNearTarget(DcMotor motor, double ticksWithinTarget) {
         return Math.abs(motor.getTargetPosition() - motor.getCurrentPosition()) < ticksWithinTarget;
-    }
-
-
-    private boolean motorsBusy() {
-        return frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy();
-    }
-
-    public void zeroPower() {
-        frontLeft.setPower(0.0);
-        frontRight.setPower(0.0);
-        backLeft.setPower(0.0);
-        backRight.setPower(0.0);
     }
 
     /**
@@ -178,23 +191,27 @@ public class MecanumDriveSystem {
      *
      * @param maxPowers must have a length of 4, each element represents the power of a motor that corresponds to that element's index
      */
-    public void manageSpeedWithEncoders(final double[] maxPowers) {
+    private void manageSpeedWithEncoders(final double[] maxPowers) {
         final TimerTask speedAdjustTask = new TimerTask() {
             @Override
             public void run() {
                 for (int i = 0; i < 4; i++) {
                     DcMotor motor = motors[i];
                     double maxPower = maxPowers[i];
-                    int currentTicks = motor.getCurrentPosition();
-                    int targetTicks = motor.getTargetPosition();
-                    double currentPower = calculateCurrentPower(maxPower, currentTicks, targetTicks);
-                    motor.setPower(currentPower);
+                    adjustMotorPower(motor, maxPower);
                 }
             }
         };
         TTTimer.scheduleAtFixedRate(speedAdjustTask, SPEED_ADJUST_WITH_ENCODERS_PERIOD);
         while (!nearTarget()) ;
-        zeroPower();
+        brake();
+    }
+
+    private void adjustMotorPower(DcMotor motor, double maxPower) {
+        int currentTicks = motor.getCurrentPosition();
+        int targetTicks = motor.getTargetPosition();
+        double currentPower = calculateCurrentPower(maxPower, currentTicks, targetTicks);
+        motor.setPower(currentPower);
     }
 
     private double calculateCurrentPower(double maxPower, int currentTicks, int targetTicks) {
@@ -217,6 +234,20 @@ public class MecanumDriveSystem {
             currentPower = maxPower;
         }
         return currentPower;
+    }
+
+    private void setRunMode(DcMotor.RunMode mode) {
+        frontLeft.setMode(mode);
+        frontRight.setMode(mode);
+        backLeft.setMode(mode);
+        backRight.setMode(mode);
+    }
+
+    private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior bahavior) {
+        frontLeft.setZeroPowerBehavior(bahavior);
+        frontRight.setZeroPowerBehavior(bahavior);
+        backLeft.setZeroPowerBehavior(bahavior);
+        backRight.setZeroPowerBehavior(bahavior);
     }
 
 }
