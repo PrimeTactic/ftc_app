@@ -52,14 +52,17 @@ public class ArmTest extends LinearOpMode {
             arm.rotate(-5, 1);
             TTTimer.schedule(ts, 100);
         } else if (gamepad1.dpad_up) {
-            TimerTask ts = new TimerTask() {
-                @Override
-                public void run() {
-                    DPadArmMovement(true);
-                }
-            };
             arm.rotate(5, 1);
-            TTTimer.schedule(ts, 100);
+            long time1 = System.currentTimeMillis();
+            while (gamepad1.dpad_up) {
+                long time2 = System.currentTimeMillis();
+                if (time2 - time1 >= 100) {
+                    while(gamepad1.dpad_up) {
+                        arm.rotateContinuous(1.0);
+                    }
+                    arm.rotateContinuous(0);
+                }
+            }
         } else if (gamepad1.b) {
             arm.lift(3, 1);
             // arm.rotate(15,1);

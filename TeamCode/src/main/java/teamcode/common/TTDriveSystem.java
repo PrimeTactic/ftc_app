@@ -13,10 +13,10 @@ public class TTDriveSystem {
     private static final double INCHES_TO_TICKS_LATERAL = 40;
     private static final double INCHES_TO_TICKS_DIAGONAL = 90.0;
     private static final double DEGREES_TO_TICKS = -9.39;
-    private static final double TICKS_WITHIN_TARGET = 15.0;
+    private static final double TICKS_WITHIN_TARGET = 30.0;
     private static final double SPEED_ADJUST_WITH_ENCODERS_PERIOD = 0.1;
-    private static final double SPEED_PLATEAU_TICKS = 500.0;
-    private static final double MINIMUM_SPEED_MANAGEMENT_POWER = 0.1;
+    private static final double SPEED_PLATEAU_TICKS = 1000.0;
+    private static final double MINIMUM_ENCODERS_POWER = 0.1;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
     private final DcMotor[] motors;
@@ -151,7 +151,7 @@ public class TTDriveSystem {
             brake();
             return;
         }
-        setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double direction = velocity.getDirection();
         double power = velocity.magnitude();
@@ -200,38 +200,36 @@ public class TTDriveSystem {
                     double maxPower = maxPowers[i];
                     adjustMotorPower(motor, maxPower);
                 }
+                TTOpMode.getOpMode().telemetry.update();
             }
         };
         TTTimer.scheduleAtFixedRate(speedAdjustTask, SPEED_ADJUST_WITH_ENCODERS_PERIOD);
         while (!nearTarget()) ;
-        brake();
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     private void adjustMotorPower(DcMotor motor, double maxPower) {
         int currentTicks = motor.getCurrentPosition();
         int targetTicks = motor.getTargetPosition();
-        double currentPower = calculateCurrentPower(maxPower, currentTicks, targetTicks);
+        double currentPower = calculateCurrentPower(currentTicks, targetTicks, maxPower);
+        TTOpMode.getOpMode().telemetry.addData("power", currentPower);
         motor.setPower(currentPower);
     }
 
-    private double calculateCurrentPower(double maxPower, int currentTicks, int targetTicks) {
+    private double calculateCurrentPower(int currentTicks, int targetTicks, double maxPower) {
         currentTicks = Math.abs(currentTicks);
         targetTicks = Math.abs(targetTicks);
-        int midpoint = targetTicks / 2;
         double currentPower;
-        if (currentTicks < midpoint) {
-            currentPower = currentTicks / SPEED_PLATEAU_TICKS * maxPower;
-            if (currentPower < MINIMUM_SPEED_MANAGEMENT_POWER) {
-                currentPower = MINIMUM_SPEED_MANAGEMENT_POWER;
-            }
+
+        if (currentTicks <= SPEED_PLATEAU_TICKS) {
+            currentPower = Math.sin(Math.PI * currentTicks / (2 * SPEED_PLATEAU_TICKS));
+        } else if (currentTicks >= targetTicks - SPEED_PLATEAU_TICKS) {
+            currentPower = Math.sin(Math.PI * (currentTicks - (targetTicks - 2 * SPEED_PLATEAU_TICKS)) / (2 * SPEED_PLATEAU_TICKS));
         } else {
-            currentPower = (targetTicks - currentTicks) / SPEED_PLATEAU_TICKS * maxPower;
-            if (currentPower <= MINIMUM_SPEED_MANAGEMENT_POWER) {
-                currentPower = 0.0;
-            }
-        }
-        if (currentPower > maxPower) {
             currentPower = maxPower;
+        }
+        if (currentPower < MINIMUM_ENCODERS_POWER) {
+            currentPower = MINIMUM_ENCODERS_POWER;
         }
         return currentPower;
     }
