@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.common.TTArm;
 import teamcode.common.TTHardwareManager;
+import teamcode.common.TTOpMode;
 import teamcode.common.TTTimer;
 import teamcode.common.TTOpMode;
 
@@ -22,8 +23,8 @@ public class ArmTest extends TTOpMode {
 
     @Override
     protected void onInitialize() {
-        TTHardwareManager hardwareManager = new TTHardwareManager(hardwareMap);
-        arm = new TTArm(hardwareManager.getArmLift(), hardwareManager.getArmElbow());
+        TTHardwareManager hardwareManager = new TTHardwareManager(hardwareMap, TTHardwareManager.TTHardwareRestriction.ARM_ONLY);
+        arm = new TTArm(hardwareManager.getArmLift(), hardwareManager.getArmLiftSensor(), hardwareManager.getArmElbow());
     }
 
     @Override
@@ -38,6 +39,8 @@ public class ArmTest extends TTOpMode {
             }
         };
         armInput.start();
+
+        setHardwareRestriction(TTHardwareManager.TTHardwareRestriction.ARM_ONLY);
     }
 
     private void update() {
@@ -63,22 +66,23 @@ public class ArmTest extends TTOpMode {
                     arm.rotateContinuous(0);
                 }
             }
-        }else if (gamepad1.dpad_up) {
+
+        } else if (gamepad1.dpad_up) {
             arm.rotate(5, 1);
             long time1 = System.currentTimeMillis();
             while (gamepad1.dpad_up) {
                 long time2 = System.currentTimeMillis();
                 if (time2 - time1 >= 100) {
                     while (gamepad1.dpad_up) {
-                        arm.rotateContinuous(1);
+                        arm.rotateContinuous(1.0);
                     }
                     arm.rotateContinuous(0);
                 }
             }
-        }
-           else if (gamepad1.b) {
-            arm.lift(3, 1);
-            //arm.rotate(15,1);
+
+        } else if (gamepad1.b) {
+            arm.setLiftHeight(arm.getLiftHeight() + 3, 1);
+            // arm.rotate(15,1);
         } else if (gamepad1.y) {
             arm.rotate(45, 1);
         } else if (gamepad1.a) {
