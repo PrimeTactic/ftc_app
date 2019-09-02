@@ -2,7 +2,6 @@ package teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import java.util.TimerTask;
 
@@ -14,9 +13,14 @@ public class TTDriveSystem {
     private static final double INCHES_TO_TICKS_LATERAL = 40;
     private static final double INCHES_TO_TICKS_DIAGONAL = 90.0;
     private static final double DEGREES_TO_TICKS = -9.39;
-    private static final double TICKS_WITHIN_TARGET = 30.0;
+    private static final double TICKS_WITHIN_TARGET = 10.0;
     private static final double SPEED_ADJUST_WITH_ENCODERS_PERIOD = 0.1;
-    private static final double SPEED_PLATEAU_TICKS = 1000.0;
+    /**
+     * More specifically, how many ticks the motors must turn before reaching full speed while
+     * accelerating with a max power of 1.0
+     */
+    private static final double ACCELERATION_SMOOTHNESS = 1000.0;
+    private static final double DECELERATION_SMOOTHNESS = 4000.0;
     private static final double MINIMUM_ENCODERS_POWER = 0.1;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
@@ -220,14 +224,34 @@ public class TTDriveSystem {
     private double calculateCurrentPower(int currentTicks, int targetTicks, double maxPower) {
         currentTicks = Math.abs(currentTicks);
         targetTicks = Math.abs(targetTicks);
-        double currentPower;
+        maxPower = Math.abs(maxPower);
 
-        if (currentTicks <= SPEED_PLATEAU_TICKS) {
-            currentPower = Math.sin(Math.PI * currentTicks / (2 * SPEED_PLATEAU_TICKS));
-        } else if (currentTicks >= targetTicks - SPEED_PLATEAU_TICKS) {
-            currentPower = Math.sin(Math.PI * (currentTicks - (targetTicks - 2 * SPEED_PLATEAU_TICKS)) / (2 * SPEED_PLATEAU_TICKS));
+        double accelerationTicks = ACCELERATION_SMOOTHNESS * maxPower;
+        double decelerationTicks = DECELERATION_SMOOTHNESS * maxPower;
+
+        if (targetTicks / 2 < DECELERATION_SMOOTHNESS) {
+            maxPower = -maxPower / 2 * Math.cos(Math.PI * targetTicks / decelerationTicks) + maxPower / 2;
+        }
+        TTOpMode.getOpMode().telemetry.addData("Max power", maxPower);
+        double currentPower;
+        if (currentTicks <= targetTicks / 2) {
+            if (accelerationTicks > targetTicks / 2) {
+                accelerationTicks = targetTicks / 2;
+            }
+            if (currentTicks <= accelerationTicks) {
+                currentPower = -maxPower / 2 * Math.cos(Math.PI * currentTicks / accelerationTicks) + maxPower / 2;
+            } else {
+                currentPower = maxPower;
+            }
         } else {
-            currentPower = maxPower;
+            if (decelerationTicks > targetTicks / 2) {
+                decelerationTicks = targetTicks / 2;
+            }
+            if (targetTicks - currentTicks <= decelerationTicks) {
+                currentPower = maxPower / 2 * Math.cos(Math.PI * (currentTicks - (targetTicks - decelerationTicks)) / decelerationTicks) + maxPower / 2;
+            } else {
+                currentPower = maxPower;
+            }
         }
         if (currentPower < MINIMUM_ENCODERS_POWER) {
             currentPower = MINIMUM_ENCODERS_POWER;
@@ -236,10 +260,9 @@ public class TTDriveSystem {
     }
 
     private void setRunMode(DcMotor.RunMode mode) {
-        frontLeft.setMode(mode);
-        frontRight.setMode(mode);
-        backLeft.setMode(mode);
-        backRight.setMode(mode);
+        for (DcMotor motor : motors) {
+            motor.setMode(mode);
+        }
     }
 
     private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior bahavior) {

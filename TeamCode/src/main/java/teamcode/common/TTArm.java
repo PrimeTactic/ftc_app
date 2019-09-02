@@ -21,26 +21,25 @@ public class TTArm {
     }
 
     /**
-     * @param height a value [0, 1] representing the height of the lift mechanism, where 0 is the
-     *               lowest possible height and 1 is the maximum possible height.
+     * @param inches how far above minimum position
      */
-    public void setLiftHeight(double height, double power) {
-        if (height < 0.0) {
-            height = 0.0;
-        } else if (height > MAXIMUM_LIFT_INCHES_FROM_GROUND - MINIMUM_LIFT_DISTANCE_FROM_GROUND) {
-            height = MAXIMUM_LIFT_INCHES_FROM_GROUND - MINIMUM_LIFT_DISTANCE_FROM_GROUND;
+    public void setLiftHeight(double inches, double power) {
+        if (inches < 0.0) {
+            inches = 0.0;
+        } else if (inches > MAXIMUM_LIFT_INCHES_FROM_GROUND - MINIMUM_LIFT_DISTANCE_FROM_GROUND) {
+            inches = MAXIMUM_LIFT_INCHES_FROM_GROUND - MINIMUM_LIFT_DISTANCE_FROM_GROUND;
         }
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double startingHeight = getLiftHeight();
-        if (height < startingHeight) {
+        if (inches < startingHeight) {
             lift.setPower(-Math.abs(power));
-            while (getLiftHeight() > height) {
+            while (getLiftHeight() > inches && TTOpMode.getOpMode().opModeIsActive()) {
                 TTOpMode.getOpMode().telemetry.addData("current height", getLiftHeight());
                 TTOpMode.getOpMode().telemetry.update();
             }
-        } else if (height > startingHeight) {
+        } else if (inches > startingHeight) {
             lift.setPower(Math.abs(power));
-            while (getLiftHeight() < height) {
+            while (getLiftHeight() < inches && TTOpMode.getOpMode().opModeIsActive()) {
                 TTOpMode.getOpMode().telemetry.addData("current height", getLiftHeight());
                 TTOpMode.getOpMode().telemetry.update();
             }
@@ -54,7 +53,7 @@ public class TTArm {
     }
 
     /**
-     * Returns the number of inches that the lift is above its minimum height.
+     * Returns the number of inches that the lift is above its minimum position.
      */
     public double getLiftHeight() {
         return liftSensor.getDistance(DistanceUnit.INCH) - MINIMUM_LIFT_DISTANCE_FROM_GROUND;
