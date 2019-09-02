@@ -16,7 +16,6 @@ public class TTArm {
 
     public void rotate(int degrees, double power) {
         elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (degrees * ELBOW_DEGREES_TO_TICKS);
         elbow.setTargetPosition(ticks);
@@ -25,12 +24,12 @@ public class TTArm {
     }
 
     public void rotateContinuous(double power) {
+        elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         elbow.setPower(power);
     }
 
     public void lift(double inches, double power) {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * LIFT_INCHES_TO_TICKS);
         lift.setTargetPosition(ticks);

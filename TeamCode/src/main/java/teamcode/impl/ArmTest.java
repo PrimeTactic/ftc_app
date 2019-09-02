@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import teamcode.common.TTArm;
 import teamcode.common.TTHardwareManager;
 import teamcode.common.TTTimer;
+import teamcode.common.TTOpMode;
 
 import java.util.*;
 
@@ -15,54 +16,69 @@ import java.util.*;
  B Button moves 15 degrees and Y Button moves 45 degrees.
  */
 @TeleOp(name = "Arm Test")
-public class ArmTest extends LinearOpMode {
+public class ArmTest extends TTOpMode {
 
     private TTArm arm;
 
     @Override
-    public void runOpMode() {
+    protected void onInitialize() {
         TTHardwareManager hardwareManager = new TTHardwareManager(hardwareMap);
         arm = new TTArm(hardwareManager.getArmLift(), hardwareManager.getArmElbow());
+    }
 
-        waitForStart();
+    @Override
+    protected void onStart() {
 
-        while (opModeIsActive()) {
-            update();
-        }
+        Thread armInput = new Thread() {
+            @Override
+            public void run() {
+                while (opModeIsActive()) {
+                    update();
+                }
+            }
+        };
+        armInput.start();
     }
 
     private void update() {
-        while (gamepad1.right_trigger > 0.3) {
-            arm.liftContinuous(gamepad1.right_trigger);
-        }
-        arm.liftContinuous(0);
-
-        while (gamepad1.left_trigger > 0.3) {
-            arm.liftContinuous(-gamepad1.left_trigger);
-        }
-        arm.liftContinuous(0);
-
-        if (gamepad1.dpad_down) {
-            TimerTask ts = new TimerTask() {
-                @Override
-                public void run() {
-                    DPadArmMovement(false);
-                }
-            };
+        if(gamepad1.right_trigger > 0.3) {
+            while (gamepad1.right_trigger > 0.3) {
+                arm.liftContinuous(gamepad1.right_trigger);
+            }
+            arm.liftContinuous(0);
+        }else if(gamepad1.left_trigger > 0.3) {
+            while (gamepad1.left_trigger > 0.3) {
+                arm.liftContinuous(-gamepad1.left_trigger);
+            }
+            arm.liftContinuous(0);
+        }else if (gamepad1.dpad_down) {
             arm.rotate(-5, 1);
-            TTTimer.schedule(ts, 100);
-        } else if (gamepad1.dpad_up) {
-            TimerTask ts = new TimerTask() {
-                @Override
-                public void run() {
-                    DPadArmMovement(true);
+            long time1 = System.currentTimeMillis();
+            while (gamepad1.dpad_down) {
+                long time2 = System.currentTimeMillis();
+                if (time2 - time1 > 100) {
+                    while (gamepad1.dpad_down) {
+                        arm.rotateContinuous(-1);
+                    }
+                    arm.rotateContinuous(0);
                 }
-            };
+            }
+        }else if (gamepad1.dpad_up) {
             arm.rotate(5, 1);
-            TTTimer.schedule(ts, 100);
-        } else if (gamepad1.b) {
+            long time1 = System.currentTimeMillis();
+            while (gamepad1.dpad_up) {
+                long time2 = System.currentTimeMillis();
+                if (time2 - time1 >= 100) {
+                    while (gamepad1.dpad_up) {
+                        arm.rotateContinuous(1);
+                    }
+                    arm.rotateContinuous(0);
+                }
+            }
+        }
+           else if (gamepad1.b) {
             arm.lift(3, 1);
-            // arm.rotate(15,1);
+            //arm.rotate(15,1);
         } else if (gamepad1.y) {
             arm.rotate(45, 1);
         } else if (gamepad1.a) {
@@ -88,5 +104,6 @@ public class ArmTest extends LinearOpMode {
             }
             arm.rotateContinuous(0);
         }
+
     }
 }

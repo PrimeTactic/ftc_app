@@ -28,5 +28,5 @@ public class TTTimer {
     static void cancel() {
         timer.cancel();
     }
-
+        //TODO make a constructor
 }

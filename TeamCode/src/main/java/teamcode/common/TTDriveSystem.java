@@ -31,7 +31,7 @@ public class TTDriveSystem {
         motors[1] = frontRight;
         motors[2] = backLeft;
         motors[3] = backRight;
-        correctDirections();
+       // correctDirections();
     }
 
     private void correctDirections() {

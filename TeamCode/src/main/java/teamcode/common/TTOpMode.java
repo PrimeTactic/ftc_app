@@ -19,6 +19,7 @@ public abstract class TTOpMode extends LinearOpMode {
         onInitialize();
         waitForStart();
         onStart();
+        while (opModeIsActive()) ;
         TTTimer.cancel();
     }
 
