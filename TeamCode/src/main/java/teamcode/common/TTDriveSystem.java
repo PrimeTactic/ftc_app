@@ -7,20 +7,16 @@ import java.util.TimerTask;
 
 public class TTDriveSystem {
 
-    // correct ticks = current ticks * expected distance / actual distance
-
+    // correct ticks = current ticks * expected distance / actual distance-
     private static final double INCHES_TO_TICKS_VERTICAL = -43.4641507685;
     private static final double INCHES_TO_TICKS_LATERAL = 40;
     private static final double INCHES_TO_TICKS_DIAGONAL = 90.0;
     private static final double DEGREES_TO_TICKS = -9.39;
-    private static final double TICKS_WITHIN_TARGET = 10.0;
+    private static final double TICKS_WITHIN_TARGET = 30.0;
+    private static final int MAX_TICKS_PER_SECOND = 40;
     private static final double SPEED_ADJUST_WITH_ENCODERS_PERIOD = 0.1;
-    /**
-     * More specifically, how many ticks the motors must turn before reaching full speed while
-     * accelerating with a max power of 1.0
-     */
-    private static final double ACCELERATION_SMOOTHNESS = 1000.0;
-    private static final double DECELERATION_SMOOTHNESS = 4000.0;
+    private static final double DECELERATION_TICKS = 3500;
+    private static final int ACCELERATION_TICKS = 1500;
     private static final double MINIMUM_ENCODERS_POWER = 0.1;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
@@ -210,53 +206,44 @@ public class TTDriveSystem {
         };
         TTTimer.scheduleAtFixedRate(speedAdjustTask, SPEED_ADJUST_WITH_ENCODERS_PERIOD);
         while (!nearTarget()) ;
+        speedAdjustTask.cancel();
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     private void adjustMotorPower(DcMotor motor, double maxPower) {
         int currentTicks = motor.getCurrentPosition();
         int targetTicks = motor.getTargetPosition();
-        double currentPower = calculateCurrentPower(currentTicks, targetTicks, maxPower);
-        TTOpMode.getOpMode().telemetry.addData("power", currentPower);
-        motor.setPower(currentPower);
+        double nextPower = calculateNextPower(currentTicks, targetTicks, motor.getPower(), maxPower);
+        motor.setPower(nextPower);
     }
 
-    private double calculateCurrentPower(int currentTicks, int targetTicks, double maxPower) {
+    private double calculateNextPower(int currentTicks, int targetTicks, double currentPower, double maxPower) {
         currentTicks = Math.abs(currentTicks);
         targetTicks = Math.abs(targetTicks);
-        maxPower = Math.abs(maxPower);
 
-        double accelerationTicks = ACCELERATION_SMOOTHNESS * maxPower;
-        double decelerationTicks = DECELERATION_SMOOTHNESS * maxPower;
-
-        if (targetTicks / 2 < DECELERATION_SMOOTHNESS) {
-            maxPower = -maxPower / 2 * Math.cos(Math.PI * targetTicks / decelerationTicks) + maxPower / 2;
-        }
-        TTOpMode.getOpMode().telemetry.addData("Max power", maxPower);
-        double currentPower;
-        if (currentTicks <= targetTicks / 2) {
-            if (accelerationTicks > targetTicks / 2) {
-                accelerationTicks = targetTicks / 2;
+        double nextPower;
+        if (currentTicks < ACCELERATION_TICKS) {
+            double acceleration = Math.pow(MAX_TICKS_PER_SECOND, 2) / (2 * ACCELERATION_TICKS);
+            nextPower = currentPower + acceleration * SPEED_ADJUST_WITH_ENCODERS_PERIOD;
+            TTOpMode.getOpMode().telemetry.addData("power", currentPower);
+            if (nextPower < MINIMUM_ENCODERS_POWER) {
+                nextPower = MINIMUM_ENCODERS_POWER;
             }
-            if (currentTicks <= accelerationTicks) {
-                currentPower = -maxPower / 2 * Math.cos(Math.PI * currentTicks / accelerationTicks) + maxPower / 2;
-            } else {
-                currentPower = maxPower;
+        } else if (currentTicks > targetTicks - DECELERATION_TICKS) {
+            double deceleration = -Math.pow(MAX_TICKS_PER_SECOND * 1.75, 2) / (2 * DECELERATION_TICKS);
+            nextPower = currentPower + deceleration * SPEED_ADJUST_WITH_ENCODERS_PERIOD;
+            //nextPower = MINIMUM_ENCODERS_POWER;
+            TTOpMode.getOpMode().telemetry.addData("power", currentPower);
+            if (nextPower <= 0.25){
+                nextPower = 0.25;
             }
         } else {
-            if (decelerationTicks > targetTicks / 2) {
-                decelerationTicks = targetTicks / 2;
-            }
-            if (targetTicks - currentTicks <= decelerationTicks) {
-                currentPower = maxPower / 2 * Math.cos(Math.PI * (currentTicks - (targetTicks - decelerationTicks)) / decelerationTicks) + maxPower / 2;
-            } else {
-                currentPower = maxPower;
-            }
+            nextPower = maxPower;
         }
-        if (currentPower < MINIMUM_ENCODERS_POWER) {
-            currentPower = MINIMUM_ENCODERS_POWER;
+        if (nextPower > maxPower) {
+            nextPower = maxPower;
         }
-        return currentPower;
+        return nextPower;
     }
 
     private void setRunMode(DcMotor.RunMode mode) {
