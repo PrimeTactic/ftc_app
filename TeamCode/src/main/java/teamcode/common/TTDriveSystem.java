@@ -232,7 +232,7 @@ public class TTDriveSystem {
     private double calculateNextPower(int currentTicks, int targetTicks, double currentPower, double maxPower) {
         currentTicks = Math.abs(currentTicks);
         targetTicks = Math.abs(targetTicks);
-
+        TTOpMode.getOpMode().telemetry.addData("current power", currentPower);
         double nextPower;
         if (currentTicks < ACCELERATION_TICKS) {
             double acceleration = Math.pow(MAX_TICKS_PER_SECOND, 2) / (2 * ACCELERATION_TICKS);
@@ -242,16 +242,22 @@ public class TTDriveSystem {
                 nextPower = MINIMUM_ENCODERS_POWER;
             }
         } else if (currentTicks > targetTicks - DECELERATION_TICKS) {
-            double deceleration = -Math.pow(MAX_TICKS_PER_SECOND, 4) / (DECELERATION_TICKS - 2*TICKS_WITHIN_TARGET);
+            double deceleration = -Math.pow(MAX_TICKS_PER_SECOND, 2) / (DECELERATION_TICKS - 2 * TICKS_WITHIN_TARGET);
+            TTOpMode.getOpMode().telemetry.addData("decceleration", deceleration);
             nextPower = currentPower + deceleration * SPEED_ADJUST_WITH_ENCODERS_PERIOD;
             //nextPower = MINIMUM_ENCODERS_POWER;
-            TTOpMode.getOpMode().telemetry.addData("power", currentPower);
+            TTOpMode.getOpMode().telemetry.addData("next power", nextPower);
+            if (nextPower <= 0.2){
+                nextPower = 0.2;
+            }
+
         } else {
             nextPower = 0.75;
         }
         if (nextPower > maxPower) {
             nextPower = 0.75;
         }
+
         return nextPower;
     }
 
