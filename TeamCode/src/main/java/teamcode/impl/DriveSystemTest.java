@@ -19,10 +19,13 @@ public class DriveSystemTest extends TTOpMode {
     protected void onStart() {
         TTRobot robot = getRobot();
         TTDriveSystem driveSystem = robot.getDriveSystem();
-        driveSystem.vertical(75, 1.0);
-        driveSystem.turn(180 * 4, 1.0);
-        driveSystem.vertical(75, 1.0);
-        driveSystem.turn(90, 1.0);
+        driveSystem.vertical(75, 1);
+        sleep(250);
+        driveSystem.turn(180 * 5, 1);
+        sleep(250);
+        driveSystem.vertical(100, 1);
+        sleep(250);
+        driveSystem.turn(90, 1);
     }
 
 }

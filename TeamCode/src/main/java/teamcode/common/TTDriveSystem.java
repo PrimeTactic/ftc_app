@@ -15,8 +15,8 @@ public class TTDriveSystem {
     private static final double TICKS_WITHIN_TARGET = 30.0;
     private static final int MAX_TICKS_PER_SECOND = 40;
     private static final double SPEED_ADJUST_WITH_ENCODERS_PERIOD = 0.1;
-    private static final double DECELERATION_TICKS = 3500;
-    private static final int ACCELERATION_TICKS = 1500;
+    private static final double DECELERATION_TICKS = 1000;
+    private static final int ACCELERATION_TICKS = 1000;
     private static final double MINIMUM_ENCODERS_POWER = 0.1;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
@@ -52,6 +52,18 @@ public class TTDriveSystem {
 
         double[] maxPowers = {speed, speed, speed, speed};
         manageSpeedWithEncoders(maxPowers);
+    }
+
+    public void vertical2(double inches, double speed) {
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int ticks = (int) (inches * INCHES_TO_TICKS_VERTICAL);
+        for (DcMotor motor : motors) {
+            motor.setTargetPosition(ticks);
+            motor.setPower(speed);
+        }
+        while (!nearTarget()) ;
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void lateral(double inches, double speed) {
@@ -230,18 +242,15 @@ public class TTDriveSystem {
                 nextPower = MINIMUM_ENCODERS_POWER;
             }
         } else if (currentTicks > targetTicks - DECELERATION_TICKS) {
-            double deceleration = -Math.pow(MAX_TICKS_PER_SECOND * 1.75, 2) / (2 * DECELERATION_TICKS);
+            double deceleration = -Math.pow(MAX_TICKS_PER_SECOND, 4) / (DECELERATION_TICKS - 2*TICKS_WITHIN_TARGET);
             nextPower = currentPower + deceleration * SPEED_ADJUST_WITH_ENCODERS_PERIOD;
             //nextPower = MINIMUM_ENCODERS_POWER;
             TTOpMode.getOpMode().telemetry.addData("power", currentPower);
-            if (nextPower <= 0.25){
-                nextPower = 0.25;
-            }
         } else {
-            nextPower = maxPower;
+            nextPower = 0.75;
         }
         if (nextPower > maxPower) {
-            nextPower = maxPower;
+            nextPower = 0.75;
         }
         return nextPower;
     }
