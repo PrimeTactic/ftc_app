@@ -22,10 +22,10 @@ public class DistanceSensorArmTest extends TTOpMode {
         DistanceSensor sensor = hardwareMap.get(DistanceSensor.class, "ArmLiftSensor");
         getRobot().getArm().setLiftHeight(11, 1.0);
         getRobot().getArm().setLiftHeight(0, 1.0);
-//        while (opModeIsActive()) {
-//            telemetry.addData("Distance Sensor Reading", sensor.getDistance(DistanceUnit.INCH));
-//            telemetry.update();
-//        }
+        while (opModeIsActive()) {
+            telemetry.addData("Distance Sensor Reading", sensor.getDistance(DistanceUnit.INCH));
+            telemetry.update();
+        }
     }
 
 }
