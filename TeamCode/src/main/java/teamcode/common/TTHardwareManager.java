@@ -12,7 +12,6 @@ public class TTHardwareManager {
             "BackLeftDrive", "BackRightDrive", "IMU", "ArmElbow", "ArmLift", "ArmLiftSensor"};
 
     private final DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
-    private final BNO055IMU imu;
     private final DcMotor armElbow, armLift;
     private final DistanceSensor armLiftSensor;
 
@@ -22,13 +21,11 @@ public class TTHardwareManager {
             frontRightDrive = null;
             backLeftDrive = null;
             backRightDrive = null;
-            imu = null;
         } else {
             frontLeftDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[0]);
             frontRightDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[1]);
             backLeftDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[2]);
             backRightDrive = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[3]);
-            imu = hardwareMap.get(BNO055IMU.class, COMPONENT_NAMES[4]);
         }
 
         if (hardwareRestriction == TTHardwareRestriction.DRIVE_SYSTEM_ONLY) {
@@ -56,10 +53,6 @@ public class TTHardwareManager {
 
     public DcMotor getBackRightDrive() {
         return backRightDrive;
-    }
-
-    public BNO055IMU getIMU() {
-        return imu;
     }
 
     public DcMotor getArmElbow() {

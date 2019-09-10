@@ -21,8 +21,7 @@ public class TTRobot {
             DcMotor frontRightDrive = hardwareManager.getFrontRightDrive();
             DcMotor backLeftDrive = hardwareManager.getBackLeftDrive();
             DcMotor backRightDrive = hardwareManager.getBackRightDrive();
-            BNO055IMU imu = hardwareManager.getIMU();
-            driveSystem = new TTDriveSystem(frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive, imu);
+            driveSystem = new TTDriveSystem(frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive);
         }
 
         if (hardwareRestriction == TTHardwareManager.TTHardwareRestriction.DRIVE_SYSTEM_ONLY) {
