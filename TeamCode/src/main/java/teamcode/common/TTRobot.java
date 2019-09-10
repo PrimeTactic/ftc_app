@@ -1,16 +1,18 @@
 package teamcode.common;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class TTRobot {
 
+    private final TTHardwareManager hardwareManager;
     private final TTDriveSystem driveSystem;
     private final TTArm arm;
 
     public TTRobot(HardwareMap hardwareMap, TTHardwareManager.TTHardwareRestriction hardwareRestriction) {
-        TTHardwareManager hardwareManager = new TTHardwareManager(hardwareMap, hardwareRestriction);
+        hardwareManager = new TTHardwareManager(hardwareMap, hardwareRestriction);
 
         if (hardwareRestriction == TTHardwareManager.TTHardwareRestriction.ARM_ONLY) {
             driveSystem = null;
@@ -19,7 +21,8 @@ public class TTRobot {
             DcMotor frontRightDrive = hardwareManager.getFrontRightDrive();
             DcMotor backLeftDrive = hardwareManager.getBackLeftDrive();
             DcMotor backRightDrive = hardwareManager.getBackRightDrive();
-            driveSystem = new TTDriveSystem(frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive);
+            BNO055IMU imu = hardwareManager.getIMU();
+            driveSystem = new TTDriveSystem(frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive, imu);
         }
 
         if (hardwareRestriction == TTHardwareManager.TTHardwareRestriction.DRIVE_SYSTEM_ONLY) {
@@ -30,6 +33,10 @@ public class TTRobot {
             DcMotor armLift = hardwareManager.getArmLift();
             arm = new TTArm(armLift, armLiftSensor, armElbow);
         }
+    }
+
+    public TTHardwareManager getHardwareManager() {
+        return hardwareManager;
     }
 
     public TTDriveSystem getDriveSystem() {
