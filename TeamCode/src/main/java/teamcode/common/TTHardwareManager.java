@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class TTHardwareManager {
 
     private static final String[] COMPONENT_NAMES = {"FrontLeftDrive", "FrontRightDrive",
-            "BackLeftDrive", "BackRightDrive", "IMU", "ArmElbow", "ArmLift", "ArmLiftSensor"};
+            "BackLeftDrive", "BackRightDrive", "ArmElbow", "ArmLift", "ArmLiftSensor"};
 
     private final DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private final DcMotor armElbow, armLift;
@@ -33,9 +33,9 @@ public class TTHardwareManager {
             armLift = null;
             armLiftSensor = null;
         } else {
-            armElbow = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[5]);
-            armLift = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[6]);
-            armLiftSensor = hardwareMap.get(DistanceSensor.class, COMPONENT_NAMES[7]);
+            armElbow = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[4]);
+            armLift = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[5]);
+            armLiftSensor = hardwareMap.get(DistanceSensor.class, COMPONENT_NAMES[6]);
         }
     }
 

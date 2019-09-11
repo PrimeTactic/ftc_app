@@ -44,6 +44,31 @@ public class TTDriveSystem {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public void continuous(Vector2 velocity, double turnSpeed) {
+        if (velocity.isZero()) {
+            brake();
+            return;
+        }
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double direction = velocity.getDirection();
+        double power = velocity.magnitude();
+
+        double angle = -direction + Math.PI / 4;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+
+        double frontLeftPow = power * sin - turnSpeed;
+        double frontRightPow = power * cos + turnSpeed;
+        double backLeftPow = power * cos - turnSpeed;
+        double backRightPow = power * sin + turnSpeed;
+
+        frontLeft.setPower(frontLeftPow);
+        frontRight.setPower(frontRightPow);
+        backLeft.setPower(backLeftPow);
+        backRight.setPower(backRightPow);
+    }
+
     public void vertical(double inches, double speed) {
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);

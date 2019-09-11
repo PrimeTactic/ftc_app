@@ -23,24 +23,6 @@ public class DriveSystemTest extends TTOpMode {
     protected void onStart() {
         TTRobot robot = getRobot();
         TTDriveSystem driveSystem = robot.getDriveSystem();
-        BNO055IMU imu = robot.getHardwareManager().getIMU();
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-
-        imu.initialize(parameters);
-        while(!imu.isGyroCalibrated());
-
-        while (opModeIsActive()) {
-            Position pos = imu.getPosition();
-            telemetry.addData("x", pos.x);
-            telemetry.addData("y", pos.y);
-            telemetry.addData("z", pos.z);
-            telemetry.update();
-        }
     }
 
 }

@@ -61,9 +61,9 @@ public class TTArm {
 
     public void rotate(int degrees, double power) {
         elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (degrees * ELBOW_DEGREES_TO_TICKS);
         elbow.setTargetPosition(ticks);
+        elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elbow.setPower(power);
         while (elbow.isBusy()) ;
     }
