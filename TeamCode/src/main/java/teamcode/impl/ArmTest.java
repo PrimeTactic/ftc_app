@@ -54,7 +54,7 @@ public class ArmTest extends TTOpMode {
             arm.rotate(-5, 1);
             TTTimer.schedule(ts, 100);
         } else if (gamepad1.dpad_up) {
-            arm.rotate(5, 1);
+            arm.rotate(10, 1);
             long time1 = System.currentTimeMillis();
             while (gamepad1.dpad_up) {
                 long time2 = System.currentTimeMillis();
@@ -69,11 +69,11 @@ public class ArmTest extends TTOpMode {
             arm.setLiftHeight(arm.getLiftHeight() + 3, 1);
             // arm.rotate(15,1);
         } else if (gamepad1.y) {
-            arm.rotate(45, 1);
+            arm.moveClawServo(0);
         } else if (gamepad1.a) {
             arm.rotate(-45, 1);
         } else if (gamepad1.x) {
-            arm.rotate(-15, 1);
+            arm.moveClawServo(1);
         }
     }
 

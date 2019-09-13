@@ -2,6 +2,7 @@ package teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -13,11 +14,13 @@ public class TTArm {
 
     private final DcMotor lift, elbow;
     private final DistanceSensor liftSensor;
+    private final Servo clawServo;
 
-    public TTArm(DcMotor lift, DistanceSensor liftSensor, DcMotor elbow) {
+    public TTArm(DcMotor lift, DistanceSensor liftSensor, DcMotor elbow, Servo clawServo) {
         this.lift = lift;
         this.liftSensor = liftSensor;
         this.elbow = elbow;
+        this.clawServo = clawServo;
     }
 
     /**
@@ -70,6 +73,10 @@ public class TTArm {
 
     public void rotateContinuous(double power) {
         elbow.setPower(power);
+    }
+
+    public void moveClawServo(double position){
+        clawServo.setPosition(position);
     }
 
 }
