@@ -81,7 +81,7 @@ public final class Vector2 {
             } else if (x > 0) {
                 return 0;
             } else { // x == 0
-                return 0;
+                return Double.NaN;
             }
         }
     }

@@ -1,14 +1,11 @@
 package teamcode.impl;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import teamcode.common.TTDriveSystem;
 import teamcode.common.TTHardwareManager;
 import teamcode.common.TTOpMode;
 import teamcode.common.TTRobot;
 import teamcode.common.Vector2;
 
-@TeleOp(name = "DriveTeleOp")
 public class TTTeleOp extends TTOpMode {
 
     private TTDriveSystem driveSystem;

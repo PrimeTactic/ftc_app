@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class TTRobot {
 
@@ -31,14 +30,10 @@ public class TTRobot {
             DcMotor armElbow = hardwareManager.getArmElbow();
             DistanceSensor armLiftSensor = hardwareManager.getArmLiftSensor();
             DcMotor armLift = hardwareManager.getArmLift();
-            Servo armClaw = hardwareManager.getArmClaw();
-            arm = new TTArm(armLift, armLiftSensor, armElbow, armClaw);
+            arm = new TTArm(armLift, armLiftSensor, armElbow);
         }
     }
 
-    /**
-     * Use this to gain access to individual components of the robot for increased flexibility.
-     */
     public TTHardwareManager getHardwareManager() {
         return hardwareManager;
     }
