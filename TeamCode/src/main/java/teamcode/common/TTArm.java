@@ -53,7 +53,7 @@ public class TTArm {
     }
 
     /**
-     * Returns the number of inches that the lift is above its minimum height.
+     * Returns the number of inches that the lift is above its minimum position.
      */
     public double getLiftHeight() {
         return liftSensor.getDistance(DistanceUnit.INCH) - MINIMUM_LIFT_DISTANCE_FROM_GROUND;

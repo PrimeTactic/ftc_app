@@ -14,10 +14,10 @@ public abstract class TTOpMode extends LinearOpMode {
         opMode = this;
         TTTimer.init();
         onInitialize();
-        if (hardwareRestriction == null) {
-            hardwareRestriction = TTHardwareManager.TTHardwareRestriction.NONE;
-        }
-        robot = new TTRobot(hardwareMap, hardwareRestriction);
+        //if (hardwareRestriction == null) {
+          //  hardwareRestriction = TTHardwareManager.TTHardwareRestriction.NONE;
+        //}
+        //robot = new TTRobot(hardwareMap, hardwareRestriction);
         waitForStart();
         onStart();
         while (opModeIsActive()) ; // this is necessary if code is being run on separate threads

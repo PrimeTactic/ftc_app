@@ -2,21 +2,21 @@ package teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import java.util.TimerTask;
 
 public class TTDriveSystem {
 
-    // correct ticks = current ticks * expected distance / actual distance
-
+    // correct ticks = current ticks * expected distance / actual distance-
     private static final double INCHES_TO_TICKS_VERTICAL = -43.4641507685;
     private static final double INCHES_TO_TICKS_LATERAL = 40;
     private static final double INCHES_TO_TICKS_DIAGONAL = 90.0;
     private static final double DEGREES_TO_TICKS = -9.39;
     private static final double TICKS_WITHIN_TARGET = 30.0;
+    private static final int MAX_TICKS_PER_SECOND = 40;
     private static final double SPEED_ADJUST_WITH_ENCODERS_PERIOD = 0.1;
-    private static final double SPEED_PLATEAU_TICKS = 1000.0;
+    private static final double DECELERATION_TICKS = 1000;
+    private static final int ACCELERATION_TICKS = 1000;
     private static final double MINIMUM_ENCODERS_POWER = 0.1;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
@@ -52,6 +52,18 @@ public class TTDriveSystem {
 
         double[] maxPowers = {speed, speed, speed, speed};
         manageSpeedWithEncoders(maxPowers);
+    }
+
+    public void vertical2(double inches, double speed) {
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int ticks = (int) (inches * INCHES_TO_TICKS_VERTICAL);
+        for (DcMotor motor : motors) {
+            motor.setTargetPosition(ticks);
+            motor.setPower(speed);
+        }
+        while (!nearTarget()) ;
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void lateral(double inches, double speed) {
@@ -206,40 +218,53 @@ public class TTDriveSystem {
         };
         TTTimer.scheduleAtFixedRate(speedAdjustTask, SPEED_ADJUST_WITH_ENCODERS_PERIOD);
         while (!nearTarget()) ;
+        speedAdjustTask.cancel();
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     private void adjustMotorPower(DcMotor motor, double maxPower) {
         int currentTicks = motor.getCurrentPosition();
         int targetTicks = motor.getTargetPosition();
-        double currentPower = calculateCurrentPower(currentTicks, targetTicks, maxPower);
-        TTOpMode.getOpMode().telemetry.addData("power", currentPower);
-        motor.setPower(currentPower);
+        double nextPower = calculateNextPower(currentTicks, targetTicks, motor.getPower(), maxPower);
+        motor.setPower(nextPower);
     }
 
-    private double calculateCurrentPower(int currentTicks, int targetTicks, double maxPower) {
+    private double calculateNextPower(int currentTicks, int targetTicks, double currentPower, double maxPower) {
         currentTicks = Math.abs(currentTicks);
         targetTicks = Math.abs(targetTicks);
-        double currentPower;
+        TTOpMode.getOpMode().telemetry.addData("current power", currentPower);
+        double nextPower;
+        if (currentTicks < ACCELERATION_TICKS) {
+            double acceleration = Math.pow(MAX_TICKS_PER_SECOND, 2) / (2 * ACCELERATION_TICKS);
+            nextPower = currentPower + acceleration * SPEED_ADJUST_WITH_ENCODERS_PERIOD;
+            TTOpMode.getOpMode().telemetry.addData("power", currentPower);
+            if (nextPower < MINIMUM_ENCODERS_POWER) {
+                nextPower = MINIMUM_ENCODERS_POWER;
+            }
+        } else if (currentTicks > targetTicks - DECELERATION_TICKS) {
+            double deceleration = -Math.pow(MAX_TICKS_PER_SECOND, 2) / (DECELERATION_TICKS - 2 * TICKS_WITHIN_TARGET);
+            TTOpMode.getOpMode().telemetry.addData("decceleration", deceleration);
+            nextPower = currentPower + deceleration * SPEED_ADJUST_WITH_ENCODERS_PERIOD;
+            //nextPower = MINIMUM_ENCODERS_POWER;
+            TTOpMode.getOpMode().telemetry.addData("next power", nextPower);
+            if (nextPower <= 0.2){
+                nextPower = 0.2;
+            }
 
-        if (currentTicks <= SPEED_PLATEAU_TICKS) {
-            currentPower = Math.sin(Math.PI * currentTicks / (2 * SPEED_PLATEAU_TICKS));
-        } else if (currentTicks >= targetTicks - SPEED_PLATEAU_TICKS) {
-            currentPower = Math.sin(Math.PI * (currentTicks - (targetTicks - 2 * SPEED_PLATEAU_TICKS)) / (2 * SPEED_PLATEAU_TICKS));
         } else {
-            currentPower = maxPower;
+            nextPower = 0.75;
         }
-        if (currentPower < MINIMUM_ENCODERS_POWER) {
-            currentPower = MINIMUM_ENCODERS_POWER;
+        if (nextPower > maxPower) {
+            nextPower = 0.75;
         }
-        return currentPower;
+
+        return nextPower;
     }
 
     private void setRunMode(DcMotor.RunMode mode) {
-        frontLeft.setMode(mode);
-        frontRight.setMode(mode);
-        backLeft.setMode(mode);
-        backRight.setMode(mode);
+        for (DcMotor motor : motors) {
+            motor.setMode(mode);
+        }
     }
 
     private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior bahavior) {
