@@ -1,18 +1,22 @@
 package teamcode.common;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class TTHardwareManager {
 
 
     private static final String[] COMPONENT_NAMES = {"FrontLeftDrive", "FrontRightDrive",
-            "BackLeftDrive", "BackRightDrive", "ArmElbow", "ArmLift", "ArmLiftSensor"};
+            "BackLeftDrive", "BackRightDrive", "ArmElbow", "ArmLift", "ArmLiftSensor", "ArmClas"};
 
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private final DcMotor armElbow, armLift;
     private final DistanceSensor armLiftSensor;
+    private final Servo armClaw;
 
 
     public TTHardwareManager(HardwareMap hardwareMap, TTHardwareRestriction hardwareRestriction) {
@@ -31,10 +35,12 @@ public class TTHardwareManager {
             armElbow = null;
             armLift = null;
             armLiftSensor = null;
+            armClaw = null;
         } else {
             armElbow = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[4]);
             armLift = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[5]);
             armLiftSensor = hardwareMap.get(DistanceSensor.class, COMPONENT_NAMES[6]);
+            armClaw = hardwareMap.get(Servo.class, COMPONENT_NAMES[7]);
         }
     }
 
@@ -64,6 +70,10 @@ public class TTHardwareManager {
 
     public DistanceSensor getArmLiftSensor() {
         return armLiftSensor;
+    }
+
+    public Servo getArmClaw() {
+        return armClaw;
     }
 
     public enum TTHardwareRestriction {
