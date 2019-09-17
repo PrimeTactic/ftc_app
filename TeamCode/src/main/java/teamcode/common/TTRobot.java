@@ -31,11 +31,14 @@ public class TTRobot {
             DcMotor armElbow = hardwareManager.getArmElbow();
             DistanceSensor armLiftSensor = hardwareManager.getArmLiftSensor();
             DcMotor armLift = hardwareManager.getArmLift();
-            Servo clawServo = hardwareManager.getClawServo();
-            arm = new TTArm(armLift, armLiftSensor, armElbow, clawServo);
+            Servo armClaw = hardwareManager.getArmClaw();
+            arm = new TTArm(armLift, armLiftSensor, armElbow, armClaw);
         }
     }
 
+    /**
+     * Use this to gain access to individual components of the robot for increased flexibility.
+     */
     public TTHardwareManager getHardwareManager() {
         return hardwareManager;
     }

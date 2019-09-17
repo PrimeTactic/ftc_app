@@ -11,16 +11,19 @@ public class TTArm {
     private static final double ELBOW_DEGREES_TO_TICKS = 3.506493506;
     private double MINIMUM_LIFT_DISTANCE_FROM_GROUND = 14;
     private double MAXIMUM_LIFT_INCHES_FROM_GROUND = 25;
+    private static final double SERVO_OPEN_POSITION = 1.0;
+    private static final double SERVO_CLOSED_POSITION = 0.0;
 
     private final DcMotor lift, elbow;
     private final DistanceSensor liftSensor;
-    private final Servo clawServo;
+    private final Servo claw;
+    private ClawPosition clawPosition;
 
-    public TTArm(DcMotor lift, DistanceSensor liftSensor, DcMotor elbow, Servo clawServo) {
+    public TTArm(DcMotor lift, DistanceSensor liftSensor, DcMotor elbow, Servo claw) {
         this.lift = lift;
         this.liftSensor = liftSensor;
         this.elbow = elbow;
-        this.clawServo = clawServo;
+        this.claw = claw;
     }
 
     /**
@@ -75,8 +78,29 @@ public class TTArm {
         elbow.setPower(power);
     }
 
-    public void moveClawServo(double position){
-        clawServo.setPosition(position);
+    public void setClawPosition(ClawPosition clawPosition) {
+        this.clawPosition = clawPosition;
+        claw.setPosition(clawPosition.getServoPosition());
+    }
+
+    public ClawPosition getClawPosition() {
+        return clawPosition;
+    }
+
+    public static enum ClawPosition {
+
+        OPEN(SERVO_OPEN_POSITION), CLOSED(SERVO_CLOSED_POSITION);
+
+        private double servoPosition;
+
+        ClawPosition(double servoPosition) {
+            this.servoPosition = servoPosition;
+        }
+
+        public double getServoPosition() {
+            return servoPosition;
+        }
+
     }
 
 }
