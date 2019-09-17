@@ -1,7 +1,10 @@
 package teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import java.util.TimerTask;
 
@@ -17,11 +20,9 @@ public class TTDriveSystem {
      * be considered near its target.
      */
     private static final double TICK_ERROR = 30.0;
-    private static final int MAX_TICKS_PER_SECOND = 40;
-    private static final double POWER_ADJUST_WITH_ENCODERS_PERIOD = 0.1;
-    private static final double DECELERATION_TICKS = 1000;
-    private static final int ACCELERATION_TICKS = 1000;
-    private static final double MINIMUM_ENCODERS_POWER = 0.1;
+    private static final double P = 2.5;
+    private static final double I = 0.1;
+    private static final double D = 0.2;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
     private final DcMotor[] motors;
@@ -36,7 +37,19 @@ public class TTDriveSystem {
         motors[1] = frontRight;
         motors[2] = backLeft;
         motors[3] = backRight;
+        setPID();
         correctDirections();
+    }
+
+    private void setPID() {
+        PIDCoefficients coefficients = new PIDCoefficients();
+        coefficients.i = I;
+        coefficients.p = P;
+        coefficients.d = D;
+        for (DcMotor motor : motors) {
+            DcMotorEx ex = (DcMotorEx) motor;
+            ex.setPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefficients);
+        }
     }
 
     private void correctDirections() {
@@ -71,30 +84,36 @@ public class TTDriveSystem {
 
     public void vertical(double inches, double speed) {
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * INCHES_TO_TICKS_VERTICAL);
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double[] maxPowers = {speed, speed, speed, speed};
-        manageSpeedWithEncoders(maxPowers);
+        for (DcMotor motor : motors) {
+            motor.setPower(speed);
+        }
+        while (!nearTarget()) ;
+        brake();
     }
 
     public void lateral(double inches, double speed) {
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * INCHES_TO_TICKS_LATERAL);
 
         frontLeft.setTargetPosition(-ticks);
         frontRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(-ticks);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double[] maxPowers = {speed, speed, speed, speed};
-        manageSpeedWithEncoders(maxPowers);
+        for (DcMotor motor : motors) {
+            motor.setPower(speed);
+        }
+        while (!nearTarget()) ;
+        brake();
     }
 
     /**
@@ -106,7 +125,6 @@ public class TTDriveSystem {
      */
     public void diagonal(int quadrant, double inches, double speed) {
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (inches * INCHES_TO_TICKS_DIAGONAL);
         double[] maxPowers = new double[4];
 
@@ -146,8 +164,9 @@ public class TTDriveSystem {
             default:
                 throw new IllegalArgumentException("quadrant must be 0, 1, 2, or 3");
         }
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        manageSpeedWithEncoders(maxPowers);
+        while (!nearTarget()) ;
     }
 
     /**
@@ -156,16 +175,16 @@ public class TTDriveSystem {
      */
     public void turn(double degrees, double speed) {
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         int ticks = (int) (degrees * DEGREES_TO_TICKS);
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(-ticks);
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(-ticks);
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double[] maxPowers = {speed, speed, speed, speed};
-        manageSpeedWithEncoders(maxPowers);
+        while (!nearTarget()) ;
         brake();
     }
 
@@ -175,55 +194,6 @@ public class TTDriveSystem {
         frontRight.setPower(0.0);
         backLeft.setPower(0.0);
         backRight.setPower(0.0);
-    }
-
-    private void manageSpeedWithEncoders(final double[] maxPowers) {
-        final TimerTask speedAdjustTask = new TimerTask() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 4; i++) {
-                    DcMotor motor = motors[i];
-                    double maxPower = maxPowers[i];
-                    int currentTicks = motor.getCurrentPosition();
-                    int targetTicks = motor.getTargetPosition();
-                    double nextPower = calculateNextPower(currentTicks, targetTicks, motor.getPower(), maxPower);
-                    motor.setPower(nextPower);
-                }
-                TTOpMode.getOpMode().telemetry.update();
-            }
-        };
-        TTTimer.scheduleAtFixedRate(speedAdjustTask, POWER_ADJUST_WITH_ENCODERS_PERIOD);
-    }
-
-    private double calculateNextPower(int currentTicks, int targetTicks, double currentPower, double maxPower) {
-        currentTicks = Math.abs(currentTicks);
-        targetTicks = Math.abs(targetTicks);
-        TTOpMode.getOpMode().telemetry.addData("current power", currentPower);
-        double nextPower;
-        if (currentTicks < ACCELERATION_TICKS) {
-            double acceleration = Math.pow(MAX_TICKS_PER_SECOND, 2) / (2 * ACCELERATION_TICKS);
-            nextPower = currentPower + acceleration * POWER_ADJUST_WITH_ENCODERS_PERIOD;
-            TTOpMode.getOpMode().telemetry.addData("power", currentPower);
-            if (nextPower < MINIMUM_ENCODERS_POWER) {
-                nextPower = MINIMUM_ENCODERS_POWER;
-            }
-        } else if (currentTicks > targetTicks - DECELERATION_TICKS) {
-            double deceleration = -Math.pow(MAX_TICKS_PER_SECOND, 2) / (DECELERATION_TICKS - 2 * TICK_ERROR);
-            TTOpMode.getOpMode().telemetry.addData("decceleration", deceleration);
-            nextPower = currentPower + deceleration * POWER_ADJUST_WITH_ENCODERS_PERIOD;
-            //nextPower = MINIMUM_ENCODERS_POWER;
-            TTOpMode.getOpMode().telemetry.addData("next power", nextPower);
-            if (nextPower <= 0.2) {
-                nextPower = 0.2;
-            }
-
-        } else {
-            nextPower = 0.75;
-        }
-        if (nextPower > maxPower) {
-            nextPower = 0.75;
-        }
-        return nextPower;
     }
 
     private boolean nearTarget() {

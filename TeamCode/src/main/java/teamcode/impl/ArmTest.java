@@ -43,28 +43,25 @@ public class ArmTest extends TTOpMode {
             arm.liftContinuous(-gamepad1.left_trigger);
         }
         arm.liftContinuous(0);
+        while (gamepad1.right_bumper) {
+            arm.intakeRotateContinuous(0.75);
+        }
+        arm.intakeRotateContinuous(0);
+        while (gamepad1.left_bumper) {
+            arm.intakeRotateContinuous(-0.75);
+        }
+        arm.intakeRotateContinuous(0);
 
         if (gamepad1.dpad_down) {
-            TimerTask ts = new TimerTask() {
-                @Override
-                public void run() {
-                    DPadArmMovement(false);
-                }
-            };
-            arm.rotate(-5, 1);
-            TTTimer.schedule(ts, 100);
-        } else if (gamepad1.dpad_up) {
-            arm.rotate(5, 1);
-            long time1 = System.currentTimeMillis();
-            while (gamepad1.dpad_up) {
-                long time2 = System.currentTimeMillis();
-                if (time2 - time1 >= 100) {
-                    while (gamepad1.dpad_up) {
-                        arm.rotateContinuous(1.0);
-                    }
-                    arm.rotateContinuous(0);
-                }
+            while (gamepad1.dpad_down) {
+                arm.rotateContinuous(-0.75);
             }
+            arm.rotateContinuous(0);
+        } else if (gamepad1.dpad_up) {
+            while (gamepad1.dpad_up) {
+                arm.rotateContinuous(0.75);
+            }
+            arm.rotateContinuous(0);
         } else if (gamepad1.b) {
             arm.setLiftHeight(arm.getLiftHeight() + 3, 1);
             // arm.rotate(15,1);
@@ -73,7 +70,11 @@ public class ArmTest extends TTOpMode {
         } else if (gamepad1.a) {
             arm.rotate(-45, 1);
         } else if (gamepad1.x) {
-            arm.rotate(-15, 1);
+            if(arm.getClawPosition() == 1.0){
+                arm.rotateClaw(0);
+            } else {
+                arm.rotateClaw(1);
+            }
         }
     }
 

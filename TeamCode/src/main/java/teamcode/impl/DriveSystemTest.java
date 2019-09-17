@@ -23,6 +23,7 @@ public class DriveSystemTest extends TTOpMode {
     protected void onStart() {
         TTRobot robot = getRobot();
         TTDriveSystem driveSystem = robot.getDriveSystem();
+        driveSystem.vertical(100,0.6);
     }
 
 }
