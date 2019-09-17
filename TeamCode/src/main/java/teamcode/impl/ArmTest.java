@@ -1,21 +1,17 @@
 package teamcode.impl;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.common.TTArm;
 import teamcode.common.TTHardwareManager;
 import teamcode.common.TTOpMode;
-import teamcode.common.TTTimer;
-
-import java.util.*;
 
 /*
  Linear lift lift is controlled by triggers.
  Arm rotation is DPad.
  B Button moves 15 degrees and Y Button moves 45 degrees.
  */
-@TeleOp(name = "Arm Test")
+@TeleOp(name = "TT Arm Test")
 public class ArmTest extends TTOpMode {
 
     private TTArm arm;
@@ -44,13 +40,13 @@ public class ArmTest extends TTOpMode {
         }
         arm.liftContinuous(0);
         while (gamepad1.right_bumper) {
-            arm.intakeRotateContinuous(0.75);
+            arm.intake(0.75);
         }
-        arm.intakeRotateContinuous(0);
+        arm.intake(0);
         while (gamepad1.left_bumper) {
-            arm.intakeRotateContinuous(-0.75);
+            arm.intake(-0.75);
         }
-        arm.intakeRotateContinuous(0);
+        arm.intake(0);
 
         if (gamepad1.dpad_down) {
             while (gamepad1.dpad_down) {
@@ -70,9 +66,9 @@ public class ArmTest extends TTOpMode {
             arm.rotate(-45, 1);
         } else if (gamepad1.x) {
             if (arm.getClawPosition() == 1.0) {
-                arm.rotateClaw(0);
+                arm.setClawPosition(0);
             } else {
-                arm.rotateClaw(1);
+                arm.setClawPosition(1);
             }
         }
     }

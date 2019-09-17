@@ -52,7 +52,7 @@ public class TTArm {
     }
 
     public void liftContinuous(double power) {
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setPower(power);
     }
 
@@ -76,15 +76,15 @@ public class TTArm {
         elbow.setPower(power);
     }
 
-    public void intakeRotateContinuous(double power){
+    public void intake(double power) {
         intake.setPower(power);
     }
 
-    public void rotateClaw(double position){
+    public void setClawPosition(double position) {
         claw.setPosition(position);
     }
 
-    public double getClawPosition(){
+    public double getClawPosition() {
         return claw.getPosition();
     }
 

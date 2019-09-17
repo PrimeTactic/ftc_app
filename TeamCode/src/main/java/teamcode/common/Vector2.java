@@ -56,7 +56,7 @@ public final class Vector2 {
     }
 
     /**
-     * @return the angle in radians
+     * @return the angle in radians (0 if this vector has no magnitude)
      */
     public double getDirection() {
         if (y > 0) {
@@ -81,7 +81,7 @@ public final class Vector2 {
             } else if (x > 0) {
                 return 0;
             } else { // x == 0
-                return Double.NaN;
+                return 0;
             }
         }
     }

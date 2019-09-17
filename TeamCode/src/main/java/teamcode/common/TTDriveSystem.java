@@ -19,9 +19,18 @@ public class TTDriveSystem {
      * Maximum number of ticks a motor's current position must be away from it's target for it to
      * be considered near its target.
      */
-    private static final double TICK_ERROR = 30.0;
+    private static final double TICK_ERROR = 25.0;
+    /**
+     * Proportional.
+     */
     private static final double P = 2.5;
+    /**
+     * Integral.
+     */
     private static final double I = 0.1;
+    /**
+     * Derivative.
+     */
     private static final double D = 0.2;
 
     private final DcMotor frontLeft, frontRight, backLeft, backRight;
@@ -32,13 +41,14 @@ public class TTDriveSystem {
         this.frontRight = frontRight;
         this.backLeft = backLeft;
         this.backRight = backRight;
-        motors = new DcMotor[4];
-        motors[0] = frontLeft;
-        motors[1] = frontRight;
-        motors[2] = backLeft;
-        motors[3] = backRight;
-        setPID();
+        motors = new DcMotor[]{frontLeft, frontRight, backLeft, backRight};
         correctDirections();
+        setPID();
+    }
+
+    private void correctDirections() {
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     private void setPID() {
@@ -52,16 +62,7 @@ public class TTDriveSystem {
         }
     }
 
-    private void correctDirections() {
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
     public void continuous(Vector2 velocity, double turnSpeed) {
-        if (velocity.isZero()) {
-            brake();
-            return;
-        }
         setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double direction = velocity.getDirection();
@@ -86,15 +87,15 @@ public class TTDriveSystem {
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int ticks = (int) (inches * INCHES_TO_TICKS_VERTICAL);
 
-        frontLeft.setTargetPosition(ticks);
-        frontRight.setTargetPosition(ticks);
-        backLeft.setTargetPosition(ticks);
-        backRight.setTargetPosition(ticks);
+        for (DcMotor motor : motors) {
+            motor.setTargetPosition(ticks);
+        }
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         for (DcMotor motor : motors) {
             motor.setPower(speed);
         }
+
         while (!nearTarget()) ;
         brake();
     }
@@ -112,6 +113,7 @@ public class TTDriveSystem {
         for (DcMotor motor : motors) {
             motor.setPower(speed);
         }
+
         while (!nearTarget()) ;
         brake();
     }
@@ -126,47 +128,59 @@ public class TTDriveSystem {
     public void diagonal(int quadrant, double inches, double speed) {
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int ticks = (int) (inches * INCHES_TO_TICKS_DIAGONAL);
-        double[] maxPowers = new double[4];
+        int[] targets = new int[4];
+        double[] powers = new double[4];
 
         switch (quadrant) {
             case 0:
                 // forward right
-                frontLeft.setTargetPosition(ticks);
-                backRight.setTargetPosition(ticks);
+                targets[0] = ticks;
+                targets[3] = ticks;
 
-                maxPowers[0] = speed;
-                maxPowers[3] = speed;
+                powers[0] = speed;
+                powers[3] = speed;
                 break;
             case 1:
                 // forward left
-                frontRight.setTargetPosition(ticks);
-                backLeft.setTargetPosition(ticks);
+                targets[1] = ticks;
+                targets[2] = ticks;
 
-                maxPowers[1] = speed;
-                maxPowers[2] = speed;
+                powers[1] = speed;
+                powers[2] = speed;
                 break;
             case 2:
                 // backward left
-                frontLeft.setTargetPosition(-ticks);
-                backRight.setTargetPosition(-ticks);
+                targets[0] = -ticks;
+                targets[3] = -ticks;
 
-                maxPowers[0] = speed;
-                maxPowers[3] = speed;
+                powers[0] = speed;
+                powers[3] = speed;
                 break;
             case 3:
                 // backward right
-                frontRight.setTargetPosition(-ticks);
-                backLeft.setTargetPosition(-ticks);
+                targets[1] = -ticks;
+                targets[2] = -ticks;
 
-                maxPowers[1] = speed;
-                maxPowers[2] = speed;
+                powers[1] = speed;
+                powers[2] = speed;
                 break;
             default:
                 throw new IllegalArgumentException("quadrant must be 0, 1, 2, or 3");
         }
+
+        for (int i = 0; i < 4; i++) {
+            DcMotor motor = motors[i];
+            motor.setTargetPosition(targets[i]);
+        }
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        for (int i = 0; i < 4; i++) {
+            DcMotor motor = motors[i];
+            motor.setPower(powers[i]);
+        }
+
         while (!nearTarget()) ;
+        brake();
     }
 
     /**
@@ -183,17 +197,18 @@ public class TTDriveSystem {
         backRight.setTargetPosition(-ticks);
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double[] maxPowers = {speed, speed, speed, speed};
+        for (DcMotor motor : motors) {
+            motor.setPower(speed);
+        }
+
         while (!nearTarget()) ;
         brake();
     }
 
     public void brake() {
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setPower(0.0);
-        frontRight.setPower(0.0);
-        backLeft.setPower(0.0);
-        backRight.setPower(0.0);
+        for (DcMotor motor : motors) {
+            motor.setPower(0.0);
+        }
     }
 
     private boolean nearTarget() {
@@ -212,13 +227,6 @@ public class TTDriveSystem {
         for (DcMotor motor : motors) {
             motor.setMode(mode);
         }
-    }
-
-    private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior bahavior) {
-        frontLeft.setZeroPowerBehavior(bahavior);
-        frontRight.setZeroPowerBehavior(bahavior);
-        backLeft.setZeroPowerBehavior(bahavior);
-        backRight.setZeroPowerBehavior(bahavior);
     }
 
 }

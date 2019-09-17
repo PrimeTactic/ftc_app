@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import teamcode.common.TTHardwareManager;
 import teamcode.common.TTOpMode;
 
-@TeleOp(name = "Distance Sensor Arm Test")
+@TeleOp(name = "TT Arm Distance Sensor Test")
 public class DistanceSensorArmTest extends TTOpMode {
 
     @Override

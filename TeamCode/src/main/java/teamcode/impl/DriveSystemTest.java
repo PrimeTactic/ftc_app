@@ -11,7 +11,7 @@ import teamcode.common.TTHardwareManager;
 import teamcode.common.TTOpMode;
 import teamcode.common.TTRobot;
 
-@Autonomous(name = "Drive System Test")
+@Autonomous(name = "TT Drive System Test")
 public class DriveSystemTest extends TTOpMode {
 
     @Override
@@ -23,7 +23,7 @@ public class DriveSystemTest extends TTOpMode {
     protected void onStart() {
         TTRobot robot = getRobot();
         TTDriveSystem driveSystem = robot.getDriveSystem();
-        driveSystem.vertical(100,0.6);
+        driveSystem.diagonal(0, 10, 0.5);
     }
 
 }
