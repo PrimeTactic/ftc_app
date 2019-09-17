@@ -58,6 +58,7 @@ public class ArmTest extends TTOpMode {
             }
             arm.rotateContinuous(0);
         } else if (gamepad1.dpad_up) {
+
             while (gamepad1.dpad_up) {
                 arm.rotateContinuous(0.75);
             }
@@ -65,12 +66,10 @@ public class ArmTest extends TTOpMode {
         } else if (gamepad1.b) {
             arm.setLiftHeight(arm.getLiftHeight() + 3, 1);
             // arm.rotate(15,1);
-        } else if (gamepad1.y) {
-            arm.rotate(45, 1);
         } else if (gamepad1.a) {
             arm.rotate(-45, 1);
         } else if (gamepad1.x) {
-            if(arm.getClawPosition() == 1.0){
+            if (arm.getClawPosition() == 1.0) {
                 arm.rotateClaw(0);
             } else {
                 arm.rotateClaw(1);
