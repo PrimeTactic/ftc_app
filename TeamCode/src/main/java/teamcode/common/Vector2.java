@@ -56,34 +56,10 @@ public final class Vector2 {
     }
 
     /**
-     * @return the angle in radians (0 if this vector has no magnitude)
+     * @return the angle in radians from -pi to pi.
      */
     public double getDirection() {
-        if (y > 0) {
-            if (x > 0) {
-                return Math.atan(y / x);
-            } else if (x < 0) {
-                return Math.PI + Math.atan(y / x);
-            } else { // x == 0
-                return Math.PI / 2;
-            }
-        } else if (y < 0) {
-            if (x > 0) {
-                return 2 * Math.PI + Math.atan(y / x);
-            } else if (x < 0) {
-                return Math.PI + Math.atan(y / x);
-            } else { // x == 0
-                return 3 * Math.PI / 2;
-            }
-        } else { // y == 0
-            if (x < 0) {
-                return Math.PI;
-            } else if (x > 0) {
-                return 0;
-            } else { // x == 0
-                return 0;
-            }
-        }
+        return Math.atan2(y, x);
     }
 
 }

@@ -6,15 +6,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.TimerTask;
 
 public class TTDriveSystem {
 
-    // correct ticks = current ticks * expected distance / actual distance-
-    private static final double INCHES_TO_TICKS_VERTICAL = -43.4641507685;
-    private static final double INCHES_TO_TICKS_LATERAL = 40;
-    private static final double INCHES_TO_TICKS_DIAGONAL = 90.0;
-    private static final double DEGREES_TO_TICKS = -9.39;
+    //    // correct ticks = current ticks * correct distance / current distance
+    private static final double INCHES_TO_TICKS_VERTICAL = -43.46;
+    private static final double INCHES_TO_TICKS_LATERAL = 47.06;
+    private static final double INCHES_TO_TICKS_DIAGONAL = -64.29;
+    private static final double DEGREES_TO_TICKS = -9.80;
     /**
      * Maximum number of ticks a motor's current position must be away from it's target for it to
      * be considered near its target.
@@ -72,15 +74,24 @@ public class TTDriveSystem {
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        double frontLeftPow = power * sin - turnSpeed;
-        double frontRightPow = power * cos + turnSpeed;
-        double backLeftPow = power * cos - turnSpeed;
-        double backRightPow = power * sin + turnSpeed;
+        double maxPow = Math.sin(Math.PI / 4);
+
+        double frontLeftPow = (power * sin - turnSpeed) / maxPow;
+        double frontRightPow = (power * cos + turnSpeed) / maxPow;
+        double backLeftPow = (power * cos - turnSpeed) / maxPow;
+        double backRightPow = (power * sin + turnSpeed) / maxPow;
 
         frontLeft.setPower(frontLeftPow);
         frontRight.setPower(frontRightPow);
         backLeft.setPower(backLeftPow);
         backRight.setPower(backRightPow);
+
+        Telemetry telemetry = TTOpMode.getOpMode().telemetry;
+        telemetry.addData("fl", frontLeftPow);
+        telemetry.addData("fr,", frontRightPow);
+        telemetry.addData("bl", backLeftPow);
+        telemetry.addData("br", backRightPow);
+        telemetry.update();
     }
 
     public void vertical(double inches, double speed) {
