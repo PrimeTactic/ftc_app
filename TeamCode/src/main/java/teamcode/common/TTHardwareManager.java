@@ -11,12 +11,13 @@ public class TTHardwareManager {
 
 
     private static final String[] COMPONENT_NAMES = {"FrontLeftDrive", "FrontRightDrive",
-            "BackLeftDrive", "BackRightDrive", "ArmElbow", "ArmLift", "ArmLiftSensor", "ArmClas"};
+            "BackLeftDrive", "BackRightDrive", "ArmElbow", "ArmLift", "ArmLiftSensor", "ArmIntake", "Claw"};
 
-    private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
-    private final DcMotor armElbow, armLift;
+    private final DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
+    private final DcMotor armElbow, armLift, armIntake;
+
     private final DistanceSensor armLiftSensor;
-    private final Servo armClaw;
+    private final Servo claw;
 
 
     public TTHardwareManager(HardwareMap hardwareMap, TTHardwareRestriction hardwareRestriction) {
@@ -35,12 +36,14 @@ public class TTHardwareManager {
             armElbow = null;
             armLift = null;
             armLiftSensor = null;
-            armClaw = null;
+            armIntake = null;
+            claw = null;
         } else {
             armElbow = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[4]);
             armLift = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[5]);
             armLiftSensor = hardwareMap.get(DistanceSensor.class, COMPONENT_NAMES[6]);
-            armClaw = hardwareMap.get(Servo.class, COMPONENT_NAMES[7]);
+            armIntake = hardwareMap.get(DcMotor.class, COMPONENT_NAMES[7]);
+            claw = hardwareMap.get(Servo.class, COMPONENT_NAMES[8]);
         }
     }
 
@@ -72,8 +75,12 @@ public class TTHardwareManager {
         return armLiftSensor;
     }
 
-    public Servo getArmClaw() {
-        return armClaw;
+    public DcMotor getArmIntake(){
+        return armIntake;
+    }
+
+    public Servo getClaw(){
+        return claw;
     }
 
     public enum TTHardwareRestriction {

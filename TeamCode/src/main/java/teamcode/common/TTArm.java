@@ -11,18 +11,16 @@ public class TTArm {
     private static final double ELBOW_DEGREES_TO_TICKS = 3.506493506;
     private double MINIMUM_LIFT_DISTANCE_FROM_GROUND = 15.7;
     private double MAXIMUM_LIFT_INCHES_FROM_GROUND = 25;
-    private static final double SERVO_OPEN_POSITION = 1.0;
-    private static final double SERVO_CLOSED_POSITION = 0.0;
 
-    private final DcMotor lift, elbow;
-    private final DistanceSensor liftSensor;
+    private final DcMotor lift, elbow, intake;
+    //private final DistanceSensor liftSensor;
     private final Servo claw;
-    private ClawPosition clawPosition;
 
-    public TTArm(DcMotor lift, DistanceSensor liftSensor, DcMotor elbow, Servo claw) {
+    public TTArm(DcMotor lift, DcMotor elbow, DcMotor intake, Servo claw) {
         this.lift = lift;
-        this.liftSensor = liftSensor;
+        //this.liftSensor = liftSensor;
         this.elbow = elbow;
+        this.intake = intake;
         this.claw = claw;
     }
 
@@ -54,7 +52,7 @@ public class TTArm {
     }
 
     public void liftContinuous(double power) {
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setPower(power);
     }
 
@@ -62,7 +60,8 @@ public class TTArm {
      * Returns the number of inches that the lift is above its minimum position.
      */
     public double getLiftHeight() {
-        return liftSensor.getDistance(DistanceUnit.INCH) - MINIMUM_LIFT_DISTANCE_FROM_GROUND;
+        return 0.0;
+        //return liftSensor.getDistance(DistanceUnit.INCH) - MINIMUM_LIFT_DISTANCE_FROM_GROUND;
     }
 
     public void rotate(int degrees, double power) {
@@ -80,29 +79,16 @@ public class TTArm {
     }
 
 
-    public void setClawPosition(ClawPosition clawPosition) {
-        this.clawPosition = clawPosition;
-        claw.setPosition(clawPosition.getServoPosition());
+
+
+    public void setClawPosition(double position) {
+        claw.setPosition(position);
     }
 
-    public ClawPosition getClawPosition() {
-        return clawPosition;
+    public double getClawPosition() {
+        return claw.getPosition();
     }
-
-    public static enum ClawPosition {
-
-        OPEN(SERVO_OPEN_POSITION), CLOSED(SERVO_CLOSED_POSITION);
-
-        private double servoPosition;
-
-        ClawPosition(double servoPosition) {
-            this.servoPosition = servoPosition;
-        }
-
-        public double getServoPosition() {
-            return servoPosition;
-        }
-
+    public void intake(double power){
+        intake.setPower(power);
     }
-
 }

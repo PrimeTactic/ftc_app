@@ -8,8 +8,10 @@ import teamcode.common.TTOpMode;
 import teamcode.common.TTRobot;
 import teamcode.common.Vector2;
 
-@TeleOp(name = "DriveTeleOp")
+@TeleOp(name = "TT TeleOp")
 public class TTTeleOp extends TTOpMode {
+
+    private static final double TURN_SPEED_MODIFIER = 0.69;
 
     private TTDriveSystem driveSystem;
 
@@ -29,12 +31,21 @@ public class TTTeleOp extends TTOpMode {
     }
 
     private void update() {
+        driveUpdate();
+        armUpdate();
+    }
+
+    private void driveUpdate() {
         double vertical = gamepad1.right_stick_y;
         double horizontal = gamepad1.right_stick_x;
-        double turn = gamepad1.left_stick_x;
+        double turn = gamepad1.left_stick_x * TURN_SPEED_MODIFIER;
         Vector2 velocity = new Vector2(vertical, horizontal);
 
         driveSystem.continuous(velocity, turn);
+    }
+
+    private void armUpdate() {
+
     }
 
 }
