@@ -30,7 +30,6 @@ public class DriveSystemTest extends TTOpMode {
         //driveSystem.vertical(100, 1);
         //sleep(250);
         //driveSystem.turn(90, 1);
-
         driveSystem.vertical(10, 0.4);
         driveSystem.vertical(-10, 0.4);
     }
